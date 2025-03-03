@@ -1,0 +1,51 @@
+{
+  "name": "shielding-dapp",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "lint:code": "eslint . --report-unused-disable-directives --max-warnings 0",
+    "lint:styles": "stylelint '**/*.{tsx,ts,js}' --ignore-path .gitignore",
+    "lint": "run-p lint:* -c",
+    "lint-feature-branch-commits": "npx commitlint --from main --to HEAD --verbose",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "styled-components": "^6.1.15"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@eslint/compat": "^1.2.7",
+    "@eslint/js": "^9.21.0",
+    "@stylistic/eslint-plugin": "^4.2.0",
+    "@types/node": "^22.13.9",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.21.0",
+    "eslint-plugin-fp": "^2.3.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prefer-arrow-functions": "^3.6.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "eslint-plugin-storybook": "^0.11.3",
+    "globals": "^15.15.0",
+    "jsdom": "^26.0.0",
+    "npm-run-all": "^4.1.5",
+    "postcss-styled-syntax": "^0.7.1",
+    "stylelint": "^16.15.0",
+    "stylelint-config-standard": "^37.0.0",
+    "stylelint-order": "^6.0.4",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.24.1",
+    "vite": "^6.2.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.0.7"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "extends": [
+    "stylelint-config-standard"
+  ],
+  "customSyntax": "postcss-styled-syntax",
+  "plugins": [
+    "stylelint-order"
+  ],
+  "rules": {
+    "no-empty-source": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+    "declaration-empty-line-before": null,
+    "function-no-unknown": null,
+    "function-name-case": null,
+    "order/properties-order": [
+      [{
+        "order": "flexible",
+        "emptyLineBefore": "threshold",
+        "noEmptyLineBetween": true,
+        "properties": ["content", "display"]
+      }, {
+        "order": "flexible",
+        "emptyLineBefore": "threshold",
+        "properties": ["position", "top", "right", "bottom", "left", "inset"]
+      }, {
+        "order": "flexible",
+        "emptyLineBefore": "threshold",
+        "noEmptyLineBetween": true,
+        "properties": [
+          "flex", "flex-direction", "justify-content", "justify-items", "align-items", "flex-grow", "flex-basis",
+          "align-self", "gap", "grid-template-columns", "grid-template-rows", "grid-auto-rows",
+          "grid-template-areas", "grid-auto-flow", "grid-auto-columns", "place-items", "grid-area"
+        ]
+      }, {
+        "order": "flexible",
+        "emptyLineBefore": "threshold",
+        "noEmptyLineBetween": true,
+        "properties": [
+          "height", "width", "max-width", "max-height", "min-height", "min-width", "margin", "padding", "margin-top",
+          "margin-right", "margin-bottom", "margin-left", "margin-block", "margin-inline", "padding-top",
+          "padding-right", "padding-bottom", "padding-left", "border", "border-bottom", "border-width",
+          "border-bottom-width", "padding-inline", "padding-block"
+        ]
+      }, {
+        "order": "flexible",
+        "emptyLineBefore": "threshold",
+        "noEmptyLineBetween": true,
+        "properties": [
+          "font-size", "font-family", "color", "text-align", "text-decoration-line", "line-height", "text-shadow",
+          "font-weight", "white-space", "font-style", "letter-spacing"
+        ]
+      }, {
+        "order": "flexible",
+        "emptyLineBefore": "threshold",
+        "noEmptyLineBetween": true,
+        "properties": [
+          "background-color",
+          "border-radius", "border-bottom-left-radius", "border-bottom-right-radius", "border-top-right-radius", "border-top-left-radius",
+          "border-color", "background", "border-left-color", "outline", "opacity", "box-shadow", "transition", "transform",
+          "pointer-events", "isolation", "overflow", "overflow-x", "overflow-y", "cursor"
+        ]
+      }],
+      {
+        "emptyLineBeforeUnspecified": "always",
+        "emptyLineMinimumPropertyThreshold": 6,
+        "unspecified": "bottom"
+      }
+    ]
+  }
+}
