@@ -20,6 +20,7 @@ export default tseslint.config(
   {
     plugins: {
       '@stylistic': stylisticPlugin,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       import: importPlugin,
       fp: fpPlugin,
       'prefer-arrow-functions': arrowFunctionsPlugin,
@@ -31,6 +32,7 @@ export default tseslint.config(
           allowDefaultProject: [
             'eslint.config.js',
             'commitlint.config.ts',
+            'vite.config.ts',
             '.storybook/*',
           ],
         },
