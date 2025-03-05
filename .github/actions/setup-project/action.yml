@@ -1,0 +1,42 @@
+name: Setup project
+description: Setup npm project in Node.js
+
+#inputs:
+#  NPM_TOKEN:
+#    required: true
+#    description: NPM_TOKEN
+
+outputs:
+  node-version:
+    description: The resolved and installed Node.js version.
+    value: ${{ steps.node.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Use Node.js version from .nvmrc
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: npm
+    - name: Read Node.js version
+      id: node
+      run: echo "version=$(node -v)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Check cache for node_modules
+      id: cache-node-modules
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: os-${{ runner.os }}/node-${{ steps.node.outputs.version }}/node_modules-${{ hashFiles('package-lock.json') }}
+    - name: Install dependencies
+      if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+      run: npm ci
+      shell: bash
+    - name: Cache node_modules
+      if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: os-${{ runner.os }}/node-${{ steps.node.outputs.version }}/node_modules-${{ hashFiles('package-lock.json') }}

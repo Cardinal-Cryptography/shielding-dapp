@@ -1,0 +1,62 @@
+name: Code quality
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  install: # Warm up node_modules cache for the following jobs
+    name: Set up Node.js and install npm dependencies
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-project
+#        with:
+#          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  lint-commits:
+    name: Lint commits
+    runs-on: ubuntu-22.04
+    needs: [install]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-project
+      - run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+  type-check:
+    name: Type check with TS
+    needs: [install]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-project
+      - run: npm run type-check
+
+  lint:
+    name: Lint code
+    needs: [install]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-project
+      - run: npm run lint
+
+  test:
+    name: Run tests
+    needs: [install]
+    runs-on: ubuntu-22.04
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-project
+      - name: Export variables
+        shell: bash
+        env:
+          VARS_CONTEXT: ${{ toJson(vars) }}
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          to_envs() { jq -r "to_entries[] | select(.key|startswith(\"PUBLIC_VAR\")) | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""; }
+          echo "$VARS_CONTEXT" | to_envs >> $GITHUB_ENV
+      - run: npm test
