@@ -48,8 +48,8 @@ export default createGlobalStyle<{ currentTheme: keyof typeof themes }>`
 
 
   body {
-    color: ${vars('--foreground')};
-    background: ${vars('--background')};
+    color: ${vars('--color-neutral-foreground-1-rest')};
+    background: ${vars('--color-neutral-background-1-rest')};
   }
 
   :root {
