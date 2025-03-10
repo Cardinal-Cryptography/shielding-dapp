@@ -49,7 +49,11 @@ export default createGlobalStyle<{ currentTheme: keyof typeof themes }>`
 
   body {
     color: ${vars('--color-neutral-foreground-1-rest')};
-    background: ${vars('--color-neutral-background-1-rest')};
+    background: linear-gradient(
+        180deg,
+        ${vars('--color-neutral-background-gradient-color-a')} 0%,
+        ${vars('--color-neutral-background-gradient-color-b')} 100%
+    ) fixed, ${vars('--color-neutral-background-gradient-color-b')} /* fixes white piece of background during mobile UI hiding upon scroll */;
   }
 
   :root {

@@ -8,7 +8,6 @@ import fpPlugin from 'eslint-plugin-fp';
 import importPlugin from 'eslint-plugin-import';
 import arrowFunctionsPlugin from 'eslint-plugin-prefer-arrow-functions';
 import hooksPlugin from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
 import eslintPluginStorybook from 'eslint-plugin-storybook';
 import tseslint from 'typescript-eslint';
 
@@ -18,7 +17,6 @@ export default tseslint.config(
   tseslint.configs.strictTypeChecked,
   tseslint.configs.stylisticTypeChecked,
   hooksPlugin.configs['recommended-latest'],
-  reactRefresh.configs.vite,
   {
     plugins: {
       '@stylistic': stylisticPlugin,
