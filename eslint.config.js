@@ -140,7 +140,7 @@ export default tseslint.config(
           },
         ],
         patterns: [{
-          regex: 'src/(?!(domains/.*/(components|utils|assets|hooks|providers)/.*))',
+          regex: 'src/(?!(domains/.*/(components|utils|assets|hooks|providers|types|styles)/.*))',
           message: 'Organize modules in predefined groups under domains.',
         }, {
           /*
