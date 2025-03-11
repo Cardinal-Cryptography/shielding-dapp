@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import CIcon from 'src/domains/common/components/CIcon';
 import { useTheme } from 'src/domains/common/hooks/useTheme';
 import Providers from 'src/domains/common/providers/Providers';
 
@@ -16,6 +17,7 @@ const App = () => {
       Current theme:
       {' '}
       {userSelectedTheme}
+      <CIcon icon="Shielded" size={32} />
     </Providers>
   );
 };
