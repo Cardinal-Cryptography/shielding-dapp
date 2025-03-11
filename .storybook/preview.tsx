@@ -1,5 +1,7 @@
 import { Preview } from '@storybook/react';
 
+import Providers from '../src/domains/common/providers/Providers';
+
 // TODO: Add after chromatic setup
 // MotionGlobalConfig.skipAnimations = isChromatic();
 
@@ -30,6 +32,9 @@ const preview = {
       },
     },
   },
+  decorators: [
+    Story => <Providers><Story /></Providers>,
+  ],
 } satisfies Preview;
 
 export default preview;
