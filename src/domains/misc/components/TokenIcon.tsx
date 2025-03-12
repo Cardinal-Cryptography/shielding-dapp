@@ -1,8 +1,8 @@
 import type { ComponentProps } from 'react';
 import styled from 'styled-components';
 
-import CIcon, { IconName } from 'src/domains/common/components/CIcon';
-import { vars } from 'src/domains/common/styles/utils';
+import CIcon, { IconName } from 'src/domains/misc/components/CIcon';
+import vars from 'src/domains/styling/utils/vars';
 
 type Size = number | `${string}%` | `${string}px`;
 

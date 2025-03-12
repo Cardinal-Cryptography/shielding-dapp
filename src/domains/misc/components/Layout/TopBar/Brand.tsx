@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { vars } from 'src/domains/common/styles/utils';
+import vars from 'src/domains/styling/utils/vars';
 
 import { BRAND_CONTAINER_TITLE, BRAND_LOGO_WIDTH_DESKTOP } from './consts';
 import LogoSvg from './logo.svg?react';

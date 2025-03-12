@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { vars } from 'src/domains/common/styles/utils';
+import vars from 'src/domains/styling/utils/vars';
 
 import AnimatingBgSvg from './bgAnimation.svg?react';
 

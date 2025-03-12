@@ -1,9 +1,9 @@
 import { ComponentProps, forwardRef, ReactNode } from 'react';
 import styled, { css, RuleSet } from 'styled-components';
 
-import CIcon, { type IconName } from 'src/domains/common/components/CIcon';
-import { transitionTime, typography } from 'src/domains/common/styles/tokens';
-import { vars } from 'src/domains/common/styles/utils';
+import CIcon, { type IconName } from 'src/domains/misc/components/CIcon';
+import { transitionTime, typography } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
 
 type Size = 'large' | 'medium' | 'small' | 'extra-small' | 'tiny';
 type Variant = 'primary' | 'secondary' | 'outline' | 'subtle' | 'transparent' | 'danger';

@@ -1,6 +1,6 @@
 import { css, keyframes } from 'styled-components';
 
-import { vars } from 'src/domains/common/styles/utils';
+import vars from 'src/domains/styling/utils/vars';
 
 const skeletonWave = keyframes`
   from { background-position-x: 300%; }

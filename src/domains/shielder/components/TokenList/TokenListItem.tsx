@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
-import TokenIcon from 'src/domains/common/components/TokenIcon';
-import { typography } from 'src/domains/common/styles/tokens';
-import { vars } from 'src/domains/common/styles/utils';
-import { Token } from 'src/domains/common/types/types';
-import formatBalance from 'src/domains/common/utils/formatBalance';
-import isPresent from 'src/domains/common/utils/isPresent';
+import TokenIcon from 'src/domains/misc/components/TokenIcon';
+import { Token } from 'src/domains/misc/types/types';
+import formatBalance from 'src/domains/misc/utils/formatBalance';
+import isPresent from 'src/domains/misc/utils/isPresent';
+import { typography } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
 
 type Props = {
   token: Token,

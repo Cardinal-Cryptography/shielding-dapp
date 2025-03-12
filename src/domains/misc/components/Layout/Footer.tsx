@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { BREAKPOINTS, typography } from 'src/domains/common/styles/tokens';
-import { vars } from 'src/domains/common/styles/utils';
+import { BREAKPOINTS, typography } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
 
 import ThemeSelector from './ThemeSelector';
 

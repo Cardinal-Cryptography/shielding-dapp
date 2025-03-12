@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 
-import Button from 'src/domains/common/components/Button';
-import { useTheme } from 'src/domains/common/hooks/useTheme';
-import { themes, typography } from 'src/domains/common/styles/tokens';
-
-import { vars } from '../../styles/utils';
+import Button from 'src/domains/misc/components/Button';
+import { themes, typography } from 'src/domains/styling/utils/tokens';
+import { useTheme } from 'src/domains/styling/utils/useTheme';
+import vars from 'src/domains/styling/utils/vars';
 
 const THEMES = ['system', ...Object.keys(themes) as (keyof typeof themes)[]] as const;
 
