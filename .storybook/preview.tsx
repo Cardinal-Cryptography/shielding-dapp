@@ -1,6 +1,6 @@
 import { Preview } from '@storybook/react';
 
-import Providers from '../src/domains/common/providers/Providers';
+import Providers from '../src/domains/misc/components/Providers';
 
 // TODO: Add after chromatic setup
 // MotionGlobalConfig.skipAnimations = isChromatic();

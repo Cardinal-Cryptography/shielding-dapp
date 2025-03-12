@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { themes } from '../styles/tokens';
+import { themes } from 'src/domains/styling/utils/tokens';
 
 type Theme = keyof typeof themes | 'system';
 

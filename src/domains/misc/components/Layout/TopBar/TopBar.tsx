@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/common/styles/tokens';
-import { vars } from 'src/domains/common/styles/utils';
+import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
 
 import Brand from './Brand';
 import * as NavBox from './NavBox';

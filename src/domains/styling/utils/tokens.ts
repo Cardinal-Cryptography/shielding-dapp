@@ -3,7 +3,7 @@
  */
 import { css } from 'styled-components';
 
-import vars from'./utils/vars';
+import vars from'./vars';
 
 export const primitives = {
   '--colors-brand-primary-10': 'rgb(13, 22, 36)',

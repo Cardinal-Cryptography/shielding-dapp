@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
-import { backgroundFilters, transitionTime, BREAKPOINTS } from 'src/domains/common/styles/tokens';
-import { vars } from 'src/domains/common/styles/utils';
+import { backgroundFilters, transitionTime, BREAKPOINTS } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
 
-import skeletonStyles from './skeletonStyles.ts';
+import skeletonStyles from './skeletonStyles';
 
 type Props = {
   children: ReactNode,

@@ -1,8 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
 import cssReset from 'styled-reset';
 
-import { primitives, themes } from './tokens';
-import { vars } from './utils';
+import { primitives, themes } from '../utils/tokens';
+import vars from '../utils/vars';
 
 const primitivesString = Object.entries(primitives)
   .map(([property, value]) => `${property}: ${value};`).join('\n');

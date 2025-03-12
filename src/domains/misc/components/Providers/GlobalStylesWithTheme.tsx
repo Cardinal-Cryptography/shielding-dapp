@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-import { useTheme } from '../hooks/useTheme';
-import GlobalStyles from '../styles/GlobalStyles';
+import GlobalStyles from 'src/domains/styling/components/GlobalStyles';
+import { useTheme } from 'src/domains/styling/utils/useTheme';
 
 type Props = {
   children: ReactNode,

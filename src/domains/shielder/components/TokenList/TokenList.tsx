@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import ScrollShadow from 'src/domains/common/components/ScrollShadow';
-import { Token } from 'src/domains/common/types/types';
+import ScrollShadow from 'src/domains/misc/components/ScrollShadow';
+import { Token } from 'src/domains/misc/types/types';
 
 import TokenListItem from './TokenListItem';
 

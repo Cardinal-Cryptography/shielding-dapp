@@ -1,4 +1,4 @@
-import { themes } from '../tokens';
+import { themes } from './tokens';
 
 type ThemeTokens = keyof (typeof themes)[keyof typeof themes];
 

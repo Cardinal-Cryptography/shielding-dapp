@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import styled from 'styled-components';
 
-import { BREAKPOINTS } from 'src/domains/common/styles/tokens';
-import { vars } from 'src/domains/common/styles/utils';
+import { BREAKPOINTS } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
 
 import AnimatingBackground from './AnimatingBackground';
 import Footer from './Footer';

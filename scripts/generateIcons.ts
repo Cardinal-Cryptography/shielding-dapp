@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
-const iconsDir = path.join(rootDir, 'src/domains/common/components/CIcon/icons');
+const iconsDir = path.join(rootDir, 'src/domains/misc/components/CIcon/icons');
 
 if (!fs.existsSync(iconsDir)) {
   console.error(`Icons directory not found: ${iconsDir}`);
@@ -40,7 +40,7 @@ export type IconName = keyof typeof icons;
 `;
 
   fs.writeFileSync(
-    path.join(rootDir, 'src/domains/common/components/CIcon/icons.ts'),
+    path.join(rootDir, 'src/domains/misc/components/CIcon/icons.ts'),
     content
   );
 

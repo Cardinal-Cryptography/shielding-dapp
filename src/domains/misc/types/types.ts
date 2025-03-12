@@ -1,4 +1,4 @@
-import { IconName } from 'src/domains/common/components/CIcon';
+import { IconName } from 'src/domains/misc/components/CIcon';
 
 export type Token = {
   chain: 'alephEvm',
