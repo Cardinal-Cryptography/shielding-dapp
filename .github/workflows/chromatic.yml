@@ -1,0 +1,38 @@
+name: Chromatic
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  NODE_OPTIONS: --max-old-space-size=16384
+
+jobs:
+  install: # Warm up node_modules cache for the following jobs
+    name: Set up Node.js and install npm dependencies
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-project
+#        with:
+#          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  storybook:
+    name: Chromatic toolset initialization
+    needs: [install]
+    runs-on: ubuntu-22.04
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export variables
+        env:
+          VARS_CONTEXT: ${{ toJson(vars) }}
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          to_envs() { jq -r "to_entries[] | select(.key|startswith(\"PUBLIC_VAR\")) | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""; }
+          echo "$VARS_CONTEXT" | to_envs >> $GITHUB_ENV
+      - uses: ./.github/actions/chromatic
+        with:
+          chromatic-project-token: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
