@@ -187,13 +187,6 @@ export default tseslint.config(
       'prefer-arrow-functions/prefer-arrow-functions': 'error',
       '@typescript-eslint/restrict-template-expressions': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, argsIgnorePattern: '^_' }],
-      'no-restricted-syntax': [
-        'error',
-        {
-          selector: 'CallExpression[callee.object.name!="Array"][callee.property.name=/^(push|pop|shift|unshift|splice|sort|reverse)$/]',
-          message: 'Avoid using mutating methods directly. Consider using non-mutating alternatives like `toSorted`, `toReversed`, or copying methods like `[...arr]` for operations.',
-        },
-      ],
     },
   },
 );
