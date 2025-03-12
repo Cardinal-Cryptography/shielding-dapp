@@ -1,0 +1,25 @@
+name: Chromatic
+description: Publish Storybook, run visual regression tests and setup snapshot baselines for
+  the following tests.
+
+inputs:
+  chromatic-project-token:
+    description: Chromatic project token
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Pull more than just last commit for Chromatic to run it's git-based diffing
+    - uses: ./.github/actions/setup-project
+
+    - name: Publish Storybook and run visual regression tests
+      env:
+        NODE_OPTIONS: "--max_old_space_size=4096"
+      uses: chromaui/action@v1
+      with:
+        projectToken: ${{ inputs.chromatic-project-token }}
+        exitZeroOnChanges: true
+        onlyChanged: true
