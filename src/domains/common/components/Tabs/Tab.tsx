@@ -2,9 +2,9 @@ import { m as motion } from 'motion/react';
 import type { ReactElement } from 'react';
 import styled, { RuleSet } from 'styled-components';
 
-import { transitionTime, typography } from 'src/domains/common/styles/tokens';
-import { vars } from 'src/domains/common/styles/utils';
-import composeFluidSize from 'src/domains/common/utils/composeFluidSize';
+import composeFluidSize from 'src/domains/styling/utils/composeFluidSize';
+import { transitionTime, typography } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
 
 const SELECTED_ITEM_BAR_HEIGHT = 3;
 

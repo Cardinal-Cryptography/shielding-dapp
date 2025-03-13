@@ -3,8 +3,8 @@ import { useLocation } from '@swan-io/chicane';
 import { type ReactNode, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
-import { BREAKPOINTS, BOTTOM_NAVIGATION_HEIGHT, BOTTOM_MENU_BREAKPOINT } from 'src/domains/common/styles/tokens';
-import { vars } from 'src/domains/common/styles/utils';
+import { BREAKPOINTS, BOTTOM_NAVIGATION_HEIGHT, BOTTOM_MENU_BREAKPOINT } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
 
 import AnimatingBackground from './AnimatingBackground';
 import Footer from './Footer';

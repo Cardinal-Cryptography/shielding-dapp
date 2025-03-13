@@ -2,8 +2,8 @@ import { AnimatePresence } from 'motion/react';
 import { type ComponentProps, type ReactElement, useId } from 'react';
 import styled from 'styled-components';
 
-import { vars } from 'src/domains/common/styles/utils';
-import composeFluidSize from 'src/domains/common/utils/composeFluidSize';
+import composeFluidSize from 'src/domains/styling/utils/composeFluidSize';
+import vars from 'src/domains/styling/utils/vars';
 
 import Tab from './Tab';
 

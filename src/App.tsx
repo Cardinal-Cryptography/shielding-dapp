@@ -1,7 +1,7 @@
 import { match } from 'ts-pattern';
 
-import Layout from 'src/domains/common/components/Layout';
-import Providers from 'src/domains/common/providers/Providers';
+import Layout from 'src/domains/misc/components/Layout';
+import Providers from 'src/domains/misc/components/Providers';
 import Redirect from 'src/domains/routing/components/Redirect';
 import router from 'src/domains/routing/utils/router';
 
