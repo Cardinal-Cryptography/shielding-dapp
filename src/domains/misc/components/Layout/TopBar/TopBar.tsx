@@ -1,6 +1,8 @@
 import { useMediaQuery } from '@react-hookz/web';
 import styled from 'styled-components';
 
+import { useNetworkStore } from 'src/domains/chains/stores/networkStore';
+import Tabs from 'src/domains/misc/components/Tabs';
 import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -12,6 +14,7 @@ import { BRAND_CONTAINER_TITLE, BRAND_LOGO_HEIGHT } from './consts';
 
 const TopBar = () => {
   const isSmallScreen = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
+  const { network, setNetwork } = useNetworkStore();
 
   return (
     <NavBox.Container>
@@ -21,6 +24,17 @@ const TopBar = () => {
         </BrandContainer>
         {!isSmallScreen && <Navigation position="floor" />}
       </NavBox.BrandCanvas>
+      <NavBox.UserCanvas $isConnected={false}>
+        {!isSmallScreen && (
+          <Tabs
+            tabsConfig={[
+              { label: 'Mainnet', key: 'mainnet', onClick: () => void setNetwork('mainnet') },
+              { label: 'Testnet', key: 'testnet', onClick: () => void setNetwork('testnet') },
+            ]}
+            selectedTabKey={network}
+          />
+        )}
+      </NavBox.UserCanvas>
     </NavBox.Container>
   );
 };

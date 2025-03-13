@@ -5,8 +5,8 @@ import { estimateFeesPerGas, readContract } from 'viem/actions';
 
 import { NetworkEnvironment, Token } from 'src/domains/chains/types/misc';
 
+import { getPublicClient } from '../clients';
 import chainsDefinitions from '../definitions/definitions';
-import getPublicClient from '../definitions/getPublicClient';
 
 type Chains = keyof typeof chainsDefinitions;
 type Erc20Abi = typeof erc20Abi;
@@ -26,7 +26,7 @@ export default (networkEnvironment: NetworkEnvironment) => {
     tokenAddress: Address,
     args: ContractFunctionArgs<Erc20Abi, 'pure' | 'view', Method>
   ) =>
-    readContract(getPublicClient(networkEnvironment, chain), {
+    readContract(getPublicClient({ networkEnvironment, chain }), {
       abi: erc20Abi,
       address: tokenAddress,
       functionName: method,
@@ -66,13 +66,13 @@ export default (networkEnvironment: NetworkEnvironment) => {
     tokenBalanceOnAccount: ({ accountAddress, token }: { accountAddress: Address, token: Token }) =>
       ({
         queryFn: () => token.isNative ?
-          getPublicClient(networkEnvironment, token.chain).getBalance({ address: accountAddress }) :
+          getPublicClient({ networkEnvironment, chain: token.chain }).getBalance({ address: accountAddress }) :
           callErc20(token.chain, 'balanceOf', token.address, [accountAddress]),
         cacheKeySegment: [token, accountAddress],
       }),
     tokenTransferFee: ({ token, from, to, amount }: { token: Token, from: Address, to: Address, amount: bigint }) => ({
       queryFn: async () => {
-        const publicClient = getPublicClient(networkEnvironment, token.chain);
+        const publicClient = getPublicClient({ networkEnvironment, chain: token.chain });
 
         const { maxFeePerGas } = await estimateFeesPerGas(publicClient);
 
