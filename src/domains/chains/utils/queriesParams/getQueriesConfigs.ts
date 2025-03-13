@@ -5,8 +5,8 @@ import { estimateFeesPerGas, readContract } from 'viem/actions';
 
 import { NetworkEnvironment, Token } from 'src/domains/chains/types/misc';
 
+import { getPublicClient } from '../clients';
 import chainsDefinitions from '../definitions/definitions';
-import getPublicClient from '../definitions/getPublicClient';
 
 type Chains = keyof typeof chainsDefinitions;
 type Erc20Abi = typeof erc20Abi;

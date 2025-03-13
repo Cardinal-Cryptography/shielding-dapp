@@ -1,21 +1,18 @@
-import type { ComponentProps } from 'react';
+import type { ComponentType } from 'react';
 import styled from 'styled-components';
 
-import CIcon, { IconName } from 'src/domains/misc/components/CIcon';
 import vars from 'src/domains/styling/utils/vars';
 
 type Size = number | `${string}%` | `${string}px`;
 
 type Props = {
-  icon?: IconName,
+  Icon?: ComponentType,
   size?: Size,
-  iconProps?: Omit<ComponentProps<typeof CIcon>, 'icon'>,
 };
 
 const TokenIcon = ({
-  icon,
+  Icon,
   size = 16,
-  iconProps,
 }: Props) => {
   const computedSize = typeof size === 'number' ? `${size}px` : size;
 
@@ -26,13 +23,10 @@ const TokenIcon = ({
         height: computedSize,
       }}
     >
-      {icon && (
-        <CIcon
-          icon={icon}
-          color={vars('--color-neutral-foreground-inverted-1-rest')}
-          size="100%"
-          {...iconProps}
-        />
+      {Icon && (
+        <IconWrapper>
+          <Icon />
+        </IconWrapper>
       )}
     </Container>
   );
@@ -47,4 +41,18 @@ const Container = styled.div`
   border-radius: ${vars('--border-radius-circular')};
 
   flex-shrink: 0;
+`;
+
+const IconWrapper = styled.div`
+  height: 100%;
+  width: 100%;
+  
+  & svg {
+    height: 100%;
+    width: 100%;
+    
+    * {
+      fill: ${vars('--color-neutral-foreground-inverted-1-rest')}
+    }
+  }
 `;

@@ -11,8 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-project
-#        with:
-#          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        with:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   lint-commits:
     name: Lint commits
@@ -23,6 +23,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup-project
+        with:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
   type-check:
@@ -32,6 +34,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-project
+        with:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npm run type-check
 
   lint:
@@ -41,6 +45,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-project
+        with:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npm run lint
 
   test:
@@ -51,12 +57,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-project
+        with:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Export variables
         shell: bash
         env:
           VARS_CONTEXT: ${{ toJson(vars) }}
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          to_envs() { jq -r "to_entries[] | select(.key|startswith(\"PUBLIC_VAR\")) | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""; }
+          to_envs() { jq -r "to_entries[] | select(.key|startswith(\"PUBLIC_VAR_\")) | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""; }
           echo "$VARS_CONTEXT" | to_envs >> $GITHUB_ENV
       - run: npm test

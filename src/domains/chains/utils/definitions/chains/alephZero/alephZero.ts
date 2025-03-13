@@ -50,6 +50,12 @@ const config: ChainConfig = {
     ChainIcon,
     NativeTokenIcon,
     id: 2039,
+    shielderConfig: {
+      shielderContractAddress: '0x7126761c7E18915C891c215a23100739492B78a1',
+      // TODO(SD-31): Replace the placeholder relayer URL with chain-specific URLs once provided.
+      // https://cardinal-cryptography.atlassian.net/browse/SD-31
+      relayerUrl: 'https://shielder-relayer-dev.test.azero.dev',
+    },
     nativeCurrency: {
       decimals: 18,
       name: 'TZERO',
