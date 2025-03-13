@@ -6,13 +6,18 @@ import { NetworkEnvironment } from 'src/domains/chains/types/misc';
 import alephZero from './chains/alephZero';
 import base from './chains/base';
 
-type Definition = {
+export type Definition = {
+  id: number,
   name: string,
   ChainIcon: FC,
   NativeTokenIcon: FC,
   whitelistedTokens: Record<Address, {
     icon: FC,
   }>,
+  shielderConfig?: {
+    shielderContractAddress: Address,
+    relayerUrl: string,
+  },
 } & Pick<Chain, 'id' | 'nativeCurrency' | 'rpcUrls' | 'blockExplorers'>;
 
 export type ChainConfig = Record<NetworkEnvironment, Definition>;

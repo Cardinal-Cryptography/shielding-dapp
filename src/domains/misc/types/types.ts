@@ -1,14 +1,17 @@
-import { IconName } from 'src/domains/misc/components/CIcon';
+import { ComponentType } from 'react';
 
-export type Token = {
-  chain: 'alephEvm',
+import { Token } from 'src/domains/chains/types/misc.ts';
+import definitions from 'src/domains/chains/utils/definitions';
+
+export type TokenListToken = Token & {
+  chain: keyof typeof definitions,
   name: string | undefined,
   symbol: string | undefined,
-  address: string,
+  address: string | undefined,
   decimals: number | undefined,
-  icon: IconName | undefined,
+  icon: ComponentType | undefined,
   balance?: {
-    atomic: bigint | string,
+    atomic?: bigint | string | number,
     usd?: number,
   },
   usdPrice?: number,

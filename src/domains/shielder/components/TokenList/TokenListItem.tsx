@@ -2,16 +2,17 @@ import { AnimatePresence, motion } from 'motion/react';
 import styled from 'styled-components';
 
 import CIcon from 'src/domains/misc/components/CIcon';
+import Skeleton from 'src/domains/misc/components/Skeleton';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
-import { Token } from 'src/domains/misc/types/types';
+import { TokenListToken } from 'src/domains/misc/types/types';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import formatBalance from 'src/domains/numbers/utils/formatBalance';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
 type Props = {
-  token: Token,
-  onTokenClick: (token: Token) => void,
+  token: TokenListToken,
+  onTokenClick: (token: TokenListToken) => void,
   isSelected: boolean,
 };
 
@@ -32,23 +33,23 @@ const TokenListItem = ({ token, onTokenClick, isSelected }: Props) => {
           </Checkmark>
         )}
       </AnimatePresence>
-      <TokenIcon size={40} icon={icon} />
+      <TokenIcon size={40} Icon={icon} />
       <Column>
         <Title>{name}</Title>
         <Subtitle>${usdPrice?.toFixed(2)}</Subtitle>
       </Column>
       <Price>
-        <Title>
-          ${isPresent(balance) && balance.usd?.toFixed(2)}
-        </Title>
-        <Subtitle>
-          {isPresent(balance) && isPresent(decimals) && formatBalance({
-            balance: balance.atomic,
-            decimals,
-          })}
-          {' '}
-          {symbol}
-        </Subtitle>
+        {isPresent(balance) && isPresent(balance.usd) ? <Title>${balance.usd.toFixed(2)}</Title>: <Skeleton style={{ height: '14px', width: '40px' }} />}
+        {symbol ? (
+          <Subtitle>
+            {isPresent(balance) && isPresent(decimals) && isPresent(balance.atomic) && formatBalance({
+              balance: balance.atomic,
+              decimals,
+            })}
+            {' '}
+            {symbol}
+          </Subtitle>
+        ) : <Skeleton style={{ height: '14px', width: '60px', marginTop: '4px' }} /> }
       </Price>
     </Container>
   );
@@ -82,6 +83,7 @@ const Column = styled.div`
 
 const Price = styled(Column)`
   align-items: end;
+  justify-content: center;
 `;
 
 const Title = styled.p`

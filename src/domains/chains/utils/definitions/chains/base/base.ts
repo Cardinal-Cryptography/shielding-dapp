@@ -24,6 +24,10 @@ const config: ChainConfig = {
   },
   testnet: {
     ...baseSepolia,
+    shielderConfig: {
+      shielderContractAddress: '0x72B16db09D234A69a7e2df05503923A885eCe0Ea',
+      relayerUrl: 'https://shielder-relayer-dev.test.azero.dev',
+    },
     ChainIcon,
     NativeTokenIcon,
     whitelistedTokens: {

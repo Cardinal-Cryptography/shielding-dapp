@@ -1,122 +1,105 @@
+import { useAppKitNetwork } from '@reown/appkit/react';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { type Address } from 'viem';
 
+import { useWallet } from 'src/domains/chains/components/WalletProvider';
+import getChainConfigById from 'src/domains/chains/utils/getChainConfigById';
 import Button from 'src/domains/misc/components/Button';
 import CopyButton from 'src/domains/misc/components/CopyButton';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
-import { Token } from 'src/domains/misc/types/types';
+import { TokenListToken } from 'src/domains/misc/types/types';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
 import Balance from 'src/domains/shielder/components/Balance';
 import TokenList from 'src/domains/shielder/components/TokenList';
+import useShielder from 'src/domains/shielder/utils/useShielder';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
+import useTokens from 'src/domains/tokens/utils/useTokens';
 
 const Shielder = () => {
   //todo Replace with store
   const [selectedAccountType, setSelectedAccountType] = useState<'public' | 'shielded'>('public');
-  const [selectedTokens, setSelectedTokens] = useState<Token[]>([]);
+  const [selectedToken, setSelectedToken] = useState<Address | 'native' | null>(null);
+  const { openModal, isConnected, address: accountAddress } = useWallet();
+  const { chainId } = useAppKitNetwork();
 
-  const handleSelect = (token: Token) => {
-    setSelectedTokens(curr => {
-      if(curr.some(t => t.address === token.address)) {
-        return curr.filter(t => t.address !== token.address);
-      } else {
-        return [...curr, token];
-      }});
+  const { shield, isShielding, unShield, isUnShielding } = useShielder();
+
+  const handleSelect = (token: TokenListToken) => {
+    const address = token.isNative ? 'native' : token.address;
+
+    setSelectedToken(curr => curr === address ? null : address);
   };
+  const chainConfig = chainId ? getChainConfigById(chainId) : undefined;
 
+  const { tokens } = useTokens();
+
+  const tokenList = tokens.map(({ balance, ...token }) =>
+    ({ ...token, balance: { ...balance, atomic: balance.atomic?.[selectedAccountType] }})
+  );
+
+  const selectedTokenData = tokenList.find(token =>selectedToken === 'native' ? token.isNative : token.address === selectedToken);
+
+  const handleShieldOrUnShield = () => {
+    const balance = typeof selectedTokenData?.balance.atomic == 'bigint' ? selectedTokenData.balance.atomic : null;
+
+    if(!balance || !selectedTokenData) return;
+
+    if (selectedAccountType === 'public') {
+      void shield(selectedTokenData, balance);
+    } else if(accountAddress) {
+      void unShield(selectedTokenData, balance, accountAddress, true);
+    }
+  };
   return (
     <Container>
+      {!isConnected && (
+        <ConnectContainer>
+          <Button
+            onClick={() => void openModal({ view: 'Connect' })}
+            variant="primary"
+          >
+            Connect wallet
+          </Button>
+        </ConnectContainer>
+      )}
       <BalanceWrapper>
         <Header>
           <Title>Your Assets</Title>
-          <AddressWrapper><Address size={18} data="Text">{formatAddress('0x4b8e2d4f9a1c3e7d5b6f8a2e9c7d4f3b1a0c9e8d')}</Address></AddressWrapper>
+          {accountAddress && (
+            <AddressWrapper>
+              <Address size={18} data={accountAddress}>{formatAddress(accountAddress)}</Address>
+            </AddressWrapper>
+          )}
         </Header>
         <Balance
           selectedAccountType={selectedAccountType}
           setSelectedAccountType={setSelectedAccountType}
-          publicBalance={5678n * 10n ** 18n}
-          privateBalance={123n * 10n ** 18n}
-          nativeAssetDecimals={18}
-          nativeAssetUsdPrice={0.51}
-          publicTokensUsdValue={123.45}
+          publicBalance={undefined}
+          privateBalance={undefined}
+          nativeAssetDecimals={chainConfig?.nativeCurrency.decimals}
+          nativeAssetUsdPrice={undefined}
+          publicTokensUsdValue={undefined}
         />
       </BalanceWrapper>
       <TokensWrapper>
         <TokenList
-          selectedTokens={selectedTokens}
+          selectedTokens={selectedTokenData ? [selectedTokenData] : []}
           onTokenClick={handleSelect}
-          tokens={[
-            {
-              address: '0x1',
-              name: 'Ethereum',
-              chain: 'alephEvm',
-              icon: 'Eth',
-              decimals: 18,
-              balance: {
-                atomic: '1500000000000000000',
-                usd: 4500,
-              },
-              usdPrice: 3000,
-              symbol: 'ETH',
-            },
-            {
-              address: '0x2',
-              name: 'Aleph Zero',
-              icon: 'Azero',
-              chain: 'alephEvm',
-              decimals: 8,
-              balance: {
-                atomic: '50000000000',
-                usd: 75,
-              },
-              usdPrice: 0.15,
-              symbol: 'AZERO',
-            },
-            {
-              address: '0x3',
-              name: 'Bitcoin',
-              icon: 'WBtc',
-              chain: 'alephEvm',
-              decimals: 8,
-              balance: {
-                atomic: '25000000',
-                usd: 12500,
-              },
-              usdPrice: 50000,
-              symbol: 'BTC',
-            },
-            {
-              address: '0x4',
-              name: 'Tether',
-              icon: 'Usdt',
-              chain: 'alephEvm',
-              decimals: 6,
-              balance: {
-                atomic: '1000000000',
-                usd: 1000,
-              },
-              usdPrice: 1,
-              symbol: 'USDT',
-            },
-            {
-              address: '0x5',
-              name: 'USD Coin',
-              icon: 'Usdc',
-              chain: 'alephEvm',
-              decimals: 6,
-              balance: {
-                atomic: '500000000',
-                usd: 500,
-              },
-              usdPrice: 1,
-              symbol: 'USDC',
-            },
-          ]}
+          tokens={tokenList}
         />
       </TokensWrapper>
       <ButtonWrapper>
-        <StyledButton variant="primary">Shield tokens</StyledButton>
+        <StyledButton
+          disabled={!selectedTokenData?.balance.atomic || isShielding || isUnShielding}
+          onClick={
+            handleShieldOrUnShield
+          }
+          variant="primary"
+        >
+          {selectedAccountType === 'public' ? 'Shield tokens' : 'Unshield tokens'}
+        </StyledButton>
       </ButtonWrapper>
     </Container>
   );
@@ -136,6 +119,8 @@ const BalanceWrapper = styled.div`
 const TokensWrapper = styled.div`
   padding-inline: ${vars('--spacing-m')};
   padding-block: ${vars('--spacing-l')};
+  height: 300px;
+  overflow: hidden;
 `;
 
 const ButtonWrapper = styled.div`
@@ -166,4 +151,18 @@ const Address = styled(CopyButton)`
   ${typography.web.body1};
   gap: ${vars('--spacing-xs')};
   color: ${vars('--color-brand-foreground-2-rest')};
+`;
+
+const ConnectContainer = styled.div`
+  display: grid;
+
+  position: absolute;
+
+  place-items: center;
+
+  height: 100%;
+  width: 100%;
+
+  z-index: 2;
+  backdrop-filter: blur(10px);
 `;

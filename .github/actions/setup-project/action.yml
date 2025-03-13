@@ -1,10 +1,10 @@
 name: Setup project
 description: Setup npm project in Node.js
 
-#inputs:
-#  NPM_TOKEN:
-#    required: true
-#    description: NPM_TOKEN
+inputs:
+  NPM_TOKEN:
+    required: true
+    description: NPM_TOKEN
 
 outputs:
   node-version:
@@ -32,8 +32,12 @@ runs:
         key: os-${{ runner.os }}/node-${{ steps.node.outputs.version }}/node_modules-${{ hashFiles('package-lock.json') }}
     - name: Install dependencies
       if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-      run: npm ci
+      run: |
+        echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
+        npm ci
       shell: bash
+      env:
+        NPM_TOKEN: ${{ inputs.NPM_TOKEN }}
     - name: Cache node_modules
       if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
       uses: actions/cache@v4

@@ -50,6 +50,7 @@ import Network from './icons/network.svg?react';
 import Open from './icons/open.svg?react';
 import PersonFeedback from './icons/personFeedback.svg?react';
 import PersonFilled from './icons/personFilled.svg?react';
+import Power from './icons/power.svg?react';
 import QuestionCircle from './icons/questionCircle.svg?react';
 import Settings from './icons/settings.svg?react';
 import ShieldError from './icons/shieldError.svg?react';
@@ -115,6 +116,7 @@ export const icons = {
   Open,
   PersonFeedback,
   PersonFilled,
+  Power,
   QuestionCircle,
   Settings,
   ShieldError,
