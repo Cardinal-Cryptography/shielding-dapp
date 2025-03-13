@@ -2,6 +2,7 @@ import { m as motion } from 'motion/react';
 import type { ReactElement } from 'react';
 import styled, { RuleSet } from 'styled-components';
 
+import Badge from 'src/domains/misc/components/Badge';
 import composeFluidSize from 'src/domains/styling/utils/composeFluidSize';
 import { transitionTime, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -15,7 +16,7 @@ type Props = {
   label: string,
   selected: boolean,
   onClick: () => void,
-  disabled?: boolean,
+  comingSoon?: boolean,
   layoutId: string,
   size?: Size,
   position?: Position,
@@ -35,31 +36,35 @@ const positionStyles = {
   },
 };
 
-const Tab = ({ label, selected, onClick, disabled, layoutId, size = 'medium', position = 'floor', icon }: Props) => (
-  <Container
-    selected={selected}
-    onClick={onClick}
-    disabled={disabled}
-    title={label}
-    $size={size}
-    layout
+const Tab = ({ label, selected, onClick, layoutId, size = 'medium', position = 'floor', icon, comingSoon }: Props) => (
+  <Wrapper
     initial={{ opacity: 0 }}
     animate={{ opacity: 1, transition: { delay: 0.1 }}}
     exit={{ opacity: 0 }}
   >
-    <LabelContainer>
-      {icon}
-      {label}
-    </LabelContainer>
-    <HoverBar style={positionStyles[position]} />
-    {selected && (
-      <SelectionBar
+    <Container
+      selected={selected}
+      onClick={onClick}
+      disabled={comingSoon}
+      title={label}
+      $size={size}
+      layout
+    >
+      <LabelContainer>
+        {icon}
+        {label}
+      </LabelContainer>
+      <HoverBar style={positionStyles[position]} />
+      {selected && (
+        <SelectionBar
         // set as an inline style for scale correction during transition (https://www.framer.com/motion/layout-animations/##scale-correction)
-        style={positionStyles[position]}
-        layoutId={layoutId}
-      />
-    )}
-  </Container>
+          style={positionStyles[position]}
+          layoutId={layoutId}
+        />
+      )}
+    </Container>
+    {comingSoon && <Badge size="medium" variant="subtle" design="tint" text="Coming soon" circular />}
+  </Wrapper>
 );
 
 export default Tab;
@@ -116,8 +121,8 @@ const Container = styled(motion.button)<{ selected: boolean, $size: Size }>`
   padding: ${perSize({
     small: vars('--spacing-m-nudge'),
     medium: composeFluidSize(
-      { sizeToken: vars('--spacing-m'), atBreakpoint: 360 },
-      { sizeToken: vars('--spacing-l'), atBreakpoint: 640 },
+      { sizeToken: '--spacing-m', atBreakpoint: 360 },
+      { sizeToken: '--spacing-l', atBreakpoint: 640 },
       'vw'
     ),
   })} ${HORIZONTAL_SPACE};
@@ -188,4 +193,10 @@ const Container = styled(motion.button)<{ selected: boolean, $size: Size }>`
       opacity: 0;
     }
   }
+`;
+
+const Wrapper = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-s')};
 `;

@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
-import { backgroundFilters, transitionTime, BREAKPOINTS } from 'src/domains/styling/utils/tokens';
+import { BREAKPOINTS } from 'src/domains/misc/consts/consts';
+import { backgroundFilters, transitionTime } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
 import skeletonStyles from './skeletonStyles';

@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 
-import Tabs from 'src/domains/common/components/Tabs';
+import Tabs from 'src/domains/misc/components/Tabs';
 import router from 'src/domains/routing/utils/router';
 
 const tabsConfig = [
@@ -15,7 +15,7 @@ const tabsConfig = [
     label: 'Yield',
     routeNames: ['Yield'],
     onClick: () => void router.push('Yield'),
-    disabled: true,
+    comingSoon: true,
   },
 ] as const;
 

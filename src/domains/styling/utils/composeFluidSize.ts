@@ -1,6 +1,10 @@
+import { themes, primitives } from 'src/domains/styling/utils/tokens';
+
+type ThemeToken = keyof (typeof themes)[keyof typeof themes];
+
 type FluidBreakPoint = {
   /* The token value should not contain the units - "px" is added automatically. */
-  sizeToken: string,
+  sizeToken: ThemeToken,
   atBreakpoint: number,
 };
 
@@ -16,8 +20,11 @@ type FluidBreakPoint = {
  * the token-based theming architecture that we utilize.
  */
 export default (min: FluidBreakPoint, max: FluidBreakPoint, dependsOn: 'vw' | 'vh') => {
-  const a = `((${max.sizeToken} - ${min.sizeToken}) / (${max.atBreakpoint - min.atBreakpoint}))`;
-  const b = `(${max.sizeToken} - ${a} * ${max.atBreakpoint})`;
+  const minSize = parseFloat(primitives[themes.light[min.sizeToken]]);
+  const maxSize = parseFloat(primitives[themes.light[max.sizeToken]]);
 
-  return `clamp(${min.sizeToken} * 1px, calc(${a} * 100${dependsOn} + ${b} * 1px), ${max.sizeToken} * 1px)`;
+  const a = (maxSize - minSize) / (max.atBreakpoint - min.atBreakpoint);
+  const b = maxSize - a * max.atBreakpoint;
+
+  return `clamp(${minSize} * 1px, calc(${a} * 100${dependsOn} + ${b} * 1px), ${maxSize} * 1px)`;
 };

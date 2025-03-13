@@ -19,7 +19,7 @@ export const Basic: Story = {
     label: 'Swap',
     selected: false,
     layoutId: 'layout-id',
-    disabled: false,
+    comingSoon: false,
     onClick: fn(),
   },
   argTypes: {

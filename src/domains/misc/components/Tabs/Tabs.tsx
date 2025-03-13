@@ -1,18 +1,17 @@
 import { AnimatePresence } from 'motion/react';
-import { type ComponentProps, type ReactElement, useId } from 'react';
+import { ComponentProps, ReactElement, useId } from 'react';
 import styled from 'styled-components';
 
 import composeFluidSize from 'src/domains/styling/utils/composeFluidSize';
-import vars from 'src/domains/styling/utils/vars';
 
 import Tab from './Tab';
 
 type TabConfig = {
   key: string,
   label: string,
-  disabled?: boolean,
   onClick: () => void,
   icon?: ReactElement,
+  comingSoon?: boolean,
 };
 
 type Props<TabsConfig extends readonly TabConfig[]> = {
@@ -31,12 +30,12 @@ const Tabs = <TabsConfig extends readonly TabConfig[]>(
   return (
     <Container className={className}>
       <AnimatePresence>
-        {tabsConfig.map(({ key, label, disabled, onClick, icon }) => (
+        {tabsConfig.map(({ key, label, onClick, icon, comingSoon }) => (
           <Tab
             key={key}
             label={label}
             selected={selectedTabKey === key}
-            disabled={disabled}
+            comingSoon={comingSoon}
             onClick={onClick}
             layoutId={selectionBarLayoutId}
             size={size}
@@ -55,8 +54,8 @@ const Container = styled.nav`
   display: flex;
   gap: ${
     composeFluidSize(
-      { sizeToken: vars('--spacing-none'), atBreakpoint: 360 },
-      { sizeToken: vars('--spacing-s'), atBreakpoint: 640 },
+      { sizeToken: '--spacing-none', atBreakpoint: 360 },
+      { sizeToken: '--spacing-s', atBreakpoint: 640 },
       'vw'
     )
   };

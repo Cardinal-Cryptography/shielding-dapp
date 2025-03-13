@@ -1,3 +1,4 @@
+import { LazyMotion, domAnimation } from 'motion/react';
 import { ReactNode } from 'react';
 
 import GlobalStylesWithTheme from './GlobalStylesWithTheme';
@@ -7,9 +8,11 @@ type Props = {
 };
 
 const Providers = ({ children }: Props) => (
-  <GlobalStylesWithTheme>
-    {children}
-  </GlobalStylesWithTheme>
+  <LazyMotion features={domAnimation}>
+    <GlobalStylesWithTheme>
+      {children}
+    </GlobalStylesWithTheme>
+  </LazyMotion>
 );
 
 export default Providers;

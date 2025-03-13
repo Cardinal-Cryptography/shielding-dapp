@@ -1,7 +1,7 @@
 import { useMediaQuery } from '@react-hookz/web';
 import styled from 'styled-components';
 
-import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/styling/utils/tokens';
+import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';
 import vars from 'src/domains/styling/utils/vars';
 
 import Navigation from '../Navigation';
@@ -11,7 +11,7 @@ import * as NavBox from './NavBox';
 import { BRAND_CONTAINER_TITLE, BRAND_LOGO_HEIGHT } from './consts';
 
 const TopBar = () => {
-  const isMobile = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
+  const isSmallScreen = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
 
   return (
     <NavBox.Container>
@@ -19,7 +19,7 @@ const TopBar = () => {
         <BrandContainer>
           <StyledBrand />
         </BrandContainer>
-        {!isMobile && <Navigation position="floor" />}
+        {!isSmallScreen && <Navigation position="floor" />}
       </NavBox.BrandCanvas>
     </NavBox.Container>
   );

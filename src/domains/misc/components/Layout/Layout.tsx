@@ -3,7 +3,7 @@ import { useLocation } from '@swan-io/chicane';
 import { type ReactNode, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
-import { BREAKPOINTS, BOTTOM_NAVIGATION_HEIGHT, BOTTOM_MENU_BREAKPOINT } from 'src/domains/styling/utils/tokens';
+import { BREAKPOINTS, BOTTOM_NAVIGATION_HEIGHT, BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';
 import vars from 'src/domains/styling/utils/vars';
 
 import AnimatingBackground from './AnimatingBackground';
@@ -16,7 +16,7 @@ type Props = {
 };
 
 const Layout = ({ children }: Props) => {
-  const isMobile = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
+  const isSmallScreen = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
   const location = useLocation();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -33,7 +33,7 @@ const Layout = ({ children }: Props) => {
         </Main>
         <Footer />
       </Container>
-      {isMobile && (
+      {isSmallScreen && (
         <BottomNavigationContainer>
           <BottomNavigationContent position="ceiling" />
         </BottomNavigationContainer>
