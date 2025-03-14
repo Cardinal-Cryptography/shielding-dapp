@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import { Token } from 'src/domains/misc/types/types';
-import formatBalance from 'src/domains/misc/utils/formatBalance';
 import isPresent from 'src/domains/misc/utils/isPresent';
+import formatBalance from 'src/domains/numbers/utils/formatBalance';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
