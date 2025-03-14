@@ -86,7 +86,6 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding-inline: ${vars('--spacing-l')};
 `;
 
 const Value = styled(NumberFlow)<{ $fontSize: 'large' | 'medium' | 'small' }>`
