@@ -138,7 +138,7 @@ export default tseslint.config(
           },
         ],
         patterns: [{
-          regex: 'src/(?!(domains/.*/(components|utils|assets|types)/.*))',
+          regex: 'src/(?!(domains/.*/(components|utils|assets|types|consts)/.*))',
           message: 'Organize modules in predefined groups under domains.',
         }, {
           /*
@@ -190,7 +190,7 @@ export default tseslint.config(
       'no-restricted-syntax': [
         'error',
         {
-          selector: 'CallExpression[callee.object.name!="Array"][callee.property.name=/^(push|pop|shift|unshift|splice|sort|reverse)$/]',
+          selector: 'CallExpression[callee.object.name!="Array"][callee.object.name!="router"][callee.property.name=/^(push|pop|shift|unshift|splice|sort|reverse)$/]',
           message: 'Avoid using mutating methods directly. Consider using non-mutating alternatives like `toSorted`, `toReversed`, or copying methods like `[...arr]` for operations.',
         },
       ],

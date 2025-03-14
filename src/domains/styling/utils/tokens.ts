@@ -1189,7 +1189,3 @@ export const boxShadows = {
 };
 
 export const transitionTime = '0.2s';
-
-export const BREAKPOINTS = { xs: '355px', sm: '500px', md: '770px', lg: '870px', xl: '1160px' };
-
-export const BOTTOM_MENU_BREAKPOINT = BREAKPOINTS.md;

@@ -1,4 +1,4 @@
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaQuery } from '@react-hookz/web';
 
 import { useThemeStore } from '../stores/themeStore';
 
