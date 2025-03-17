@@ -1,6 +1,8 @@
 import { LazyMotion, domAnimation } from 'motion/react';
 import { ReactNode } from 'react';
 
+import { QueryClientProvider } from 'src/domains/misc/utils/queryClient';
+
 import GlobalStylesWithTheme from './GlobalStylesWithTheme';
 
 type Props = {
@@ -10,7 +12,9 @@ type Props = {
 const Providers = ({ children }: Props) => (
   <LazyMotion features={domAnimation}>
     <GlobalStylesWithTheme>
-      {children}
+      <QueryClientProvider>
+        {children}
+      </QueryClientProvider>
     </GlobalStylesWithTheme>
   </LazyMotion>
 );
