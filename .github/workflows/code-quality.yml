@@ -57,6 +57,6 @@ jobs:
           VARS_CONTEXT: ${{ toJson(vars) }}
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          to_envs() { jq -r "to_entries[] | select(.key|startswith(\"VITE_\")) | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""; }
+          to_envs() { jq -r "to_entries[] | select(.key|startswith(\"PUBLIC_VAR_\")) | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""; }
           echo "$VARS_CONTEXT" | to_envs >> $GITHUB_ENV
       - run: npm test
