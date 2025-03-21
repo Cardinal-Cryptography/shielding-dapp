@@ -1,7 +1,7 @@
 import { useMediaQuery } from '@react-hookz/web';
 import styled from 'styled-components';
 
-import { useNetworkStore } from 'src/domains/chains/stores/networkStore';
+import { useNetworkStore } from 'src/domains/chains/stores/network';
 import Tabs from 'src/domains/misc/components/Tabs';
 import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';
 import vars from 'src/domains/styling/utils/vars';

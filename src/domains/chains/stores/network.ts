@@ -3,12 +3,12 @@ import { persist } from 'zustand/middleware';
 
 import { NetworkEnvironment } from 'src/domains/chains/types/misc';
 
-type networkStore = {
+type network = {
   network: NetworkEnvironment,
   setNetwork: (theme: NetworkEnvironment) => void,
 };
 
-export const useNetworkStore = create<networkStore>()(
+export const useNetworkStore = create<network>()(
   persist(
     set => ({
       network: 'mainnet',
@@ -17,7 +17,7 @@ export const useNetworkStore = create<networkStore>()(
       },
     }),
     {
-      name: 'network-storage',
+      name: 'network',
       partialize: state => ({ network: state.network }),
     }
   )

@@ -3,25 +3,30 @@ import { createWalletClient, custom, defineChain } from 'viem';
 
 import { NetworkEnvironment } from 'src/domains/chains/types/misc';
 
-import chainsDefinitions from '../definitions/definitions';
+import chainsDefinitions from '../definitions';
 
 import getEthereumProvider from './getEthereumProvider';
 
-export default memoize(async (config?: {
+async function getWalletClient(): Promise<ReturnType<typeof createWalletClient>>;
+async function getWalletClient(
   networkEnvironment: NetworkEnvironment,
-  chain: keyof typeof chainsDefinitions,
-}) => {
+  chain: keyof typeof chainsDefinitions
+): Promise<ReturnType<typeof createWalletClient>>;
+
+async function getWalletClient(
+  networkEnvironment?: NetworkEnvironment,
+  chain?: keyof typeof chainsDefinitions
+) {
   const provider = await getEthereumProvider();
 
-  const getChain = () => {
-    if(!config) return undefined;
-    return defineChain({
-      ...chainsDefinitions[config.chain][config.networkEnvironment],
-    });
-  };
-
   return createWalletClient({
-    chain: getChain(),
+    chain: networkEnvironment && chain ?
+      defineChain({
+        ...chainsDefinitions[chain][networkEnvironment],
+      }) :
+      undefined,
     transport: custom(provider),
   });
-});
+}
+
+export default memoize(getWalletClient, { primitive: true });

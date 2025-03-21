@@ -1,12 +1,22 @@
-import { createContext, useContext, useEffect, useMemo, useState, useCallback, ReactNode } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  createContext,
+  useContext,
+  useMemo,
+  ReactNode,
+} from 'react';
 import { Address } from 'viem';
+
+import { NEVER_CHANGING_DATA_OPTIONS } from 'src/domains/misc/consts/consts.ts';
 
 import { getWalletClient, getEthereumProvider } from '../utils/clients';
 
+const WALLET_QUERY_KEY = ['wallet-address'];
+
 type WalletContextType = {
   account?: Address,
-  error: Error | null,
   loading: boolean,
+  error: Error | null,
   connectWallet: () => Promise<void>,
   disconnectWallet: () => Promise<void>,
 };
@@ -14,66 +24,64 @@ type WalletContextType = {
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 const WalletProvider = ({ children }: { children: ReactNode }) => {
-  const [account, setAccount] = useState<Address>();
-  const [error, setError] = useState<Error | null>(null);
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  const updateAccount = async () => {
-    try {
+  const {
+    data: account,
+    isLoading,
+    error: addressError,
+  } = useQuery<Address | undefined>({
+    queryKey: WALLET_QUERY_KEY,
+    queryFn: async () => {
+      const provider = await getEthereumProvider();
+      if (!provider.session) return undefined;
+
       const walletClient = await getWalletClient();
-      setAccount((await walletClient.getAddresses())[0]);
-    } catch (err) {
-      setError(err as Error);
-    }
-  };
+      const addresses = await walletClient.getAddresses();
+      return addresses[0];
+    },
+    ...NEVER_CHANGING_DATA_OPTIONS,
+  });
 
-  useEffect(() => {
-    void (async () => {
-      setLoading(true);
-      try {
-        const provider = await getEthereumProvider();
-        if (provider.session) await updateAccount();
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+  const {
+    mutateAsync: connectWallet,
+    error: connectError,
+  } = useMutation({
+    mutationFn: async () => {
+      const provider = await getEthereumProvider();
+      await provider.connect();
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: WALLET_QUERY_KEY });
+    },
+  });
 
-  const connectWallet = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await (await getEthereumProvider()).connect();
-      await updateAccount();
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const {
+    mutateAsync: disconnectWallet,
+    error: disconnectError,
+  } = useMutation({
+    mutationFn: async () => {
+      const provider = await getEthereumProvider();
+      await provider.disconnect();
+    },
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: WALLET_QUERY_KEY });
+    },
+  });
 
-  const disconnectWallet = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await (await getEthereumProvider()).disconnect();
-      setAccount(undefined);
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const value = useMemo<WalletContextType>(() => ({
+    account,
+    loading: isLoading,
+    error: addressError ?? connectError ?? disconnectError ?? null,
+    connectWallet,
+    disconnectWallet,
+  }), [account, isLoading, addressError, connectError, disconnectError, connectWallet, disconnectWallet]);
 
-  const value = useMemo(() => (
-    { account, error, loading, connectWallet, disconnectWallet }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [account, error, loading]
+  return (
+    <WalletContext.Provider value={value}>
+      {children}
+    </WalletContext.Provider>
   );
-
-  return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
 };
 
 export const useWallet = () => {
