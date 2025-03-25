@@ -8,7 +8,6 @@ const StyledTokenList = styled(TokenList)`
 `;
 
 const meta = {
-  title: 'TokenList',
   component: StyledTokenList,
   args: {
     onTokenClick: token => void alert(token.name),
