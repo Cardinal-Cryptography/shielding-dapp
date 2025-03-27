@@ -64,9 +64,13 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
 
-    - name: Clean install
+    - name: Set NPM_TOKEN
       env:
         NPM_TOKEN: ${{ inputs.npm-token }}
+      shell: bash
+      run: npm config set '//registry.npmjs.org/:_authToken' "${{ env.NPM_TOKEN }}"
+
+    - name: Clean install
       shell: bash
       run: npm ci
 
