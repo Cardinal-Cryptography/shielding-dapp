@@ -30,3 +30,4 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_S3_STAGE_SECRET_ACCESS_KEY }}
           s3-bucket-name: ${{ secrets.AWS_S3_STAGE_BUCKET_NAME }}
           amplify-app-id: ${{ secrets.AWS_AMPLIFY_STAGE_APP_ID }}
+          npm-token: ${{ secrets.NPM_TOKEN }}
