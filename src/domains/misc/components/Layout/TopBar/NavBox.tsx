@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { BREAKPOINTS } from 'src/domains/misc/consts/consts';
 import { backgroundFilters, transitionTime } from 'src/domains/styling/utils/tokens';
@@ -102,41 +102,12 @@ export const BrandCanvas = styled(Canvas)`
   }
 `;
 
-export const UserCanvas = styled(Canvas)<{ $isConnected: boolean }>`
+export const UserCanvas = styled(Canvas)`
   justify-content: end;
   padding: 0;
-  padding-inline: ${({ $isConnected }) => $isConnected ?
-    vars('--spacing-m-nudge') : vars('--spacing-s')};
+  padding-inline: ${vars('--spacing-s')};
   border: 1px solid transparent;
   transition: all ${transitionTime};
-  
-  ${({ $isConnected }) => $isConnected && css`
-    &:hover {
-      border-bottom: 1px solid ${vars('--color-brand-stroke-compound-hover')};
-      background: ${vars('--color-neutral-background-2-hover')};
-
-      border-left: 1px solid ${vars('--color-brand-stroke-compound-hover')};
-      
-      @media (width >= 870px) {
-        border: 1px solid ${vars('--color-brand-stroke-compound-hover')};
-      }
-
-      ${ChevronDown} {
-        transform: translateY(${vars('--spacing-xxs')});
-      }
-    }
-
-    &:active {
-      border-bottom: 1px solid ${vars('--color-brand-stroke-compound-pressed')};
-      background: ${vars('--color-neutral-background-2-pressed')};
-
-      border-left: 1px solid ${vars('--color-brand-stroke-compound-pressed')};
-      
-      @media (width >= 870px) {
-        border: 1px solid ${vars('--color-brand-stroke-compound-pressed')};
-      }
-    }
-  `};
 
   @media (width <= ${BREAKPOINTS.lg}) { /* stylelint-disable-line media-query-no-invalid */
     border-bottom-left-radius: ${vars('--spacing-l')};
@@ -147,9 +118,4 @@ export const UserCanvas = styled(Canvas)<{ $isConnected: boolean }>`
     min-width: 112px;
     ${skeletonStyles}
   }
-`;
-
-// TODO: add icon
-export const ChevronDown = styled.span`
-  transition: all ${transitionTime};
 `;

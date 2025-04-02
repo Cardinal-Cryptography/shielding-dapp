@@ -2,9 +2,12 @@ import { useMediaQuery } from '@react-hookz/web';
 import styled from 'styled-components';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
-import useChain from 'src/domains/chains/utils/useChain.ts';
+import useChain from 'src/domains/chains/utils/useChain';
 import Button from 'src/domains/misc/components/Button';
+import CIcon from 'src/domains/misc/components/CIcon';
 import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';
+import formatAddress from 'src/domains/misc/utils/formatAddress';
+import { typography } from 'src/domains/styling/utils/tokens.ts';
 import vars from 'src/domains/styling/utils/vars';
 
 import Navigation from '../Navigation';
@@ -12,11 +15,12 @@ import Navigation from '../Navigation';
 import Brand from './Brand';
 import * as NavBox from './NavBox';
 import { BRAND_CONTAINER_TITLE, BRAND_LOGO_HEIGHT } from './consts';
+import UserIcon from './userIcon.svg?react';
 
 const TopBar = () => {
   const isSmallScreen = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
   const chainConfig = useChain();
-  const { openModal, disconnect, isConnected } = useWallet();
+  const { openModal, disconnect, isConnected , address } = useWallet();
 
   return (
     <NavBox.Container>
@@ -26,23 +30,34 @@ const TopBar = () => {
         </BrandContainer>
         {!isSmallScreen && <Navigation position="floor" />}
       </NavBox.BrandCanvas>
-      <NavBox.UserCanvas $isConnected={false}>
-        {isConnected ? (chainConfig && (
-          <>
-            <ChainButton variant="primary" onClick={() => void openModal({ view: 'Networks' })}>
-              <Icon>
-                <chainConfig.ChainIcon />
-              </Icon>
-              {chainConfig.name}
-            </ChainButton>
-            <Button variant="transparent"
-              leftIcon="Power"
-              onClick={() => void disconnect()}
-            >
-            </Button>
-          </>
-        )) :
-        <Button variant="primary" onClick={() => void openModal({ view: 'Connect' })}>Connect</Button>}
+      <NavBox.UserCanvas>
+        {isConnected ? (
+          <AccountManager>
+            <ChainSelector variant="secondary" onClick={() => void openModal({ view: 'Networks' })}>
+              {chainConfig ? (
+                <ButtonLeftContent>
+                  <Icon>
+                    <chainConfig.ChainIcon />
+                  </Icon>
+                  {chainConfig.name}
+                </ButtonLeftContent>
+              ) : 'Select Network'}
+              <ChevronIcon icon="ChevronLeft" />
+            </ChainSelector>
+            <AccountDetails>
+              <AccountIcon />
+              {address && formatAddress(address)}
+              <Button
+                variant="transparent"
+                leftIcon="Power"
+                size="small"
+                onClick={() => void disconnect()}
+              >
+              </Button>
+            </AccountDetails>
+          </AccountManager>
+        ) :
+          <Button variant="primary" onClick={() => void openModal({ view: 'Connect' })}>Connect</Button>}
       </NavBox.UserCanvas>
     </NavBox.Container>
   );
@@ -64,10 +79,20 @@ const BrandContainer = styled.div`
   }
 `;
 
-const ChainButton = styled(Button)`
+const ChainSelector = styled(Button)`
   display: flex;
-  align-items: center;
+
   gap: ${vars('--spacing-s')};
+  align-items: center;
+  justify-content: space-between;
+
+  padding-inline: ${vars('--spacing-s')};
+  width: 216px;
+
+  background: ${vars('--color-neutral-background-1-rest')};
+  border-color: ${vars('--color-neutral-stroke-2-rest')};
+  
+  ${typography.web.body1};
 `;
 
 const Icon = styled.div`
@@ -83,4 +108,30 @@ const Icon = styled.div`
       stroke: currentcolor;
     }
   }
+`;
+
+const ButtonLeftContent = styled.div`
+  display: flex;
+  gap: ${vars('--spacing-s')};
+  align-items: center;
+`;
+
+const ChevronIcon = styled(CIcon)`
+  transform: rotate(180deg);
+`;
+
+const AccountDetails = styled.div`
+  display: flex;
+  align-items: center;
+  ${typography.web.caption1};
+`;
+
+const AccountManager = styled.div`
+  display:flex;
+  gap: ${vars('--spacing-m')};
+  align-items: center;
+`;
+
+const AccountIcon = styled(UserIcon)`
+  margin-right: ${vars('--spacing-s')};
 `;
