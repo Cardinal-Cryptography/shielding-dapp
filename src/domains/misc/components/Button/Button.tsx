@@ -23,6 +23,7 @@ type Props = {
   selected?: boolean,
   leftIcon?: IconName,
   rightIcon?: IconName,
+  isLoading?: boolean,
 } & ComponentProps<'button'>;
 
 const Button = forwardRef<HTMLButtonElement, Props>(({
@@ -32,18 +33,20 @@ const Button = forwardRef<HTMLButtonElement, Props>(({
   selected,
   leftIcon,
   rightIcon,
+  isLoading,
   ...props
 }, ref) => (
   <DomButton
     ref={ref}
     {...props}
+    disabled={!!props.disabled || !!isLoading}
     size={size}
     variant={variant}
     center={!leftIcon && !rightIcon}
     selected={selected}
     $iconOnly={!children}
   >
-    {leftIcon && <CIcon icon={leftIcon} size={ICON_SIZE_MAP[size]} />}
+    {isLoading ? <LoadingIcon icon="Spinner" size={ICON_SIZE_MAP[size] * 0.75} /> : leftIcon && <CIcon icon={leftIcon} size={ICON_SIZE_MAP[size]} />}
     {children}
     {rightIcon && <CIcon icon={rightIcon} size={ICON_SIZE_MAP[size]} />}
   </DomButton>
@@ -302,5 +305,22 @@ const DomButton = styled.button.withConfig({
     })};
     outline: none;
     cursor: not-allowed;
+  }
+`;
+
+const LoadingIcon = styled(CIcon)`
+  animation: spin 1.4s linear infinite;
+
+  & *:first-of-type {
+    fill: ${vars('--color-neutral-stroke-2-rest')};
+  }
+
+  & *:last-of-type {
+    fill: ${vars('--color-neutral-stroke-1-rest')};
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 `;

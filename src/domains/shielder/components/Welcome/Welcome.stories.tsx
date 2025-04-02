@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import Welcome from 'src/domains/shielder/components/Welcome/Welcome.tsx';
+import Welcome from 'src/domains/shielder/components/Welcome';
 
 const meta: Meta<typeof Welcome> = {
   component: Welcome,

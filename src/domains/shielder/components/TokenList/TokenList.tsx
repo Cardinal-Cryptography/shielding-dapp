@@ -46,7 +46,7 @@ export default TokenList;
 
 const Container = styled(ScrollShadow)`
   height: 100%;
-  width: min(100vw, 440px);
+  width: 100%;
   overflow: auto;
 
   &::-webkit-scrollbar {

@@ -27,6 +27,7 @@ const getQueryKey = {
     chainId,
     walletAddress,
   ] as const,
+  shielderPrivateKey: (walletAddress: Address) => ['shielderPrivateKey', walletAddress] as const,
   wasmCryptoClient: () => ['wasm-crypto-client'] as const,
 };
 

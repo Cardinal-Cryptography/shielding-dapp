@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
+import ConnectModal from 'src/domains/chains/components/ConnectModal';
 import Button from 'src/domains/misc/components/Button';
-import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox.tsx';
+import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import { typography } from 'src/domains/styling/utils/tokens.ts';
 import vars from 'src/domains/styling/utils/vars.ts';
 
@@ -17,14 +18,14 @@ const Welcome = () => (
         <Title>Make your onchain actions private and secure with shielding.</Title>
         <List>
           {STEPS.map((step, index) => (
-            <Step>
+            <Step key={index}>
               <StepNumber>{index+1}</StepNumber>
               <p>{step}</p>
             </Step>
           ))}
         </List>
       </Steps>
-      <ConnectButton size="large" variant="primary">Connect Wallet</ConnectButton>
+      <ConnectModal triggerElement={<ConnectButton size="large" variant="primary">Connect Wallet</ConnectButton>} />
     </Content>
   </DoubleBorderBox.Wrapper>
 );

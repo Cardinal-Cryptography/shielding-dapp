@@ -58,7 +58,9 @@ import ShieldRegular from './icons/shieldRegular.svg?react';
 import ShieldTask from './icons/shieldTask.svg?react';
 import Shielded from './icons/shielded.svg?react';
 import ShieldedFilled from './icons/shieldedFilled.svg?react';
+import Signature from './icons/signature.svg?react';
 import SmartContractRegular from './icons/smartContractRegular.svg?react';
+import Spinner from './icons/spinner.svg?react';
 import TelegramSM from './icons/telegramSM.svg?react';
 import Usdc from './icons/usdc.svg?react';
 import Usdt from './icons/usdt.svg?react';
@@ -124,7 +126,9 @@ export const icons = {
   ShieldTask,
   Shielded,
   ShieldedFilled,
+  Signature,
   SmartContractRegular,
+  Spinner,
   TelegramSM,
   Usdc,
   Usdt,
