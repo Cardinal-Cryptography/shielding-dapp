@@ -11,7 +11,7 @@ const Footer = () => (
     <ThemeSelector />
     <InnerContainer data-chromatic="ignore">
       <Copyright>
-        Copyright © {new Date().getFullYear()} Shielder, ver. {__APP_VERSION__}
+        Copyright © {new Date().getFullYear()} Shielder, ver. {import.meta.env.APP_VERSION}
       </Copyright>
     </InnerContainer>
   </Container>

@@ -12,6 +12,7 @@ import eslintPluginStorybook from 'eslint-plugin-storybook';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument
   includeIgnoreFile(path.resolve(path.dirname(fileURLToPath(import.meta.url)), '.gitignore')),
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
@@ -36,6 +37,7 @@ export default tseslint.config(
             '.storybook/*',
           ],
         },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         tsconfigRootDir: import.meta.dirname,
       },
 
@@ -138,7 +140,7 @@ export default tseslint.config(
           },
         ],
         patterns: [{
-          regex: 'src/(?!(domains/.*/(components|utils|assets|types|consts)/.*))',
+          regex: 'src/(?!(domains/.*/(components|utils|assets|types|consts|stores)/.*))',
           message: 'Organize modules in predefined groups under domains.',
         }, {
           /*

@@ -24,6 +24,12 @@ const config: ChainConfig = {
   },
   testnet: {
     ...baseSepolia,
+    shielderConfig: {
+      shielderContractAddress: '0x72B16db09D234A69a7e2df05503923A885eCe0Ea',
+      // TODO(SD-31): Replace the placeholder relayer URL with chain-specific URLs once provided.
+      // https://cardinal-cryptography.atlassian.net/browse/SD-31
+      relayerUrl: 'https://shielder-relayer-dev.test.azero.dev',
+    },
     ChainIcon,
     NativeTokenIcon,
     whitelistedTokens: {

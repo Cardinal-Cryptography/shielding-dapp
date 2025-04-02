@@ -1,83 +1,48 @@
 import { Meta, StoryObj } from '@storybook/react';
 import styled from 'styled-components';
+import { objectEntries } from 'tsafe';
 
+import getChainConfigById from 'src/domains/chains/utils/getChainConfigById';
 import TokenList from 'src/domains/shielder/components/TokenList';
 
 const StyledTokenList = styled(TokenList)`
   max-height: 200px;
 `;
 
+const chainConfig = getChainConfigById(2039);
+
+const nonNativeTokens =
+  objectEntries(chainConfig.whitelistedTokens).map(([address, token]) => ({
+    ...token,
+    address,
+    isNative: false as const,
+    chain: chainConfig.chain,
+    name: 'Unknown',
+    symbol: 'N/A',
+    decimals: 18,
+    usdPrice: 0,
+  }));
+
+const nativeToken =
+  [
+    {
+      address: undefined,
+      isNative: true as const,
+      chain: chainConfig.chain,
+      name: chainConfig.nativeCurrency.name,
+      symbol: chainConfig.nativeCurrency.symbol,
+      decimals: chainConfig.nativeCurrency.decimals,
+      icon: chainConfig.NativeTokenIcon,
+    },
+  ];
+
+const tokens = [...nativeToken, ...nonNativeTokens];
+
 const meta = {
   component: StyledTokenList,
   args: {
     onTokenClick: token => void alert(token.name),
-    tokens: [
-      {
-        address: '0x1',
-        name: 'Ethereum',
-        chain: 'alephEvm',
-        icon: 'Eth',
-        decimals: 18,
-        balance: {
-          atomic: '1500000000000000000',
-          usd: 4500,
-        },
-        usdPrice: 3000,
-        symbol: 'ETH',
-      },
-      {
-        address: '0x2',
-        name: 'Aleph Zero',
-        icon: 'Azero',
-        chain: 'alephEvm',
-        decimals: 8,
-        balance: {
-          atomic: '50000000000',
-          usd: 75,
-        },
-        usdPrice: 0.15,
-        symbol: 'AZERO',
-      },
-      {
-        address: '0x3',
-        name: 'Bitcoin',
-        icon: 'WBtc',
-        chain: 'alephEvm',
-        decimals: 8,
-        balance: {
-          atomic: '25000000',
-          usd: 12500,
-        },
-        usdPrice: 50000,
-        symbol: 'BTC',
-      },
-      {
-        address: '0x4',
-        name: 'Tether',
-        icon: 'Usdt',
-        chain: 'alephEvm',
-        decimals: 6,
-        balance: {
-          atomic: '1000000000',
-          usd: 1000,
-        },
-        usdPrice: 1,
-        symbol: 'USDT',
-      },
-      {
-        address: '0x5',
-        name: 'USD Coin',
-        icon: 'Usdc',
-        chain: 'alephEvm',
-        decimals: 6,
-        balance: {
-          atomic: '500000000',
-          usd: 500,
-        },
-        usdPrice: 1,
-        symbol: 'USDC',
-      },
-    ],
+    tokens,
   },
 
 } satisfies Meta<typeof TokenList>;
