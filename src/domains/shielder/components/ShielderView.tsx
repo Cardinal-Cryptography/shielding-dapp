@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
@@ -8,19 +7,14 @@ import SignatureModal from 'src/domains/shielder/components/SignatureModal';
 import Welcome from 'src/domains/shielder/components/Welcome';
 import vars from 'src/domains/styling/utils/vars';
 
-const View = () => {
+const ShielderView = () => {
   const { isConnected, privateKey } = useWallet();
-
-  const content = useMemo(() => {
-    if(isConnected && !!privateKey) return <Shielder />;
-
-    return <Welcome />;
-  }, [isConnected, privateKey]);
+  const isReady = isConnected && !!privateKey;
 
   return (
     <>
       <Container>
-        {content}
+        {isReady ? <Shielder /> : <Welcome />}
         <HelpDisclaimer />
       </Container>
       <SignatureModal />
@@ -28,7 +22,7 @@ const View = () => {
   );
 };
 
-export default View;
+export default ShielderView;
 
 const Container = styled.div`
   display: flex;

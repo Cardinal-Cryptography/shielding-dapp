@@ -1,5 +1,4 @@
 import { useAppKit, useDisconnect } from '@reown/appkit/react';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   createContext,
   useContext,
@@ -26,15 +25,9 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
   const { address, isConnected, status } = useAccount();
   const { disconnect } = useDisconnect();
   const { shielderPrivateKey } = useShielderStore(address);
-  const queryClient = useQueryClient();
-
-  const handleDisconnect = async () => {
-    await queryClient.resetQueries({ predicate: (q => address ? q.queryKey.includes(address) : false) });
-    await disconnect();
-  };
 
   const value = {
-    disconnect: handleDisconnect,
+    disconnect,
     openModal,
     address,
     isConnected,

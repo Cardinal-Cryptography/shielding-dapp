@@ -6,7 +6,7 @@ import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import Modal from 'src/domains/misc/components/Modal';
 import { ModalRef } from 'src/domains/misc/components/Modal';
-import PatternContainer from 'src/domains/misc/components/PatternContainer';
+import CheckedContainer from 'src/domains/misc/components/PatternContainer';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -25,12 +25,12 @@ const ConnectModal = (props: Props) => {
   return (
     <Modal ref={ref} {...props} title="Welcome">
       <Content>
-        <PatternContainer>
+        <CheckedContainer>
           <Branding>
             <LogoContainer><CIcon icon="Common" size={26} color="#406EB2" /></LogoContainer>
             <p>Common Web App</p>
           </Branding>
-        </PatternContainer>
+        </CheckedContainer>
         <Title>
           We value your privacy!
         </Title>

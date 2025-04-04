@@ -1,1 +1,1 @@
-export { default } from './PatternContainer';
+export { default } from './CheckedContainer';

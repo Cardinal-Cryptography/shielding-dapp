@@ -1,64 +1,54 @@
-import { useQuery } from '@tanstack/react-query';
+import { skipToken, useQuery } from '@tanstack/react-query';
 import { signMessage } from '@wagmi/core';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { keccak256, toHex } from 'viem';
+import { useAccount } from 'wagmi';
 
-import { useWallet } from 'src/domains/chains/components/WalletProvider.tsx';
+import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import Modal from 'src/domains/misc/components/Modal';
-import PatternContainer from 'src/domains/misc/components/PatternContainer';
-import getQueryKey from 'src/domains/misc/utils/getQueryKey.ts';
-import { useShielderStore } from 'src/domains/shielder/stores/shielder.ts';
-import { typography } from 'src/domains/styling/utils/tokens.ts';
-import vars from 'src/domains/styling/utils/vars.ts';
+import CheckedContainer from 'src/domains/misc/components/PatternContainer';
+import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import { useShielderStore } from 'src/domains/shielder/stores/shielder';
+import { typography } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
 
 const SignatureModal = () => {
   const [isTryingAgain, setIsTryingAgain] = useState(false);
   const { address, disconnect, isConnected } = useWallet();
-  const { shielderPrivateKey, setShielderPrivateKeySeeds } = useShielderStore(address);
+  const { connector } = useAccount();
+  const { setShielderPrivateKeySeeds } = useShielderStore(address);
 
   const getShielderPrivateKey = async () => {
-    if(!address) {
-      throw new Error('Account address is not available');
-    }
-    // TODO(SD-30): Replace placeholder with proper message for common wallet usage.
-    // https://cardinal-cryptography.atlassian.net/browse/SD-30
-    const message = `I love common wallet on account - ${address}`;
+    if (!address) throw new Error('No address');
     const signature = await signMessage(wagmiAdapter.wagmiConfig, {
-      message,
+      message: `I love common wallet on account - ${address}`,
     });
-
     const key = keccak256(toHex(signature));
     setShielderPrivateKeySeeds(address, key);
     return key;
   };
 
-  const { refetch, isError: isSigningError, isLoading } = useQuery({
-    enabled: false,
+  const isReady = !!connector?.getChainId && isConnected;
+
+  const { data: shielderPrivateKey, refetch, isError: isSigningError, isLoading } = useQuery({
     queryKey: address ? getQueryKey.shielderPrivateKey(address) : [],
-    queryFn: getShielderPrivateKey,
+    queryFn: isReady ? getShielderPrivateKey : skipToken,
     staleTime: Infinity,
+    gcTime: Infinity,
     retry: false,
   });
 
-  useEffect(() => {
-    const requestSignature = () => {
-      if(isConnected && !shielderPrivateKey) {
-        void refetch();
-      }
-    };
-
-    const timeoutId = setTimeout(requestSignature, 500);
-
-    return () => void clearTimeout(timeoutId);
-  }, [isConnected, shielderPrivateKey, refetch]);
-
-  const handleTryAgain = () => {
+  const retry = async () => {
     setIsTryingAgain(true);
-    void refetch();
+    try {
+      await refetch();
+    } finally {
+      setIsTryingAgain(false);
+    }
   };
 
   const isError = isTryingAgain || isSigningError || !isConnected;
@@ -66,22 +56,19 @@ const SignatureModal = () => {
   return (
     <Modal isOpenInitially={isConnected && !shielderPrivateKey} nonDismissable>
       <Content>
-        <PatternContainer>
+        <CheckedContainer>
           <SignatureIcon size={60} icon="Signature" color={isError ? vars('--color-status-danger-foreground-1-rest') : undefined} />
-        </PatternContainer>
-        <Title $isError={isError}>
-          {isError ? 'Signature Declined' : 'Signature required'}
-        </Title>
-        <Text>
-          To create a Shielded account, a one-time signature is required.
-          Approve message in your wallet to automatically continue.
-        </Text>
+        </CheckedContainer>
+        <Title $isError={isError}>{isError ? 'Signature Declined' : 'Signature required'}</Title>
+        <Text>To create a Shielded account, a one-time signature is required.</Text>
         <LearnMore>
           <p>Learn more</p>
           <CIcon icon="Open" size={20} />
         </LearnMore>
         <Buttons>
-          <Button variant="primary" onClick={() => void handleTryAgain()} isLoading={isLoading}>{isLoading ? 'Waiting for Signature' : 'Try again'}</Button>
+          <Button variant="primary" onClick={() => void retry()} isLoading={isLoading}>
+            {isLoading ? 'Waiting for Signature' : 'Try again'}
+          </Button>
           {isError && <Button variant="outline" onClick={() => void disconnect()}>Disconnect</Button>}
         </Buttons>
       </Content>
@@ -105,9 +92,7 @@ const SignatureIcon = styled(CIcon)`
 
 const Title = styled.h3<{ $isError?: boolean }>`
   ${typography.decorative.subtitle1};
-  ${({ $isError }) => $isError && css`
-    color: ${vars('--color-status-danger-foreground-1-rest')};
-  `}
+  ${({ $isError }) => $isError && css`color: ${vars('--color-status-danger-foreground-1-rest')};`}
 `;
 
 const Text = styled.p`
