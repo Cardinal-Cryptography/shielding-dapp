@@ -1,9 +1,8 @@
 import { CryptoClient } from '@cardinal-cryptography/shielder-sdk-crypto';
-import { skipToken, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
 import { type ReactNode } from 'react';
 
-import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 
 import { wasmCryptoClientRead } from './wasmCryptoClientRead';
@@ -18,11 +17,9 @@ const WasmContext = createContext<WasmContextType | undefined>(undefined);
 type Props = { children: ReactNode };
 
 const WasmProvider = ({ children }: Props) => {
-  const { isConnected, privateKey } = useWallet();
-
   const { data, isSuccess } = useQuery({
     queryKey: getQueryKey.wasmCryptoClient(),
-    queryFn: isConnected && !!privateKey ? () => wasmCryptoClientRead : skipToken,
+    queryFn: () => wasmCryptoClientRead(),
     staleTime: Infinity,
   });
 

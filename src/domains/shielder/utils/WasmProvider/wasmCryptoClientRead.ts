@@ -7,11 +7,10 @@ import withdrawParamsUrl from '@cardinal-cryptography/shielder-sdk-crypto-wasm/k
 import withdrawPkUrl from '@cardinal-cryptography/shielder-sdk-crypto-wasm/keys/withdraw/pk.bin?url';
 import memoize from 'memoizee';
 
-const fetchArrayBuffer = async (url: string): Promise<Uint8Array> => fetch(url)
-  .then(r => r.arrayBuffer())
-  .then(b => new Uint8Array(b));
+const fetchArrayBuffer = async (url: string): Promise<Uint8Array> =>
+  fetch(url).then(r => r.arrayBuffer()).then(b => new Uint8Array(b));
 
-export const wasmCryptoClientRead = memoize(async () => {
+const _wasmCryptoClientRead = async () => {
   const [
     newAccountParams,
     newAccountPk,
@@ -43,4 +42,6 @@ export const wasmCryptoClientRead = memoize(async () => {
       pkBuf: withdrawPk,
     },
   );
-})();
+};
+
+export const wasmCryptoClientRead = memoize(_wasmCryptoClientRead);
