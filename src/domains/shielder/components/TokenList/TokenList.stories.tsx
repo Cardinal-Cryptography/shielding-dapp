@@ -41,7 +41,6 @@ const tokens = [...nativeToken, ...nonNativeTokens];
 const meta = {
   component: StyledTokenList,
   args: {
-    onTokenClick: token => void alert(token.name),
     tokens,
   },
 

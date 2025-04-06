@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import AccountTypeIcon from './AccountTypeIcon';
 
 const ACCOUNT_TYPES = ['public', 'shielded'] as const;
-const SIZES = ['extra-small', 'small', 'medium', 'large'] as const;
+const SIZES = [14, 20, 34, 40] as const;
 
 const meta: Meta<typeof AccountTypeIcon> = {
   component: AccountTypeIcon,
@@ -36,7 +36,7 @@ export const Variants: Story = {
     <Grid>
       {ACCOUNT_TYPES.map(type => SIZES.map(size => (
         <AccountTypeIcon
-          key={type + size}
+          key={`${type}-${size}`}
           type={type}
           size={size}
         />

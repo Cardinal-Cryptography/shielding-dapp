@@ -14,6 +14,7 @@ import ArrowDownload from './icons/arrowDownload.svg?react';
 import ArrowImport from './icons/arrowImport.svg?react';
 import ArrowRight from './icons/arrowRight.svg?react';
 import ArrowSort from './icons/arrowSort.svg?react';
+import ArrowTurnDownLeft from './icons/arrowTurnDownLeft.svg?react';
 import ArrowUpRight from './icons/arrowUpRight.svg?react';
 import ArrowUpRightRegular from './icons/arrowUpRightRegular.svg?react';
 import Azero from './icons/azero.svg?react';
@@ -48,6 +49,7 @@ import Lock from './icons/lock.svg?react';
 import MoreVertical from './icons/moreVertical.svg?react';
 import Network from './icons/network.svg?react';
 import Open from './icons/open.svg?react';
+import Pencil from './icons/pencil.svg?react';
 import PersonFeedback from './icons/personFeedback.svg?react';
 import PersonFilled from './icons/personFilled.svg?react';
 import Power from './icons/power.svg?react';
@@ -82,6 +84,7 @@ export const icons = {
   ArrowImport,
   ArrowRight,
   ArrowSort,
+  ArrowTurnDownLeft,
   ArrowUpRight,
   ArrowUpRightRegular,
   Azero,
@@ -116,6 +119,7 @@ export const icons = {
   MoreVertical,
   Network,
   Open,
+  Pencil,
   PersonFeedback,
   PersonFilled,
   Power,

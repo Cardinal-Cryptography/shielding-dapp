@@ -1,37 +1,17 @@
 import { erc20Token, nativeToken } from '@cardinal-cryptography/shielder-sdk';
-import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { estimateFeesPerGas } from 'viem/actions';
-import { useAccount, usePublicClient, useSendTransaction } from 'wagmi';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAccount, useSendTransaction } from 'wagmi';
 
 import { Token } from 'src/domains/chains/types/misc';
-import getQueryKey from 'src/domains/misc/utils/getQueryKey.ts';
-import isPresent from 'src/domains/misc/utils/isPresent';
+import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 
 import useShielderClient from './useShielderClient';
-
-// Temporary hardcoded for now since chain-specific gas limit API is not available.
-// Used to estimate max shieldable amount: max_amount = token_balance - (gas_price * gas_limit)
-const SHIELD_ACTION_GAS_LIMIT = 2_400_000n;
 
 export const useWithdraw = () => {
   const { data: shielderClient } = useShielderClient();
   const { sendTransactionAsync } = useSendTransaction();
   const { address: walletAddress, chainId } = useAccount();
-  const publicClient = usePublicClient();
   const queryClient = useQueryClient();
-
-  const { data: { maxFeePerGas, gas } = {}} = useQuery({
-    queryKey: walletAddress ? getQueryKey.estimateFeesPerGas(walletAddress) : [],
-    queryFn: !publicClient ?
-      skipToken :
-      async () => {
-        const { maxFeePerGas } = await estimateFeesPerGas(publicClient);
-        return { maxFeePerGas, gas: SHIELD_ACTION_GAS_LIMIT };
-      },
-  });
-
-  const transactionFee =
-      isPresent(maxFeePerGas) && isPresent(gas) ? maxFeePerGas * gas : undefined;
 
   const { mutateAsync: withdraw, isPending: isWithdrawing, ...meta } = useMutation({
     mutationFn: async ({
@@ -51,8 +31,6 @@ export const useWithdraw = () => {
       const sdkToken = token.isNative ? nativeToken() : erc20Token(token.address);
 
       if (useManualWithdraw) {
-        if (!transactionFee) throw new Error('Transaction fees not available');
-
         await shielderClient.withdrawManual(
           sdkToken,
           amount,

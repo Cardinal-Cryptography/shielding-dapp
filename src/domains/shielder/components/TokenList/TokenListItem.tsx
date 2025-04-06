@@ -1,64 +1,83 @@
-import { AnimatePresence, motion } from 'motion/react';
 import styled from 'styled-components';
 
-import CIcon from 'src/domains/misc/components/CIcon';
+import Button from 'src/domains/misc/components/Button';
 import Skeleton from 'src/domains/misc/components/Skeleton';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import formatBalance from 'src/domains/numbers/utils/formatBalance';
+import { useShielderStore } from 'src/domains/shielder/stores/shielder';
+import useToken from 'src/domains/shielder/utils/useToken';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
+
+import ShieldModal from './Modals';
+import SendModal from './Modals/SendModal/SendModal';
 
 import { Token } from '.';
 
 type Props = {
   token: Token,
-  onTokenClick: (token: Token) => void,
-  isSelected: boolean,
 };
 
-const TokenListItem = ({ token, onTokenClick, isSelected }: Props) => {
-  const { name, icon, decimals, balance, usdPrice, symbol } = token;
+const TokenListItem = ({ token }: Props) => {
+  const { selectedAccountType } = useShielderStore();
+  const isPublic = selectedAccountType === 'public';
+
+  const {
+    symbolQuery: { data: symbol },
+    decimalsQuery: { data: decimals },
+    shieldedBalanceQuery: { data: shieldedBalance },
+    publicBalanceQuery: { data: publicBalance },
+    nameQuery: { data: name },
+  } = useToken(token);
+
+  const activeBalance = isPublic ? publicBalance : shieldedBalance;
+  const isDisabled = !activeBalance || activeBalance <= 0n;
 
   return (
-    <Container onClick={() => void onTokenClick(token)}>
-      <AnimatePresence>
-        {isSelected && (
-          <Checkmark
-            initial={{ x: 5,y: '-50%', opacity: 0 }}
-            animate={{ x: 0,y: '-50%', opacity: 1 }}
-            exit={{ y: '-50%', opacity: 0, scale: 0.5 }}
-            transition={{ duration: 0.1 }}
-          >
-            <CIcon icon="CheckmarkRegular" size={14} />
-          </Checkmark>
-        )}
-      </AnimatePresence>
-      <TokenIcon size={40} Icon={icon} />
+    <Container>
+      <TokenIcon size={40} Icon={token.icon} />
       <Column>
-        <Title>{name}</Title>
-        <Subtitle>${usdPrice?.toFixed(2)}</Subtitle>
+        <Title>{name ?? <Skeleton style={{ height: '14px', width: '80px', marginTop: '4px' }} />}</Title>
+        <Subtitle>
+          {isPresent(activeBalance) && isPresent(decimals) && isPresent(activeBalance) ? formatBalance({
+            balance: activeBalance,
+            decimals,
+          }) : <Skeleton style={{ height: '14px', width: '40px', marginTop: '4px' }} />}
+          {' '}
+          {symbol ?? <Skeleton style={{ height: '14px', width: '60px', marginTop: '4px' }} />}
+        </Subtitle>
       </Column>
-      <Price>
-        {isPresent(balance) && isPresent(balance.usd) ? <Title>${balance.usd.toFixed(2)}</Title>: <Skeleton style={{ height: '14px', width: '40px' }} />}
-        {symbol ? (
-          <Subtitle>
-            {isPresent(balance) && isPresent(decimals) && isPresent(balance.atomic) && formatBalance({
-              balance: balance.atomic,
-              decimals,
-            })}
-            {' '}
-            {symbol}
-          </Subtitle>
-        ) : <Skeleton style={{ height: '14px', width: '60px', marginTop: '4px' }} /> }
-      </Price>
+      {isPublic ? (
+        <ShieldModal token={{ ...token, symbol, decimals, balance: publicBalance }}>
+          <Button
+            variant="primary"
+            size="small"
+            leftIcon="Shielded"
+            disabled={isDisabled}
+          >
+            Shield
+          </Button>
+        </ShieldModal>
+      ) : (
+        <SendModal token={{ ...token, symbol, decimals, balance: shieldedBalance }}>
+          <Button
+            variant="primary"
+            size="small"
+            leftIcon="ArrowUpRight"
+            disabled={isDisabled}
+          >
+            Send
+          </Button>
+        </SendModal>
+      )}
     </Container>
   );
 };
 
 export default TokenListItem;
 
-const Container = styled.button`
+const Container = styled.div`
   display: grid;
   
   position: relative;
@@ -71,10 +90,6 @@ const Container = styled.button`
   transition: background 0.1s;
 
   column-gap: ${vars('--spacing-m')};
-
-  &:hover {
-    background: rgb(0 0 0 / 5%);
-  }
 `;
 
 const Column = styled.div`
@@ -82,36 +97,14 @@ const Column = styled.div`
   flex-direction: column; 
 `;
 
-const Price = styled(Column)`
-  align-items: end;
-  justify-content: center;
-`;
-
 const Title = styled.p`
-  ${typography.decorative.body1Strong};
+  ${typography.decorative.subtitle2};
 `;
 
-const Subtitle = styled.p`
+const Subtitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
   color: ${vars('--color-neutral-foreground-4-rest')};
   ${typography.web.caption1};
-`;
-
-const Checkmark = styled(motion.div)`
-  display: grid;
-
-  position: absolute;
-  top: 50%;
-  left: 0;
-
-  place-items: center;
-
-  height: 20px;
-  width: 20px;
-
-  border-radius: ${vars('--border-radius-circular')};
-  background: red;
-  background: ${vars('--color-brand-background-2-rest')};
-  transform: translateY(-50%);
-
-  aspect-ratio: 1/1;
 `;

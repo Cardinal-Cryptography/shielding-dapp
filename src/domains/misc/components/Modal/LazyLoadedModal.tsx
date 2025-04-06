@@ -19,7 +19,7 @@ import { IconName } from 'src/domains/misc/components/CIcon';
 import Pager from 'src/domains/misc/components/Pager';
 import * as Title from 'src/domains/misc/components/Title';
 import withPropAs from 'src/domains/misc/utils/withPropAs';
-import { backgroundFilters, boxShadows } from 'src/domains/styling/utils/tokens';
+import { backgroundFilters, boxShadows, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
 const SLIDE_IN_CARD_BREAKPOINT = 434;
@@ -111,7 +111,7 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
       setIsOpen(true);
     } else {
       void initiateClosing();
-    };
+    }
   }, [isOpenInitially]);
 
   const finishClosing = () => {
@@ -408,6 +408,8 @@ const SecondPageTitle = styled.header`
 
   text-align: center;
   white-space: nowrap;
+  
+  ${typography.decorative.subtitle2}
 `;
 
 const CloseButton = styled(Button)`

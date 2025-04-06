@@ -12,9 +12,9 @@ const getQueryKey = {
     accountAddress,
     chainId,
   ] as const,
-  tokenDecimals: (tokenAddress: Address) => ['token-decimals', tokenAddress] as const,
-  tokenName: (tokenAddress: Address) => ['token-name', tokenAddress] as const,
-  tokenSymbol: (tokenAddress: Address) => ['token-symbol', tokenAddress] as const,
+  tokenDecimals: (tokenAddress: Address | 'native') => ['token-decimals', tokenAddress] as const,
+  tokenName: (tokenAddress: Address | 'native') => ['token-name', tokenAddress] as const,
+  tokenSymbol: (tokenAddress: Address | 'native') => ['token-symbol', tokenAddress] as const,
   tokenPublicBalance: (tokenAddress: Address | 'native', chainId: string | number, walletAddress: Address) => [
     'token-public-balance',
     tokenAddress,

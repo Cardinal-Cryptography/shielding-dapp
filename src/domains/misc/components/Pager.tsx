@@ -1,5 +1,5 @@
 import { usePrevious } from '@react-hookz/web';
-import { AnimatePresence, m as motion, Variants } from 'framer-motion';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { ReactElement, useLayoutEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
 

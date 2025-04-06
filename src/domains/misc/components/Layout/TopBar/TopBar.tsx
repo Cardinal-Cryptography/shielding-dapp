@@ -1,12 +1,13 @@
 import { useMediaQuery } from '@react-hookz/web';
 import styled from 'styled-components';
 
+import ChainIcon from 'src/domains/chains/components/ChainIcon.tsx';
 import ConnectModal from 'src/domains/chains/components/ConnectModal';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
-import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';
+import { BOTTOM_MENU_BREAKPOINT, BREAKPOINTS } from 'src/domains/misc/consts/consts';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
 import { typography } from 'src/domains/styling/utils/tokens.ts';
 import vars from 'src/domains/styling/utils/vars';
@@ -20,6 +21,8 @@ import UserIcon from './userIcon.svg?react';
 
 const TopBar = () => {
   const isSmallScreen = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
+  const isLargeScreen = useMediaQuery(`(min-width: ${BREAKPOINTS.sm})`);
+
   const chainConfig = useChain();
   const { openModal, disconnect, isConnected , address } = useWallet();
 
@@ -37,10 +40,8 @@ const TopBar = () => {
             <ChainSelector variant="secondary" onClick={() => void openModal({ view: 'Networks' })}>
               {chainConfig ? (
                 <ButtonLeftContent>
-                  <Icon>
-                    <chainConfig.ChainIcon />
-                  </Icon>
-                  {chainConfig.name}
+                  <ChainIcon chainId={chainConfig.id} size={24} />
+                  {isLargeScreen && chainConfig.name}
                 </ButtonLeftContent>
               ) : 'Select Network'}
               <ChevronIcon icon="ChevronLeft" />
@@ -70,6 +71,8 @@ export default TopBar;
 const StyledBrand = styled(Brand)`
   margin-left: 8px;
   height: ${BRAND_LOGO_HEIGHT};
+
+  flex-shrink: 0;
 `;
 
 const BrandContainer = styled.div`
@@ -95,20 +98,9 @@ const ChainSelector = styled(Button)`
   border-color: ${vars('--color-neutral-stroke-2-rest')};
   
   ${typography.web.body1};
-`;
 
-const Icon = styled.div`
-  height: 24px;
-  width: 24px;
-
-  & svg {
-    height: 100%;
-    width: 100%;
-    
-    * {
-      fill: currentcolor;
-      stroke: currentcolor;
-    }
+  @media (width <= ${BOTTOM_MENU_BREAKPOINT}) { /* stylelint-disable-line media-query-no-invalid */
+    width: fit-content;
   }
 `;
 

@@ -1,0 +1,76 @@
+import {
+  ReactElement,
+} from 'react';
+import { styled } from 'styled-components';
+
+import CIcon from 'src/domains/misc/components/CIcon';
+import { typography } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
+
+type ValueProps = { value: ReactElement | string };
+
+const MIN_SEPARATOR_WIDTH = 10;
+
+type Props = {
+  label: ReactElement | string,
+  className?: string,
+  tooltipText?: string,
+} & ValueProps;
+
+const InfoPair = ({ label, className, tooltipText, ...props }: Props) => (
+  <ContainerHorizontal className={className}>
+    <Label>
+      {label}
+      {tooltipText && <CIcon icon="Info" color={vars('--color-neutral-foreground-4-rest')} />}
+    </Label>
+    <Separator />
+    <Value>
+      {props.value}
+    </Value>
+  </ContainerHorizontal>
+);
+
+export default InfoPair;
+
+const CONTAINER_GAP = '--spacing-s';
+
+const ContainerHorizontal = styled.section`
+  display: flex;
+  align-items: center;
+  min-height: ${vars('--spacing-xxl')};
+
+  column-gap: ${vars(CONTAINER_GAP)};
+`;
+
+const Label = styled.div`
+  display: flex;
+
+  align-items: center;
+  align-self: flex-start;
+  gap: ${vars('--spacing-xs')};
+
+  height: 24px;
+
+  flex-shrink: 0;
+  ${typography.web.body1};
+`;
+
+const Value = styled.div<{ $allowShrinking?: boolean }>`
+  display: flex;
+  gap: ${vars('--spacing-xxs')};
+  overflow: hidden;
+
+  flex-shrink: ${({ $allowShrinking }) => ($allowShrinking ? 1 : 0)};
+  ${typography.web.body1Strong};
+`;
+
+const Separator = styled.div`
+  flex: 1;
+  align-self: end;
+
+  height: 1px;
+  min-width: ${MIN_SEPARATOR_WIDTH}px;
+  margin-bottom: ${vars('--spacing-s-nudge-2')};
+
+  background: ${vars('--color-neutral-stroke-2-rest')};
+`;
