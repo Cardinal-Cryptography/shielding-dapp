@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import Button from 'src/domains/misc/components/Button';
 import { BREAKPOINTS } from 'src/domains/misc/consts/consts';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -13,6 +14,14 @@ const Footer = () => (
       <Copyright>
         Copyright © {new Date().getFullYear()} Shielder, ver. {import.meta.env.APP_VERSION}
       </Copyright>
+      <Button
+        variant="outline"
+        size="extra-small"
+        rightIcon="Open"
+        onClick={() => window.open('https://dex.common.fi/', '_blank', 'noopener')}
+      >
+        DEX and Bridge (WASM)
+      </Button>
     </InnerContainer>
   </Container>
 );
@@ -38,6 +47,7 @@ const InnerContainer = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-xxl')};
+  justify-content: space-between;
 
   flex-wrap: wrap;
 `;
