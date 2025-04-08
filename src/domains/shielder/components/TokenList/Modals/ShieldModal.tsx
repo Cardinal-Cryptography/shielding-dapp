@@ -2,6 +2,7 @@ import { skipToken, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { ReactElement, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { isNullish } from 'utility-types';
 import { usePublicClient } from 'wagmi';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
@@ -11,8 +12,7 @@ import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import Modal from 'src/domains/misc/components/Modal';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
-import isPresent from 'src/domains/misc/utils/isPresent';
-import useTransactionFee from 'src/domains/misc/utils/useTransactionFee';
+import useTransactionFees from 'src/domains/misc/utils/useTransactionFees';
 import NetworkFeeRow from 'src/domains/shielder/components/NetworkFeeRow';
 import useShield from 'src/domains/shielder/utils/useShield';
 import { typography } from 'src/domains/styling/utils/tokens';
@@ -45,13 +45,16 @@ const ShieldModal = ({ children, token }: Props) => {
     return token.decimals ? BigNumber(value || 0).shiftedBy(token.decimals) : BigNumber(0);
   }, [value, token.decimals]);
 
-  const transactionFee = useTransactionFee({ walletAddress: address });
+  const fees = useTransactionFees({ walletAddress: address, token });
 
   const maxAmountToShield = useMemo(() => {
-    if (!isPresent(token.balance)) return token.balance;
-    if (!isPresent(transactionFee)) return token.balance;
-    return BigInt(BigNumber.max((token.balance - transactionFee).toString(), 0).toString());
-  }, [token.balance, transactionFee]);
+    if (isNullish(token.balance)) return token.balance;
+    if (isNullish(fees)) return token.balance;
+    const result = token.isNative ? token.balance - fees.fee_details.total_cost_native : token.balance;
+    return result > 0n ? result : 0n;
+  }, [token, fees]);
+
+  console.log(fees, token.symbol);
 
   const { data: publicNativeBalance } = useQuery({
     queryKey:
@@ -64,15 +67,15 @@ const ShieldModal = ({ children, token }: Props) => {
         skipToken,
   });
 
-  const hasInsufficientFees = publicNativeBalance && transactionFee ?
-    publicNativeBalance < transactionFee :
+  const hasInsufficientFees = publicNativeBalance && fees?.fee_details.total_cost_native ?
+    publicNativeBalance < fees.fee_details.total_cost_native :
     false;
 
   const hasNotSelectedAmount = valueBn.lte(0);
   const isButtonDisabled = valueBn.lte(0) || isExceedingBalance;
 
-  const handleShield = () => {
-    void shield({ token, amount: BigInt(valueBn.toString()) });
+  const handleShield = (closeModal: () => Promise<unknown>) => {
+    void shield({ token, amount: BigInt(valueBn.toString()) }).then(() => void closeModal());
   };
 
   const buttonLabel = useMemo(() => {
@@ -92,35 +95,42 @@ const ShieldModal = ({ children, token }: Props) => {
 
   return (
     <StyledModal title="Shield" triggerElement={children}>
-      <Container>
-        <AssetBox
-          accountType="public"
-          title="Tokens"
-          tokenSymbol={token.symbol}
-          currentBalance={token.balance}
-          decimals={token.decimals}
-          maxNativeAmount={maxAmountToShield}
-          token={token}
-          effectiveAssetValue={value}
-          onAssetValueChange={setValue}
-          accountAddress={address}
-          onAssetBalanceExceeded={setIsExceedingBalance}
-        />
-        <Disclaimer>
-          <InfoContainer>
-            <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
-            <p>
-              You're about to shield your tokens.
-              Your shielded account balance and actions will be private and secured.
-            </p>
-          </InfoContainer>
-          <ShieldImage src={shieldImage} alt="Shield icon" />
-        </Disclaimer>
-        <NetworkFeeRow transactionFee={transactionFee} isError={hasInsufficientFees} />
-        <Button isLoading={isShielding} disabled={isButtonDisabled} variant="primary" onClick={handleShield}>
-          {buttonLabel}
-        </Button>
-      </Container>
+      {close => (
+        <Container>
+          <AssetBox
+            accountType="public"
+            title="Tokens"
+            tokenSymbol={token.symbol}
+            currentBalance={token.balance}
+            decimals={token.decimals}
+            maxAmount={maxAmountToShield}
+            token={token}
+            effectiveAssetValue={value}
+            onAssetValueChange={setValue}
+            accountAddress={address}
+            onAssetBalanceExceeded={setIsExceedingBalance}
+          />
+          <Disclaimer>
+            <InfoContainer>
+              <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
+              <p>
+                You're about to shield your tokens.
+                Your shielded account balance and actions will be private and secured.
+              </p>
+            </InfoContainer>
+            <ShieldImage src={shieldImage} alt="Shield icon" />
+          </Disclaimer>
+          <NetworkFeeRow transactionFee={fees?.fee_details.total_cost_native} isError={hasInsufficientFees} />
+          <Button
+            isLoading={isShielding}
+            disabled={isButtonDisabled}
+            variant="primary"
+            onClick={() => void handleShield(close)}
+          >
+            {buttonLabel}
+          </Button>
+        </Container>
+      )}
     </StyledModal>
   );
 };

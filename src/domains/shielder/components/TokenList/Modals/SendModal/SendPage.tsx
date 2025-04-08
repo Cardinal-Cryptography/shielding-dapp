@@ -12,7 +12,7 @@ import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import isPresent from 'src/domains/misc/utils/isPresent';
-import useTransactionFee from 'src/domains/misc/utils/useTransactionFee';
+import useTransactionFees from 'src/domains/misc/utils/useTransactionFees';
 import NetworkFeeRow from 'src/domains/shielder/components/NetworkFeeRow';
 import { Token } from 'src/domains/shielder/components/TokenList';
 import useWithdraw from 'src/domains/shielder/utils/useWithdraw';
@@ -29,9 +29,10 @@ type Props = {
     balance?: bigint,
   },
   addressTo: Address | undefined,
+  onSuccess?: () => Promise<unknown>,
 };
 
-const SendPage = ({ token, addressTo }: Props) => {
+const SendPage = ({ token, addressTo, onSuccess }: Props) => {
   const { withdraw, isWithdrawing } = useWithdraw();
   const { address } = useWallet();
   const publicClient = usePublicClient();
@@ -44,13 +45,13 @@ const SendPage = ({ token, addressTo }: Props) => {
     return token.decimals ? BigNumber(value || 0).shiftedBy(token.decimals) : BigNumber(0);
   }, [value, token.decimals]);
 
-  const transactionFee = useTransactionFee({ walletAddress: address });
+  const fees = useTransactionFees({ walletAddress: address, token });
 
-  const maxAmountToShield = useMemo(() => {
+  const maxAmountToSend = useMemo(() => {
     if (!isPresent(token.balance)) return token.balance;
-    if (!isPresent(transactionFee)) return token.balance;
-    return BigInt(BigNumber.max((token.balance - transactionFee).toString(), 0).toString());
-  }, [token.balance, transactionFee]);
+    if (!isPresent(fees)) return token.balance;
+    return BigInt(BigNumber.max((token.balance - fees.fee_details.total_cost_fee_token).toString(), 0).toString());
+  }, [token.balance, fees]);
 
   const { data: publicNativeBalance } = useQuery({
     queryKey:
@@ -63,8 +64,8 @@ const SendPage = ({ token, addressTo }: Props) => {
         skipToken,
   });
 
-  const hasInsufficientFees = publicNativeBalance && transactionFee ?
-    publicNativeBalance < transactionFee :
+  const hasInsufficientFees = publicNativeBalance && fees?.fee_details.total_cost_native ?
+    publicNativeBalance < fees.fee_details.total_cost_native :
     false;
 
   const hasNotSelectedAmount = valueBn.lte(0);
@@ -75,7 +76,7 @@ const SendPage = ({ token, addressTo }: Props) => {
       throw new Error('Address to is not available'); // should never happen
     }
 
-    void withdraw({ token, amount: BigInt(valueBn.toString()), addressTo, useManualWithdraw: true });
+    void withdraw({ token, amount: BigInt(valueBn.toString()), addressTo }).then(() => onSuccess?.());
   };
 
   const buttonLabel = useMemo(() => {
@@ -100,7 +101,7 @@ const SendPage = ({ token, addressTo }: Props) => {
         tokenSymbol={token.symbol}
         currentBalance={token.balance}
         decimals={token.decimals}
-        maxNativeAmount={maxAmountToShield}
+        maxAmount={maxAmountToSend}
         token={token}
         effectiveAssetValue={value}
         onAssetValueChange={setValue}
@@ -117,7 +118,7 @@ const SendPage = ({ token, addressTo }: Props) => {
         </InfoContainer>
         <ShieldImage src={shieldImage} alt="Shield icon" />
       </Disclaimer>
-      <NetworkFeeRow transactionFee={transactionFee} isError={hasInsufficientFees} />
+      <NetworkFeeRow transactionFee={fees?.fee_details.total_cost_native} isError={hasInsufficientFees} />
       <Button isLoading={isWithdrawing} disabled={isButtonDisabled} variant="primary" onClick={handleWithdraw}>
         {buttonLabel}
       </Button>

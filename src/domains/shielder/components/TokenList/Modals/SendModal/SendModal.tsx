@@ -39,7 +39,7 @@ const SendModal = ({ children, token }: Props) => {
       {
         [
           <SelectAccountPage key="select-account" addressTo={addressTo} setAddressTo={setAddressTo} onConfirmClick={onConfirm} />,
-          <SendPage key="send-tokens" token={token} addressTo={addressTo as Address} />,
+          close => <SendPage key="send-tokens" token={token} addressTo={addressTo as Address} onSuccess={close} />,
         ]
       }
     </StyledModal>

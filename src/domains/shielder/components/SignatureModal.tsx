@@ -20,8 +20,7 @@ const SignatureModal = () => {
   const [isTryingAgain, setIsTryingAgain] = useState(false);
   const { address, disconnect, isConnected } = useWallet();
   const { connector } = useAccount();
-  const { setShielderPrivateKeySeeds } = useShielderStore(address);
-
+  const { setShielderPrivateKeySeeds, shielderPrivateKey } = useShielderStore(address);
   const getShielderPrivateKey = async () => {
     if (!address) throw new Error('No address');
     const signature = await signMessage(wagmiAdapter.wagmiConfig, {
@@ -34,7 +33,8 @@ const SignatureModal = () => {
 
   const isReady = !!connector?.getChainId && isConnected;
 
-  const { data: shielderPrivateKey, refetch, isError: isSigningError, isLoading } = useQuery({
+  const { refetch, isError: isSigningError, isLoading } = useQuery({
+    enabled: !shielderPrivateKey,
     queryKey: address ? getQueryKey.shielderPrivateKey(address) : [],
     queryFn: isReady ? getShielderPrivateKey : skipToken,
     staleTime: Infinity,
@@ -54,7 +54,7 @@ const SignatureModal = () => {
   const isError = isTryingAgain || isSigningError || !isConnected;
 
   return (
-    <Modal isOpenInitially={isConnected && !shielderPrivateKey} nonDismissable>
+    <Modal isOpenInitially={isConnected && !shielderPrivateKey } nonDismissable>
       <Content>
         <CheckedContainer>
           <SignatureIcon size={60} icon="Signature" color={isError ? vars('--color-status-danger-foreground-1-rest') : undefined} />

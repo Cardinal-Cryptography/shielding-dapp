@@ -1,24 +1,51 @@
 import { erc20Token, nativeToken } from '@cardinal-cryptography/shielder-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAccount,useSendTransaction } from 'wagmi';
+import { erc20Abi } from 'viem';
+import { useAccount, usePublicClient, useSendTransaction, useWalletClient } from 'wagmi';
 
 import { Token } from 'src/domains/chains/types/misc';
+import useChain from 'src/domains/chains/utils/useChain';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 
 import useShielderClient from './useShielderClient';
 
 export const useShield = () => {
   const { data: shielderClient } = useShielderClient();
-  const { sendTransactionAsync } = useSendTransaction();
   const { address: walletAddress, chainId } = useAccount();
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+  const { sendTransactionAsync } = useSendTransaction();
   const queryClient = useQueryClient();
+  const chainConfig = useChain();
 
   const { mutateAsync: shield, isPending: isShielding, ...meta } = useMutation({
-    mutationFn: async ({ token, amount }: { token: Token, amount: bigint }) => {
+    mutationFn: async ({ token, amount }: { token: Token, amount: bigint, onSuccess?: () => void }) => {
       if (!shielderClient) throw new Error('Shielder is not ready');
       if (!walletAddress) throw new Error('Address is not available');
 
       const sdkToken = token.isNative ? nativeToken() : erc20Token(token.address);
+
+      if (!token.isNative) {
+        if (!publicClient) throw new Error('Public client is not ready');
+        if (!walletClient) throw new Error('Wallet client is not ready');
+        if (!chainConfig?.shielderConfig) throw new Error('Shielder config is missing in chain configuration');
+
+        const allowance = await publicClient.readContract({
+          address: token.address,
+          abi: erc20Abi,
+          functionName: 'allowance',
+          args: [walletAddress, chainConfig.shielderConfig.shielderContractAddress],
+        });
+
+        if (allowance < amount) {
+          await walletClient.writeContract({
+            address: token.address,
+            abi: erc20Abi,
+            functionName: 'approve',
+            args: [chainConfig.shielderConfig.shielderContractAddress, amount],
+          });
+        }
+      }
 
       await shielderClient.shield(
         sdkToken,

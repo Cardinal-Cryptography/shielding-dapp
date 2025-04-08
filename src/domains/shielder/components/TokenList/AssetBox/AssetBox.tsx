@@ -32,7 +32,7 @@ type Props = {
   tokenSymbol: string | undefined,
   currentBalance: bigint | undefined,
   decimals: number | undefined,
-  maxNativeAmount: bigint | undefined,
+  maxAmount: bigint | undefined,
   token: Token | undefined,
   effectiveAssetValue: string | undefined,
   onAssetValueChange: (value: string) => void,
@@ -47,7 +47,7 @@ const AssetBox = ({
   tokenSymbol,
   currentBalance,
   decimals,
-  maxNativeAmount,
+  maxAmount,
   token,
   effectiveAssetValue,
   onAssetValueChange,
@@ -56,6 +56,7 @@ const AssetBox = ({
   accountAddress,
   accountType = 'public',
 }: Props) => {
+  console.log(maxAmount);
   const [manuallyEnteredPercentage, setManuallyEnteredPercentage] = useState<number>();
   const [isPrecise, setIsPrecise] = useState(false);
   const [inputTokenValue, setInputTokenValue] = useDecimalInputValue({
@@ -72,10 +73,9 @@ const AssetBox = ({
     getHumanFriendlyBigNumber(currentBalance, decimals) :
     undefined;
 
-  const nativeCoinClippedMaxValue = isPresent(maxNativeAmount) && isPresent(decimals) ?
-    getHumanFriendlyBigNumber(maxNativeAmount, decimals) : undefined;
-  const shouldClipNativeCoinValue =
-    token?.isNative && !isNullish(maxNativeAmount) && !isNullish(nativeCoinClippedMaxValue);
+  const clippedMaxValue = isPresent(maxAmount) && isPresent(decimals) ?
+    getHumanFriendlyBigNumber(maxAmount, decimals) : undefined;
+  const shouldClipNativeCoinValue = isPresent(maxAmount) && isPresent(clippedMaxValue);
 
   const handleSliderValueChange = useDebouncedCallback(
     (value: number) => {
@@ -83,7 +83,7 @@ const AssetBox = ({
 
       const newAssetValue = (
         BigNumber.min(
-          shouldClipNativeCoinValue ? nativeCoinClippedMaxValue : transactionMaxValue,
+          shouldClipNativeCoinValue ? clippedMaxValue : transactionMaxValue,
           transactionMaxValue.multipliedBy(value)
         ).dp(decimals, BigNumber.ROUND_FLOOR)
       ).toFixed();
@@ -100,11 +100,11 @@ const AssetBox = ({
   const isBalanceExceeded = (
     isPresent(decimals) && isPresent(currentBalance) && isPresent(effectiveAssetValue) &&
     fromDecimal(BigNumber(effectiveAssetValue), decimals).toBn()
-      .gt(shouldClipNativeCoinValue ? maxNativeAmount.toString() : currentBalance.toString())
+      .gt(shouldClipNativeCoinValue ? maxAmount.toString() : currentBalance.toString())
   );
 
-  const isBalanceCapped = nativeCoinClippedMaxValue && effectiveAssetValue ?
-    BigNumber(effectiveAssetValue).eq(nativeCoinClippedMaxValue) :
+  const isBalanceCapped = clippedMaxValue && effectiveAssetValue ?
+    BigNumber(effectiveAssetValue).eq(clippedMaxValue) :
     false;
 
   useEffect(() => {
@@ -218,15 +218,21 @@ const AssetBox = ({
               </PercentageContainer>
             )}
           </Row>
-          {isPresent(effectiveAssetValue) && transactionMaxValue?.gt(0) && nativeCoinClippedMaxValue?.gt(0) && (
-            <InteractiveSlider
-              snapPoints={[0, 0.25, 0.5, 0.75, 1]}
-              snapRange={20}
-              onValueChange={handleSliderValueChange}
-              value={BigNumber(effectiveAssetValue).div(transactionMaxValue).toNumber()}
-              highlighted={isBalanceExceeded}
-            />
-          )}
+          {
+            isPresent(effectiveAssetValue) &&
+            transactionMaxValue?.gt(0) &&
+            (
+              !shouldClipNativeCoinValue || clippedMaxValue.gt(0)
+            ) && (
+              <InteractiveSlider
+                snapPoints={[0, 0.25, 0.5, 0.75, 1]}
+                snapRange={20}
+                onValueChange={handleSliderValueChange}
+                value={BigNumber(effectiveAssetValue).div(transactionMaxValue).toNumber()}
+                highlighted={isBalanceExceeded}
+              />
+            )
+          }
         </SplitBox.Section>
       )}
     </SplitBox.Container>
