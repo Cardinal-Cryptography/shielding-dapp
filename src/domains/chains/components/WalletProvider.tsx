@@ -15,7 +15,7 @@ type WalletContextType = {
   isConnected: boolean,
   disconnect: () => Promise<void>,
   address?: Address,
-  privateKey: string | undefined,
+  privateKey: Address | undefined,
 };
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);

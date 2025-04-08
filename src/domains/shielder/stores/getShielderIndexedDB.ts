@@ -1,5 +1,6 @@
 import { ShielderTransaction } from '@cardinal-cryptography/shielder-sdk';
 import { openDB, IDBPDatabase } from 'idb';
+import { Address, sha256 } from 'viem';
 import { z } from 'zod';
 
 const DB_NAME = 'SHIELDER_STORAGE';
@@ -8,7 +9,7 @@ const DB_VERSION = 2;
 const STORE_CLIENTS = 'clients';
 const STORE_TRANSACTIONS = 'transactions';
 
-type ShielderClientData = Record<string, string>;
+type ShielderClientData = Record<string, Record<string, string>>;
 
 const transactionSchema = z.object({
   type: z.enum(['NewAccount', 'Deposit', 'Withdraw']),
@@ -68,27 +69,34 @@ const initDB = async (): Promise<IDBPDatabase<DBSchema>> => {
   });
 };
 
-export const getShielderIndexedDB = (chainId: number) => {
-  const key = chainId.toString();
+export const getShielderIndexedDB = (chainId: number, privateKey: Address) => {
+  const chainKey = chainId.toString();
+  const hashedPrivateKey = sha256(privateKey);
   const initDbPromise = initDB();
 
   return {
     getItem: async (itemKey: string): Promise<string | null> => {
       const db = await initDbPromise;
-      const clientData = (await db.get(STORE_CLIENTS, key)) ?? {};
-      return clientData[itemKey] ?? null;
+      const allDataForAddress = await db.get(STORE_CLIENTS, hashedPrivateKey);
+      const chainData = allDataForAddress?.[chainKey];
+      return chainData?.[itemKey] ?? null;
     },
-
     setItem: async (itemKey: string, value: string): Promise<void> => {
       const db = await initDbPromise;
-      const existingData = (await db.get(STORE_CLIENTS, key)) ?? {};
+      const allDataForAddress = (await db.get(STORE_CLIENTS, hashedPrivateKey)) ?? {};
+      const existingChainData = allDataForAddress[chainKey] ?? {};
 
-      const updatedData = {
-        ...existingData,
+      const updatedChainData = {
+        ...existingChainData,
         [itemKey]: value,
       };
 
-      await db.put(STORE_CLIENTS, updatedData, key);
+      const updatedAllData = {
+        ...allDataForAddress,
+        [chainKey]: updatedChainData,
+      };
+
+      await db.put(STORE_CLIENTS, updatedAllData, hashedPrivateKey);
     },
   };
 };

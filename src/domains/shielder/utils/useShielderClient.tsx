@@ -10,7 +10,6 @@ import useChain from 'src/domains/chains/utils/useChain';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import { getShielderIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import { getTransactionsIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import { useShielderStore } from 'src/domains/shielder/stores/shielder';
 import { useWasm } from 'src/domains/shielder/utils/WasmProvider';
 
 const useShielderClient = () => {
@@ -18,36 +17,35 @@ const useShielderClient = () => {
   const { wasmCryptoClient, wasmLoaded } = useWasm();
 
   const publicClient = usePublicClient({ chainId: chainConfig?.id });
-  const { address: account } = useWallet();
-  const { shielderPrivateKey } = useShielderStore(account);
+  const { address: accountAddress, privateKey } = useWallet();
 
   const isQueryDisabled =
-      !publicClient || !chainConfig || !wasmLoaded || !account || !wasmCryptoClient || !shielderPrivateKey;
+      !publicClient || !chainConfig || !wasmLoaded || !accountAddress || !wasmCryptoClient || !privateKey;
 
   return useQuery({
-    queryKey: chainConfig && shielderPrivateKey ? getQueryKey.shielderClient(chainConfig.id, shielderPrivateKey) : [],
+    queryKey: chainConfig && privateKey ? getQueryKey.shielderClient(chainConfig.id, privateKey) : [],
     staleTime: Infinity,
-    retry: false,
     queryFn: isQueryDisabled ? skipToken : async () => {
-      const { shielderConfig, id } = chainConfig;
+      const { shielderConfig, id: chainId } = chainConfig;
 
       if (!shielderConfig) {
         throw new Error('Shielder config is not available');
       }
 
-      const storage = getTransactionsIndexedDB(account);
+      const transactionsStorage = getTransactionsIndexedDB(accountAddress);
+      const shielderStorage = getShielderIndexedDB(chainId, privateKey);
 
       const client = createShielderClient({
-        shielderSeedPrivateKey: shielderPrivateKey,
-        chainId: BigInt(id),
+        shielderSeedPrivateKey: privateKey,
+        chainId: BigInt(chainId),
         publicClient,
         contractAddress: shielderConfig.shielderContractAddress,
         relayerUrl: shielderConfig.relayerUrl,
-        storage: getShielderIndexedDB(id),
+        storage: shielderStorage,
         cryptoClient: wasmCryptoClient,
         callbacks: {
           onNewTransaction: async (tx: ShielderTransaction) => {
-            await storage.addItem(
+            await transactionsStorage.addItem(
               chainConfig.id,
               tx
             );
