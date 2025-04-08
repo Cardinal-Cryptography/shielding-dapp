@@ -1,6 +1,7 @@
 import { useMediaQuery } from '@react-hookz/web';
 import styled from 'styled-components';
 
+import ConnectModal from 'src/domains/chains/components/ConnectModal';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
 import Button from 'src/domains/misc/components/Button';
@@ -57,7 +58,8 @@ const TopBar = () => {
             </AccountDetails>
           </AccountManager>
         ) :
-          <Button variant="primary" onClick={() => void openModal({ view: 'Connect' })}>Connect</Button>}
+          <ConnectModal triggerElement={<Button variant="primary">Connect</Button>} />
+        }
       </NavBox.UserCanvas>
     </NavBox.Container>
   );

@@ -62,57 +62,59 @@ const Shielder = () => {
     }
   };
   return (
-    <Container>
-      {!isConnected && (
-        <ConnectContainer>
-          <Button
-            onClick={() => void openModal({ view: 'Connect' })}
+    <DoubleBorderBox.Wrapper>
+      <Container>
+        {!isConnected && (
+          <ConnectContainer>
+            <Button
+              onClick={() => void openModal({ view: 'Connect' })}
+              variant="primary"
+            >
+              Connect wallet
+            </Button>
+          </ConnectContainer>
+        )}
+        <BalanceWrapper>
+          <Header>
+            <Title>Your Assets</Title>
+            {accountAddress && (
+              <Actions>
+                <AddressWrapper>
+                  <Address size={18} data={accountAddress}>{formatAddress(accountAddress)}</Address>
+                </AddressWrapper>
+              </Actions>
+            )}
+          </Header>
+          <Balance
+            selectedAccountType={selectedAccountType}
+            setSelectedAccountType={setSelectedAccountType}
+            publicBalance={undefined}
+            privateBalance={undefined}
+            nativeAssetDecimals={chainConfig?.nativeCurrency.decimals}
+            nativeAssetUsdPrice={undefined}
+            publicTokensUsdValue={undefined}
+          />
+        </BalanceWrapper>
+        <TokensWrapper>
+          <TokenList
+            selectedTokens={selectedTokenData ? [selectedTokenData] : []}
+            onTokenClick={handleSelect}
+            tokens={tokenList}
+          />
+        </TokensWrapper>
+        <ButtonWrapper>
+          <StyledButton
+            disabled={!selectedTokenData?.balance.atomic || isShielding || isWithdrawing}
+            onClick={
+              handleShieldOrUnShield
+            }
             variant="primary"
           >
-            Connect wallet
-          </Button>
-        </ConnectContainer>
-      )}
-      <BalanceWrapper>
-        <Header>
-          <Title>Your Assets</Title>
-          {accountAddress && (
-            <Actions>
-              <AddressWrapper>
-                <Address size={18} data={accountAddress}>{formatAddress(accountAddress)}</Address>
-              </AddressWrapper>
-            </Actions>
-          )}
-        </Header>
-        <Balance
-          selectedAccountType={selectedAccountType}
-          setSelectedAccountType={setSelectedAccountType}
-          publicBalance={undefined}
-          privateBalance={undefined}
-          nativeAssetDecimals={chainConfig?.nativeCurrency.decimals}
-          nativeAssetUsdPrice={undefined}
-          publicTokensUsdValue={undefined}
-        />
-      </BalanceWrapper>
-      <TokensWrapper>
-        <TokenList
-          selectedTokens={selectedTokenData ? [selectedTokenData] : []}
-          onTokenClick={handleSelect}
-          tokens={tokenList}
-        />
-      </TokensWrapper>
-      <ButtonWrapper>
-        <StyledButton
-          disabled={!selectedTokenData?.balance.atomic || isShielding || isWithdrawing}
-          onClick={
-            handleShieldOrUnShield
-          }
-          variant="primary"
-        >
-          {selectedAccountType === 'public' ? 'Shield tokens' : 'Unshield tokens'}
-        </StyledButton>
-      </ButtonWrapper>
-    </Container>
+            {selectedAccountType === 'public' ? 'Shield tokens' : 'Unshield tokens'}
+          </StyledButton>
+        </ButtonWrapper>
+      </Container>
+    </DoubleBorderBox.Wrapper>
   );
 };
 

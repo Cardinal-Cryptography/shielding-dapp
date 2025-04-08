@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
 import { type ReactNode } from 'react';
 
-import getQueryKey from 'src/domains/misc/utils/getQueryKey.ts';
+import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 
-import { wasmCryptoClientRead } from './wasmCryptoClientRead.ts';
+import { wasmCryptoClientRead } from './wasmCryptoClientRead';
 
 type WasmContextType = {
   wasmCryptoClient: CryptoClient | null,
@@ -19,7 +19,7 @@ type Props = { children: ReactNode };
 const WasmProvider = ({ children }: Props) => {
   const { data, isSuccess } = useQuery({
     queryKey: getQueryKey.wasmCryptoClient(),
-    queryFn: () => wasmCryptoClientRead,
+    queryFn: () => wasmCryptoClientRead(),
     staleTime: Infinity,
   });
 

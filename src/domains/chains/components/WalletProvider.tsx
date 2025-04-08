@@ -15,6 +15,7 @@ type WalletContextType = {
   isConnected: boolean,
   disconnect: () => Promise<void>,
   address?: Address,
+  privateKey: string | undefined,
 };
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -23,22 +24,15 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
   const { open: openModal } = useAppKit();
   const { address, isConnected, status } = useAccount();
   const { disconnect } = useDisconnect();
-  const { removePrivateKeys } = useShielderStore();
-
-  const handleDisconnect = async () => {
-    await disconnect();
-
-    if(address) {
-      removePrivateKeys([address]);
-    }
-  };
+  const { shielderPrivateKey } = useShielderStore(address);
 
   const value = {
-    disconnect: handleDisconnect,
+    disconnect,
     openModal,
     address,
     isConnected,
     isLoading: status !== 'connected' && status !== 'disconnected',
+    privateKey: shielderPrivateKey,
   };
 
   return (

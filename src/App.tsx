@@ -4,7 +4,7 @@ import Layout from 'src/domains/misc/components/Layout';
 import Providers from 'src/domains/misc/components/Providers';
 import Redirect from 'src/domains/routing/components/Redirect';
 import router from 'src/domains/routing/utils/router';
-import Shielder from 'src/domains/shielder/components/Shielder';
+import ShielderView from 'src/domains/shielder/components/ShielderView.tsx';
 
 const App = () => {
   const route = router.useRoute(['Shield']);
@@ -14,7 +14,7 @@ const App = () => {
       <Layout>
         {
           match(route)
-            .with({ name: 'Shield' }, () => <Shielder />)
+            .with({ name: 'Shield' }, () => <ShielderView />)
             .otherwise(() => <Redirect to="/" />)
         }
       </Layout>
