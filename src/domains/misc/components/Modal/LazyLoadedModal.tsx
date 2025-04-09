@@ -246,7 +246,7 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
                                 $isSlideInCardMode={!!isSlideInCardMode}
                                 $isRightSide={side === 'right'}
                               >
-                                {title ? (
+                                {title ? onPreviousPageClick ? (
                                   <SecondPageTitle>
                                     <Button
                                       variant="transparent"
@@ -265,6 +265,25 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
                                       </RadixDialog.Close>
                                     )}
                                   </SecondPageTitle>
+                                ) : (
+                                  <FirstPageTitleComponent
+                                    size="medium"
+                                    // @ts-expect-error TS2322: "withPropAs" loses some type information in case of union types
+                                    closeButton={[
+                                      additionalTitleRightSide,
+                                      !nonDismissable &&(
+                                        <RadixDialog.Close key="close button" asChild>
+                                          <CloseButton size="small" variant="transparent" leftIcon={closeIcon} />
+                                        </RadixDialog.Close>
+                                      ),
+                                    ] as Iterable<ReactNode>}
+                                  >
+                                    {typeof title === 'string' ? (
+                                      <RadixDialog.Title>
+                                        {title}
+                                      </RadixDialog.Title>
+                                    ) : title(RadixDialog.Title)}
+                                  </FirstPageTitleComponent>
                                 ) : <RadixDialog.Title hidden />}
                                 {typeof children === 'function' ? children(initiateClosing) : children}
                               </Content>

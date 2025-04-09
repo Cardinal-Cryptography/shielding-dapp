@@ -1,8 +1,7 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
-import { useMemo, useState } from 'react';
+import { ComponentProps, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Address } from 'viem';
 import { usePublicClient } from 'wagmi';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
@@ -10,12 +9,12 @@ import useChain from 'src/domains/chains/utils/useChain';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import fromDecimals from 'src/domains/misc/utils/fromDecimals.ts';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import useTransactionFees from 'src/domains/misc/utils/useTransactionFees';
-import FeeRows from 'src/domains/shielder/components/FeeRows.tsx';
+import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
 import { Token } from 'src/domains/shielder/components/TokenList';
-import useWithdraw from 'src/domains/shielder/utils/useWithdraw';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -28,22 +27,17 @@ type Props = {
     decimals?: number,
     balance?: bigint,
   },
-  addressTo: Address | undefined,
-  onSuccess?: () => Promise<unknown>,
+  feeConfig: ComponentProps<typeof FeeBreakdown>['config'],
+  onContinue: (amount: bigint) => void,
 };
 
-const SendPage = ({ token, addressTo, onSuccess }: Props) => {
-  const { withdraw, isWithdrawing } = useWithdraw();
+const SelectAmountPage = ({ token, feeConfig, onContinue }: Props) => {
   const { address } = useWallet();
   const publicClient = usePublicClient();
   const chainConfig = useChain();
 
   const [value, setValue] = useState('');
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
-
-  const valueBn = useMemo(() => {
-    return token.decimals ? BigNumber(value || 0).shiftedBy(token.decimals) : BigNumber(0);
-  }, [value, token.decimals]);
 
   const fees = useTransactionFees({ walletAddress: address, token });
 
@@ -68,26 +62,18 @@ const SendPage = ({ token, addressTo, onSuccess }: Props) => {
     publicNativeBalance < fees.fee_details.total_cost_native :
     false;
 
-  const hasNotSelectedAmount = valueBn.lte(0);
-  const isButtonDisabled = valueBn.lte(0) || isExceedingBalance || hasInsufficientFees;
+  const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
+  const hasNotSelectedAmount = amount <= 0n;
 
-  const handleWithdraw = () => {
-    if(!addressTo) {
-      throw new Error('Address to is not available'); // should never happen
-    }
-
-    void withdraw({ token, amount: BigInt(valueBn.toString()), addressTo }).then(() => onSuccess?.());
-  };
+  const isButtonDisabled = hasNotSelectedAmount || isExceedingBalance || hasInsufficientFees;
 
   const buttonLabel = useMemo(() => {
-    if (isWithdrawing) return 'Sending';
     if (hasInsufficientFees) return `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance`;
     if (isExceedingBalance) return `Insufficient ${token.symbol} Balance`;
     if (hasNotSelectedAmount) return 'Enter amount';
-    return 'Send';
+    return 'Continue';
   }, [
     hasInsufficientFees,
-    isWithdrawing,
     isExceedingBalance,
     token.symbol,
     hasNotSelectedAmount,
@@ -118,38 +104,15 @@ const SendPage = ({ token, addressTo, onSuccess }: Props) => {
         </InfoContainer>
         <ShieldImage src={shieldImage} alt="Shield icon" />
       </Disclaimer>
-      <FeeRows config={[
-        {
-          label: 'Transaction fee',
-          amount: fees?.fee_details.total_cost_fee_token,
-          tokenSymbol: token.symbol,
-          tokenDecimals: token.decimals,
-          tokenIcon: token.icon,
-        },
-        {
-          label: 'Network fee',
-          amount: fees?.fee_details.relayer_cost_native,
-          tokenSymbol: chainConfig?.nativeCurrency.symbol,
-          tokenDecimals: chainConfig?.nativeCurrency.decimals,
-          tokenIcon: chainConfig?.NativeTokenIcon,
-        },
-        {
-          label: 'Relayer fee',
-          amount: fees?.fee_details.commission_native,
-          tokenSymbol: chainConfig?.nativeCurrency.symbol,
-          tokenDecimals: chainConfig?.nativeCurrency.decimals,
-          tokenIcon: chainConfig?.NativeTokenIcon,
-        },
-      ]}
-      />
-      <Button isLoading={isWithdrawing} disabled={isButtonDisabled} variant="primary" onClick={handleWithdraw}>
+      <FeeBreakdown config={feeConfig} />
+      <Button disabled={isButtonDisabled} variant="primary" onClick={() => void onContinue(amount)}>
         {buttonLabel}
       </Button>
     </Container>
   );
 };
 
-export default SendPage;
+export default SelectAmountPage;
 
 const Container = styled.div`
   display: flex;

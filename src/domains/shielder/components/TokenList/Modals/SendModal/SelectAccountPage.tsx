@@ -51,7 +51,7 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
         <ShieldImage src={shieldImage} alt="Shield icon" />
       </Disclaimer>
       <Button variant="primary" onClick={onConfirmClick} disabled={!isAddress(addressTo)}>
-        Confirm
+        Continue
       </Button>
     </Container>
   );

@@ -11,7 +11,7 @@ import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
 import ShieldModal from './Modals';
-import SendModal from './Modals/SendModal/SendModal';
+import SendModal from './Modals/SendModal';
 
 import { Token } from '.';
 

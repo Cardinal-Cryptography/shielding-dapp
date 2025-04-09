@@ -1,18 +1,16 @@
 import { ReactElement,useState } from 'react';
 import styled from 'styled-components';
-import { isAddress } from 'viem';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
-import useChain from 'src/domains/chains/utils/useChain.ts';
+import useChain from 'src/domains/chains/utils/useChain';
 import Modal from 'src/domains/misc/components/Modal';
 import useTransactionFees from 'src/domains/misc/utils/useTransactionFees';
-import useWithdraw from 'src/domains/shielder/utils/useWithdraw.ts';
+import useShield from 'src/domains/shielder/utils/useShield';
 import vars from 'src/domains/styling/utils/vars';
 
 import { Token } from '../../';
 import ConfirmPage from '../ConfirmPage';
 
-import SelectAccountPage from './SelectAccountPage';
 import SelectAmountPage from './SelectAmountPage';
 
 type Props = {
@@ -26,36 +24,17 @@ type Props = {
 
 const SendModal = ({ children, token }: Props) => {
   const { address } = useWallet();
-  const [addressTo, setAddressTo] = useState<string>(address ?? '');
   const [page, setPage] = useState(0);
   const [amount, setAmount] = useState(0n);
   const chainConfig = useChain();
-  const { withdraw, isWithdrawing } = useWithdraw();
-
-  const onConfirm = () => {
-    setPage(1);
-  };
+  const { shield, isShielding, reset } = useShield();
 
   const fees = useTransactionFees({ walletAddress: address, token });
 
   const feeConfig = [
     {
       label: 'Transaction fee',
-      amount: fees?.fee_details.total_cost_fee_token,
-      tokenSymbol: token.symbol,
-      tokenDecimals: token.decimals,
-      tokenIcon: token.icon,
-    },
-    {
-      label: 'Network fee',
-      amount: fees?.fee_details.relayer_cost_native,
-      tokenSymbol: chainConfig?.nativeCurrency.symbol,
-      tokenDecimals: chainConfig?.nativeCurrency.decimals,
-      tokenIcon: chainConfig?.NativeTokenIcon,
-    },
-    {
-      label: 'Relayer fee',
-      amount: fees?.fee_details.commission_native,
+      amount: fees?.fee_details.total_cost_native,
       tokenSymbol: chainConfig?.nativeCurrency.symbol,
       tokenDecimals: chainConfig?.nativeCurrency.decimals,
       tokenIcon: chainConfig?.NativeTokenIcon,
@@ -64,39 +43,37 @@ const SendModal = ({ children, token }: Props) => {
 
   const handleSelectAmount = (amount: bigint) => {
     setAmount(amount);
-    setPage(2);
+    setPage(1);
   };
 
-  const validatedAddressTo = isAddress(addressTo) ? addressTo : undefined;
+  const handleShield = (close: () => Promise<unknown>) => {
+    void shield({ token, amount }).then(() => void close());
+  };
 
-  const handleWithdraw = (close: () => Promise<unknown>) => {
-    if(!validatedAddressTo) {
-      throw new Error('Address to is not available'); // should never happen
-    }
-
-    void withdraw({ token, amount, addressTo: validatedAddressTo }).then(() => close());
+  const handleReset = () => {
+    setPage(0);
+    reset();
   };
 
   return (
     <StyledModal
       currentPageIndex={page}
-      title={['Send', 'Send', 'Send']}
+      title={['Shield', 'Shield']}
       triggerElement={children}
-      onClose={() => void setPage(0)}
+      onClose={handleReset}
     >
       {
         [
-          <SelectAccountPage key="select-account" addressTo={addressTo} setAddressTo={setAddressTo} onConfirmClick={onConfirm} />,
           <SelectAmountPage key="select-amount" token={token} feeConfig={feeConfig} onContinue={handleSelectAmount} />,
           close => (
             <ConfirmPage
               key="confirmation"
               amount={amount}
               token={token}
-              addressTo={validatedAddressTo}
-              onConfirm={() => void handleWithdraw(close)}
-              loadingText={isWithdrawing ? 'Sending' : undefined}
+              onConfirm={() => void handleShield(close)}
+              loadingText={isShielding ? 'Shielding' : undefined}
               feeConfig={feeConfig}
+              addressFrom={address}
             />
           ),
         ]
