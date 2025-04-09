@@ -12,6 +12,7 @@ import CIcon from 'src/domains/misc/components/CIcon';
 import Modal from 'src/domains/misc/components/Modal';
 import CheckedContainer from 'src/domains/misc/components/PatternContainer';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import { SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE } from 'src/domains/shielder/consts/consts';
 import { useShielderStore } from 'src/domains/shielder/stores/shielder';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -24,7 +25,7 @@ const SignatureModal = () => {
   const getShielderPrivateKey = async () => {
     if (!address) throw new Error('No address');
     const signature = await signMessage(wagmiAdapter.wagmiConfig, {
-      message: `I love common wallet on account - ${address}`,
+      message: SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE,
     });
     const key = keccak256(toHex(signature));
     setShielderPrivateKeySeeds(address, key);
