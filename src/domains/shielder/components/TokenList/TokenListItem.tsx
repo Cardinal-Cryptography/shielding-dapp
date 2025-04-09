@@ -37,7 +37,9 @@ const TokenListItem = ({ token }: Props) => {
     <Container>
       <TokenIcon size={40} Icon={token.icon} />
       <Column>
-        <Title>{name ?? <Skeleton style={{ height: '14px', width: '80px', marginTop: '4px' }} />}</Title>
+        <Title>
+          {name?.replace('Dumb-faucet ', '') ?? <Skeleton style={{ height: '14px', width: '80px', marginTop: '4px' }} />}
+        </Title>
         <Subtitle>
           {isPresent(activeBalance) && isPresent(decimals) && isPresent(activeBalance) ? formatBalance({
             balance: activeBalance,
