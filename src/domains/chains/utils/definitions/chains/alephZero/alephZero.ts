@@ -1,3 +1,4 @@
+import SpringIcon from '../../commonTokensIcons/spring.svg?react';
 import UsdcIcon from '../../commonTokensIcons/usdc.svg?react';
 import UsdtIcon from '../../commonTokensIcons/usdt.svg?react';
 import WAzeroIcon from '../../commonTokensIcons/wAzero.svg?react';
@@ -78,7 +79,7 @@ const config: ChainConfig = {
       },
     },
     whitelistedTokens: {
-      '0x1C66D6187B318f10Eb1A8BD986451DF02BE3DbAC': { icon: WEthIcon },
+      '0x1C66D6187B318f10Eb1A8BD986451DF02BE3DbAC': { icon: SpringIcon },
       '0x27a1Bb249A2973D01264e8e43Ee9be2424F1a52B': { icon: UsdtIcon },
     },
   },

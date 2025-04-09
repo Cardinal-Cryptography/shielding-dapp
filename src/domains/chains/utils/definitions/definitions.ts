@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ComponentType } from 'react';
 import { Address, Chain } from 'viem';
 
 import { NetworkEnvironment } from 'src/domains/chains/types/misc';
@@ -9,10 +9,10 @@ import arbitrum from './chains/arbitrum';
 export type Definition = {
   id: number,
   name: string,
-  ChainIcon: FC,
-  NativeTokenIcon: FC,
+  ChainIcon: ComponentType,
+  NativeTokenIcon: ComponentType,
   whitelistedTokens: Record<Address, {
-    icon: FC,
+    icon: ComponentType,
   }>,
   shielderConfig?: {
     shielderContractAddress: Address,

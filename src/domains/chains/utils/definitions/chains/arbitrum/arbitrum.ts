@@ -1,7 +1,7 @@
 import { arbitrum, arbitrumSepolia } from 'viem/chains';
 
+import SpringIcon from '../../commonTokensIcons/spring.svg?react';
 import UsdtIcon from '../../commonTokensIcons/usdt.svg?react';
-import WEthIcon from '../../commonTokensIcons/wEth.svg?react';
 import { ChainConfig } from '../../definitions';
 
 import ChainIcon from './arbitrum.svg?react';
@@ -23,7 +23,7 @@ const config: ChainConfig = {
     ChainIcon,
     NativeTokenIcon,
     whitelistedTokens: {
-      '0xaefC07E8821fB684DB23c7e3a6A1CC91B871a954': { icon: WEthIcon },
+      '0xaefC07E8821fB684DB23c7e3a6A1CC91B871a954': { icon: SpringIcon },
       '0xbf97a6bea949aabe8324f78b2f5455f7b1f52a78': { icon: UsdtIcon },
     },
   },

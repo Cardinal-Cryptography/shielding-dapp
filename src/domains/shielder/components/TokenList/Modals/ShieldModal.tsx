@@ -1,19 +1,17 @@
-import { skipToken, useQuery } from '@tanstack/react-query';
-import BigNumber from 'bignumber.js';
 import { ReactElement, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { isNullish } from 'utility-types';
-import { usePublicClient } from 'wagmi';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
+import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import Modal from 'src/domains/misc/components/Modal';
-import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import fromDecimals from 'src/domains/misc/utils/fromDecimals.ts';
 import useTransactionFees from 'src/domains/misc/utils/useTransactionFees';
-import NetworkFeeRow from 'src/domains/shielder/components/NetworkFeeRow';
+import FeeRows from 'src/domains/shielder/components/FeeRows.tsx';
 import useShield from 'src/domains/shielder/utils/useShield';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -35,15 +33,10 @@ type Props = {
 const ShieldModal = ({ children, token }: Props) => {
   const { shield, isShielding } = useShield();
   const { address } = useWallet();
-  const publicClient = usePublicClient();
   const chainConfig = useChain();
 
   const [value, setValue] = useState('');
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
-
-  const valueBn = useMemo(() => {
-    return token.decimals ? BigNumber(value || 0).shiftedBy(token.decimals) : BigNumber(0);
-  }, [value, token.decimals]);
 
   const fees = useTransactionFees({ walletAddress: address, token });
 
@@ -54,28 +47,18 @@ const ShieldModal = ({ children, token }: Props) => {
     return result > 0n ? result : 0n;
   }, [token, fees]);
 
-  console.log(fees, token.symbol);
-
-  const { data: publicNativeBalance } = useQuery({
-    queryKey:
-      address && chainConfig?.id ?
-        getQueryKey.tokenPublicBalance(address, chainConfig.id, address) :
-        [],
-    queryFn:
-      publicClient && address ?
-        () => publicClient.getBalance({ address }) :
-        skipToken,
-  });
+  const { data: publicNativeBalance } = usePublicBalance({ accountAddress: address, token: { isNative: true }});
 
   const hasInsufficientFees = publicNativeBalance && fees?.fee_details.total_cost_native ?
     publicNativeBalance < fees.fee_details.total_cost_native :
     false;
 
-  const hasNotSelectedAmount = valueBn.lte(0);
-  const isButtonDisabled = valueBn.lte(0) || isExceedingBalance;
+  const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
+  const hasNotSelectedAmount = amount <= 0n;
+  const isButtonDisabled = hasNotSelectedAmount || isExceedingBalance;
 
   const handleShield = (closeModal: () => Promise<unknown>) => {
-    void shield({ token, amount: BigInt(valueBn.toString()) }).then(() => void closeModal());
+    void shield({ token, amount }).then(() => void closeModal());
   };
 
   const buttonLabel = useMemo(() => {
@@ -120,7 +103,16 @@ const ShieldModal = ({ children, token }: Props) => {
             </InfoContainer>
             <ShieldImage src={shieldImage} alt="Shield icon" />
           </Disclaimer>
-          <NetworkFeeRow transactionFee={fees?.fee_details.total_cost_native} isError={hasInsufficientFees} />
+          <FeeRows config={[
+            {
+              label: 'Transaction fee',
+              amount: fees?.fee_details.total_cost_native,
+              tokenSymbol: chainConfig?.nativeCurrency.symbol,
+              tokenDecimals: chainConfig?.nativeCurrency.decimals,
+              tokenIcon: chainConfig?.NativeTokenIcon,
+            },
+          ]}
+          />
           <Button
             isLoading={isShielding}
             disabled={isButtonDisabled}

@@ -37,6 +37,7 @@ const CONTAINER_GAP = '--spacing-s';
 const ContainerHorizontal = styled.section`
   display: flex;
   align-items: center;
+  flex: 1;
   min-height: ${vars('--spacing-xxl')};
 
   column-gap: ${vars(CONTAINER_GAP)};
@@ -72,5 +73,5 @@ const Separator = styled.div`
   min-width: ${MIN_SEPARATOR_WIDTH}px;
   margin-bottom: ${vars('--spacing-s-nudge-2')};
 
-  background: ${vars('--color-neutral-stroke-2-rest')};
+  background: ${vars('--color-neutral-stroke-subtle-rest')};
 `;

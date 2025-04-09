@@ -13,7 +13,7 @@ import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import useTransactionFees from 'src/domains/misc/utils/useTransactionFees';
-import NetworkFeeRow from 'src/domains/shielder/components/NetworkFeeRow';
+import FeeRows from 'src/domains/shielder/components/FeeRows.tsx';
 import { Token } from 'src/domains/shielder/components/TokenList';
 import useWithdraw from 'src/domains/shielder/utils/useWithdraw';
 import { typography } from 'src/domains/styling/utils/tokens';
@@ -118,7 +118,30 @@ const SendPage = ({ token, addressTo, onSuccess }: Props) => {
         </InfoContainer>
         <ShieldImage src={shieldImage} alt="Shield icon" />
       </Disclaimer>
-      <NetworkFeeRow transactionFee={fees?.fee_details.total_cost_native} isError={hasInsufficientFees} />
+      <FeeRows config={[
+        {
+          label: 'Transaction fee',
+          amount: fees?.fee_details.total_cost_fee_token,
+          tokenSymbol: token.symbol,
+          tokenDecimals: token.decimals,
+          tokenIcon: token.icon,
+        },
+        {
+          label: 'Network fee',
+          amount: fees?.fee_details.relayer_cost_native,
+          tokenSymbol: chainConfig?.nativeCurrency.symbol,
+          tokenDecimals: chainConfig?.nativeCurrency.decimals,
+          tokenIcon: chainConfig?.NativeTokenIcon,
+        },
+        {
+          label: 'Relayer fee',
+          amount: fees?.fee_details.commission_native,
+          tokenSymbol: chainConfig?.nativeCurrency.symbol,
+          tokenDecimals: chainConfig?.nativeCurrency.decimals,
+          tokenIcon: chainConfig?.NativeTokenIcon,
+        },
+      ]}
+      />
       <Button isLoading={isWithdrawing} disabled={isButtonDisabled} variant="primary" onClick={handleWithdraw}>
         {buttonLabel}
       </Button>

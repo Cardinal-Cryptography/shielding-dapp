@@ -4,6 +4,7 @@ import { useAccount, usePublicClient } from 'wagmi';
 
 import { Token } from 'src/domains/chains/types/misc';
 import useChain from 'src/domains/chains/utils/useChain';
+import usePublicBalance from 'src/domains/chains/utils/usePublicBalance.ts';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import { useShielderStore } from 'src/domains/shielder/stores/shielder';
 import tokenToSdkToken from 'src/domains/shielder/utils/tokenToSdkToken';
@@ -66,20 +67,12 @@ const useToken = (token: Token, include?: QueryNames[]) => {
         skipToken,
   });
 
-  const publicBalanceQuery = useQuery({
-    enabled: selectedAccountType === 'public' && (!include || include.includes('publicBalance')),
-    queryKey: accountAddress && chainConfig?.id ?
-      getQueryKey.tokenPublicBalance(tokenAddress, chainConfig.id, accountAddress) : [],
-    queryFn: publicClient && accountAddress ?
-      token.isNative ? () => publicClient.getBalance({ address: accountAddress }) :
-      () =>
-        publicClient.readContract({
-          address: token.address,
-          abi: erc20Abi,
-          functionName: 'balanceOf',
-          args: [accountAddress],
-        }) :
-      skipToken,
+  const publicBalanceQuery = usePublicBalance({
+    token,
+    accountAddress,
+    options: {
+      enabled: selectedAccountType === 'public' && (!include || include.includes('publicBalance')),
+    },
   });
 
   const shieldedBalanceQuery = useQuery({
