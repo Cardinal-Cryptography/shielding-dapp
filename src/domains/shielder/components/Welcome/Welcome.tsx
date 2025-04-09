@@ -33,7 +33,7 @@ const Welcome = () => (
 export default Welcome;
 
 const BreakTheTrace = styled.img`
-  height: 133px;
+  width: 100%;
   margin-top: calc(${vars('--spacing-s')} * -1);
   pointer-events: none;
 

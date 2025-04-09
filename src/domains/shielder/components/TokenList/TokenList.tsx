@@ -9,33 +9,20 @@ import TokenListItem from './TokenListItem';
 
 export type Token = TokenBase & {
   chain: keyof typeof definitions,
-  name: string | undefined,
-  symbol: string | undefined,
-  address: string | undefined,
-  decimals: number | undefined,
   icon: ComponentType | undefined,
-  balance?: {
-    atomic?: bigint | string | number,
-    usd?: number,
-  },
-  usdPrice?: number,
 };
 
 type Props = {
   tokens: Token[],
-  onTokenClick: (token: Token) => void,
-  selectedTokens?: Token[],
   className?: string,
 };
 
-const TokenList = ({ tokens, onTokenClick, className, selectedTokens }: Props) => (
+const TokenList = ({ tokens, className }: Props) => (
   <Container className={className}>
     {tokens.map(token => (
       <TokenListItem
-        onTokenClick={onTokenClick}
         key={`${token.address ?? 'native'}-${token.chain}`}
         token={token}
-        isSelected={selectedTokens?.some(t => t.address === token.address) ?? false}
       />
     )
     )}

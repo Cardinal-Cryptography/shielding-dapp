@@ -1,8 +1,10 @@
+import { useMediaQuery } from '@react-hookz/web';
 import { m as motion } from 'motion/react';
 import type { ReactElement } from 'react';
 import styled, { RuleSet } from 'styled-components';
 
 import Badge from 'src/domains/misc/components/Badge';
+import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts.ts';
 import composeFluidSize from 'src/domains/styling/utils/composeFluidSize';
 import { transitionTime, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -36,36 +38,42 @@ const positionStyles = {
   },
 };
 
-const Tab = ({ label, selected, onClick, layoutId, size = 'medium', position = 'floor', icon, comingSoon }: Props) => (
-  <Wrapper
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1, transition: { delay: 0.1 }}}
-    exit={{ opacity: 0 }}
-  >
-    <Container
-      selected={selected}
-      onClick={onClick}
-      disabled={comingSoon}
-      title={label}
-      $size={size}
-      layout
+const Tab = ({ label, selected, onClick, layoutId, size = 'medium', position = 'floor', icon, comingSoon }: Props) => {
+  const isSmallScreen = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
+
+  return (
+    <Wrapper
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { delay: 0.1 }}}
+      exit={{ opacity: 0 }}
     >
-      <LabelContainer>
-        {icon}
-        {label}
-      </LabelContainer>
-      <HoverBar style={positionStyles[position]} />
-      {selected && (
-        <SelectionBar
-        // set as an inline style for scale correction during transition (https://www.framer.com/motion/layout-animations/##scale-correction)
-          style={positionStyles[position]}
-          layoutId={layoutId}
-        />
+      <Container
+        selected={selected}
+        onClick={onClick}
+        disabled={comingSoon}
+        title={label}
+        $size={size}
+        layout
+      >
+        <LabelContainer>
+          {icon}
+          {label}
+        </LabelContainer>
+        <HoverBar style={positionStyles[position]} />
+        {selected && (
+          <SelectionBar
+            // set as an inline style for scale correction during transition (https://www.framer.com/motion/layout-animations/##scale-correction)
+            style={positionStyles[position]}
+            layoutId={layoutId}
+          />
+        )}
+      </Container>
+      {comingSoon && (
+        <Badge size="medium" variant="subtle" design="tint" text={isSmallScreen ? 'Soon' : 'Coming soon'} circular />
       )}
-    </Container>
-    {comingSoon && <Badge size="medium" variant="subtle" design="tint" text="Coming soon" circular />}
-  </Wrapper>
-);
+    </Wrapper>
+  );
+};
 
 export default Tab;
 
@@ -102,6 +110,7 @@ const LabelContainer = styled.div`
   display: flex;
   gap: ${vars('--spacing-xxs')};
   align-items: center;
+  white-space: nowrap;
 
   svg {
     fill: ${vars('--color-brand-foreground-compound-rest')};

@@ -1,18 +1,18 @@
-import { FC } from 'react';
+import { ComponentType } from 'react';
 import { Address, Chain } from 'viem';
 
 import { NetworkEnvironment } from 'src/domains/chains/types/misc';
 
 import alephZero from './chains/alephZero';
-import base from './chains/base';
+import arbitrum from './chains/arbitrum';
 
 export type Definition = {
   id: number,
   name: string,
-  ChainIcon: FC,
-  NativeTokenIcon: FC,
+  ChainIcon: ComponentType,
+  NativeTokenIcon: ComponentType,
   whitelistedTokens: Record<Address, {
-    icon: FC,
+    icon: ComponentType,
   }>,
   shielderConfig?: {
     shielderContractAddress: Address,
@@ -24,5 +24,6 @@ export type ChainConfig = Record<NetworkEnvironment, Definition>;
 
 export default {
   alephZero,
-  base,
+  arbitrum,
+  // base,
 } satisfies Record<string, ChainConfig>;

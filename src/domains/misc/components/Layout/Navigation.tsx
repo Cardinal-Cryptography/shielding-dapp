@@ -6,13 +6,13 @@ import router from 'src/domains/routing/utils/router';
 const tabsConfig = [
   {
     key: 'shield',
-    label: 'Shield',
+    label: 'Trace Breaker',
     routeNames: ['Shield'],
     onClick: () => void router.push('Shield'),
   },
   {
     key: 'yield',
-    label: 'Yield',
+    label: 'Shielded Yield',
     routeNames: ['Yield'],
     onClick: () => void router.push('Yield'),
     comingSoon: true,

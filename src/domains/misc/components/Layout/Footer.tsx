@@ -1,7 +1,13 @@
 import styled from 'styled-components';
 
 import Button from 'src/domains/misc/components/Button';
-import { BREAKPOINTS } from 'src/domains/misc/consts/consts';
+import {
+  BREAKPOINTS,
+  CHANGELOG_LINK,
+  FEEDBACK_LINK,
+  KNOWLEDGE_BASE_LINK, LANDING_PAGE_LINK,
+  FAUCET_LINK,
+} from 'src/domains/misc/consts/consts';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -10,9 +16,18 @@ import ThemeSelector from './ThemeSelector';
 const Footer = () => (
   <Container>
     <ThemeSelector />
-    <InnerContainer data-chromatic="ignore">
+    <InnerContainer>
+      <Link href={FEEDBACK_LINK} target="_blank" rel="noopener noreferrer">Feedback</Link>
+      <Link href={CHANGELOG_LINK} target="_blank" rel="noopener noreferrer">Changelog</Link>
+      <Link href={KNOWLEDGE_BASE_LINK} target="_blank" rel="noopener noreferrer">Help center</Link>
+      <Link href={FAUCET_LINK} target="_blank" rel="noopener noreferrer">
+        Get Testnet Tokens
+      </Link>
+      <Link href={LANDING_PAGE_LINK} target="_blank" rel="noopener noreferrer">common.fi</Link>
+    </InnerContainer>
+    <CopyrightContainer data-chromatic="ignore">
       <Copyright>
-        Copyright © {new Date().getFullYear()} Shielder, ver. {import.meta.env.APP_VERSION}
+        Copyright © {new Date().getFullYear()} Common
       </Copyright>
       <Button
         variant="outline"
@@ -22,7 +37,7 @@ const Footer = () => (
       >
         DEX and Bridge (WASM)
       </Button>
-    </InnerContainer>
+    </CopyrightContainer>
   </Container>
 );
 
@@ -47,9 +62,12 @@ const InnerContainer = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-xxl')};
-  justify-content: space-between;
 
   flex-wrap: wrap;
+`;
+
+const CopyrightContainer = styled(InnerContainer)`
+  justify-content: space-between;
 `;
 
 const Copyright = styled.div`
@@ -60,4 +78,11 @@ const Copyright = styled.div`
   @media (width >= ${BREAKPOINTS.sm}) { /* stylelint-disable-line media-query-no-invalid */
     width: auto;
   }
+`;
+
+const Link = styled.a`
+  color: ${vars('--color-neutral-foreground-4-rest')};
+
+  text-decoration: underline;
+  ${typography.web.caption2}
 `;

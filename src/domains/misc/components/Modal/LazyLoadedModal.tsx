@@ -19,7 +19,7 @@ import { IconName } from 'src/domains/misc/components/CIcon';
 import Pager from 'src/domains/misc/components/Pager';
 import * as Title from 'src/domains/misc/components/Title';
 import withPropAs from 'src/domains/misc/utils/withPropAs';
-import { backgroundFilters, boxShadows } from 'src/domains/styling/utils/tokens';
+import { backgroundFilters, boxShadows, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
 const SLIDE_IN_CARD_BREAKPOINT = 434;
@@ -111,7 +111,7 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
       setIsOpen(true);
     } else {
       void initiateClosing();
-    };
+    }
   }, [isOpenInitially]);
 
   const finishClosing = () => {
@@ -246,7 +246,7 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
                                 $isSlideInCardMode={!!isSlideInCardMode}
                                 $isRightSide={side === 'right'}
                               >
-                                {title ? (
+                                {title ? onPreviousPageClick ? (
                                   <SecondPageTitle>
                                     <Button
                                       variant="transparent"
@@ -265,6 +265,25 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
                                       </RadixDialog.Close>
                                     )}
                                   </SecondPageTitle>
+                                ) : (
+                                  <FirstPageTitleComponent
+                                    size="medium"
+                                    // @ts-expect-error TS2322: "withPropAs" loses some type information in case of union types
+                                    closeButton={[
+                                      additionalTitleRightSide,
+                                      !nonDismissable &&(
+                                        <RadixDialog.Close key="close button" asChild>
+                                          <CloseButton size="small" variant="transparent" leftIcon={closeIcon} />
+                                        </RadixDialog.Close>
+                                      ),
+                                    ] as Iterable<ReactNode>}
+                                  >
+                                    {typeof title === 'string' ? (
+                                      <RadixDialog.Title>
+                                        {title}
+                                      </RadixDialog.Title>
+                                    ) : title(RadixDialog.Title)}
+                                  </FirstPageTitleComponent>
                                 ) : <RadixDialog.Title hidden />}
                                 {typeof children === 'function' ? children(initiateClosing) : children}
                               </Content>
@@ -408,6 +427,8 @@ const SecondPageTitle = styled.header`
 
   text-align: center;
   white-space: nowrap;
+  
+  ${typography.decorative.subtitle2}
 `;
 
 const CloseButton = styled(Button)`

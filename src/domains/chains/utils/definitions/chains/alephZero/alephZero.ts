@@ -1,8 +1,9 @@
+import SpringIcon from '../../commonTokensIcons/spring.svg?react';
 import UsdcIcon from '../../commonTokensIcons/usdc.svg?react';
 import UsdtIcon from '../../commonTokensIcons/usdt.svg?react';
 import WAzeroIcon from '../../commonTokensIcons/wAzero.svg?react';
 import WBtcIcon from '../../commonTokensIcons/wBtc.svg?react';
-import WEthIcon from '../../commonTokensIcons/wBtc.svg?react';
+import WEthIcon from '../../commonTokensIcons/wEth.svg?react';
 import { ChainConfig } from '../../definitions';
 
 import ChainIcon from './alephZeroEvm.svg?react';
@@ -42,19 +43,17 @@ const config: ChainConfig = {
       '0x5be9D19Ed24c8C31f4b1FA78A555a97eD462582D': { icon: WBtcIcon },
       '0xB3f0eE446723f4258862D949B4c9688e7e7d35d3': { icon: WEthIcon },
       '0x18d25B4e18165c97e1285212e5d1f80eDD6d3Aa7': { icon: UsdcIcon },
-      '0xD648529D4803d3467bA8850577BEd4e4b8Ae583C': { icon: UsdtIcon },
+      '0x27a1Bb249A2973D01264e8e43Ee9be2424F1a52B': { icon: UsdtIcon },
     },
   },
   testnet: {
-    name: 'Aleph Zero',
+    name: 'Aleph Zero EVM Testnet',
     ChainIcon,
     NativeTokenIcon,
     id: 2039,
     shielderConfig: {
-      shielderContractAddress: '0x7126761c7E18915C891c215a23100739492B78a1',
-      // TODO(SD-31): Replace the placeholder relayer URL with chain-specific URLs once provided.
-      // https://cardinal-cryptography.atlassian.net/browse/SD-31
-      relayerUrl: 'https://shielder-relayer-dev.test.azero.dev',
+      shielderContractAddress: '0x0037A4AAE611b931d626887Bd53028a2a7051A7e',
+      relayerUrl: 'https://shielder-relayer-v2.dev.azero.dev/azero-testnet',
     },
     nativeCurrency: {
       decimals: 18,
@@ -80,11 +79,8 @@ const config: ChainConfig = {
       },
     },
     whitelistedTokens: {
-      '0xcC1141eEd15EB519b08cA38A2Ee75AB8025F0DA9': { icon: WAzeroIcon },
-      '0x50Cb1A86F64E065F1763E9c5B3a8FA321dad9402': { icon: WBtcIcon },
-      '0x189d0D5409F244B78C86cdcF9331B276363bDDa1': { icon: WEthIcon },
-      '0xc1947a75696731548651dD40CcB22D23fEA71AF3': { icon: UsdcIcon },
-      '0x8fceA92b10b7ee07fc625Cd3441Bbe65E9F472f2': { icon: UsdtIcon },
+      '0x1C66D6187B318f10Eb1A8BD986451DF02BE3DbAC': { icon: SpringIcon },
+      '0x27a1Bb249A2973D01264e8e43Ee9be2424F1a52B': { icon: UsdtIcon },
     },
   },
 };
