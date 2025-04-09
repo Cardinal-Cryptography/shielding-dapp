@@ -1,1 +1,2 @@
-export { default } from './ShieldModal/ShieldModal.tsx';
+export { default as ShieldModal } from './ShieldModal';
+export { default as SendModal } from './SendModal';

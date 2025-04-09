@@ -92,7 +92,7 @@ const ChainSelector = styled(Button)`
   justify-content: space-between;
 
   padding-inline: ${vars('--spacing-s')};
-  width: 216px;
+  width: 246px;
 
   background: ${vars('--color-neutral-background-1-rest')};
   border-color: ${vars('--color-neutral-stroke-2-rest')};

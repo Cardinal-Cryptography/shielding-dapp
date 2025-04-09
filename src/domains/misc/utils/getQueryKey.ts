@@ -1,7 +1,7 @@
 import type { Address } from 'viem';
 
 const getQueryKey = {
-  estimateFeesPerGas: (walletAddress: Address) => ['shieldActionFees', walletAddress] as const,
+  shielderFees: (walletAddress: Address) => ['shielderFees', walletAddress] as const,
   shielderClient: (chainId: number, shielderPrivateKey: Address) => [
     'shielder-client',
     chainId,

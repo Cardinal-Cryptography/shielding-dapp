@@ -32,6 +32,7 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
           <PasteButton size={20} onPaste={setAddressTo}>Paste</PasteButton>
         </Label>
         <TextInput
+          placeholder="Input address"
           onClear={() => void setAddressTo('')}
           value={addressTo}
           onChange={e => void setAddressTo(e.target.value)}
@@ -94,7 +95,10 @@ const InfoContainer = styled.div`
 
 const ShieldImage = styled.img`
   align-self: end;
-  height: fit-content;
+  height: 120px;
+  margin-bottom: -2px;
+  margin-right: -32px;
+  pointer-events: none;
 `;
 
 const Label = styled.div`

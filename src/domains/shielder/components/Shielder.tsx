@@ -8,6 +8,7 @@ import Skeleton from 'src/domains/misc/components/Skeleton';
 import Title from 'src/domains/misc/components/Title.tsx';
 import AccountTypeSelector from 'src/domains/shielder/components/AccountTypeSelector';
 import TokenList from 'src/domains/shielder/components/TokenList';
+import { useShielderStore } from 'src/domains/shielder/stores/shielder';
 import useShielderClient from 'src/domains/shielder/utils/useShielderClient';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -15,6 +16,7 @@ import vars from 'src/domains/styling/utils/vars';
 const Shielder = () => {
   const chainConfig = useChain();
   const { isSuccess } = useShielderClient();
+  const { selectedAccountType } = useShielderStore();
 
   const nonNativeTokens = chainConfig ?
     objectEntries(chainConfig.whitelistedTokens).map(([address, token]) => ({
@@ -38,10 +40,12 @@ const Shielder = () => {
     <>
       <Title size="medium">Your accounts</Title>
       <AccountTypeSelector />
-      <Disclaimer>
-        <CIcon icon="Info" size={20} />
-        <p>Tokens that can be moved to shielded account:</p>
-      </Disclaimer>
+      {selectedAccountType === 'public' && (
+        <Disclaimer>
+          <CIcon icon="Info" size={20} />
+          <p>Tokens that can be moved to shielded account:</p>
+        </Disclaimer>
+      )}
       <TokensWrapper>
         <TokenList tokens={tokens} />
       </TokensWrapper>

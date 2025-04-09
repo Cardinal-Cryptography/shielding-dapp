@@ -5,8 +5,8 @@ import { isAddress } from 'viem';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain.ts';
 import Modal from 'src/domains/misc/components/Modal';
-import useTransactionFees from 'src/domains/misc/utils/useTransactionFees';
-import useWithdraw from 'src/domains/shielder/utils/useWithdraw.ts';
+import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
+import useWithdraw from 'src/domains/shielder/utils/useWithdraw';
 import vars from 'src/domains/styling/utils/vars';
 
 import { Token } from '../../';
@@ -26,7 +26,7 @@ type Props = {
 
 const SendModal = ({ children, token }: Props) => {
   const { address } = useWallet();
-  const [addressTo, setAddressTo] = useState<string>(address ?? '');
+  const [addressTo, setAddressTo] = useState('');
   const [page, setPage] = useState(0);
   const [amount, setAmount] = useState(0n);
   const chainConfig = useChain();
@@ -36,7 +36,7 @@ const SendModal = ({ children, token }: Props) => {
     setPage(1);
   };
 
-  const fees = useTransactionFees({ walletAddress: address, token });
+  const fees = useShielderFees({ walletAddress: address, token });
 
   const feeConfig = [
     {

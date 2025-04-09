@@ -104,8 +104,6 @@ const InteractiveSlider = ({
     [0, 1],
   );
 
-  // console.log(thumbMotion.get(), touchMotion.get(), interactiveAreaWidth);
-
   const {
     isHoverThumbVisible,
     eventsListeners: hoverThumbEventsListeners,
@@ -154,7 +152,7 @@ const InteractiveSlider = ({
         >
           <Axis
             data={snapPoints.map((snapPoint, i) => ({
-              text: `${Math.round(snapPoint * 100)}%`,
+              text: snapPoint === 1 ? 'MAX' : `${Math.round(snapPoint * 100)}%`,
               position: snapPointsPositions[i],
             }))}
             highlightedIndex={hoverSnappedAtIndex}

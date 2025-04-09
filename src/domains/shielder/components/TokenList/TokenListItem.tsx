@@ -6,12 +6,11 @@ import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import formatBalance from 'src/domains/numbers/utils/formatBalance';
 import { useShielderStore } from 'src/domains/shielder/stores/shielder';
-import useToken from 'src/domains/shielder/utils/useToken';
+import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
-import ShieldModal from './Modals';
-import SendModal from './Modals/SendModal';
+import { ShieldModal, SendModal } from './Modals';
 
 import { Token } from '.';
 
@@ -29,7 +28,7 @@ const TokenListItem = ({ token }: Props) => {
     shieldedBalanceQuery: { data: shieldedBalance },
     publicBalanceQuery: { data: publicBalance },
     nameQuery: { data: name },
-  } = useToken(token);
+  } = useTokenData(token);
 
   const activeBalance = isPublic ? publicBalance : shieldedBalance;
   const isDisabled = !activeBalance || activeBalance <= 0n;

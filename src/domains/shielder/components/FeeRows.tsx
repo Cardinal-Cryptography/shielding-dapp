@@ -25,10 +25,9 @@ type Props = {
 
 const FeeBreakdown = ({ config }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const mainFeeRow = config[0];
-  const additionalFeeRows = config.slice(1);
+  const [mainFeeRow, ...additionalFeeRows] = config;
 
-  const hasAdditionalRows = additionalFeeRows.length > 0;
+  const hasAdditionalRows = !!additionalFeeRows.length;
 
   const mainInfoPair = (
     <InfoPair

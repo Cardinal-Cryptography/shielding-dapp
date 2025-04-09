@@ -47,7 +47,7 @@ const config: ChainConfig = {
     },
   },
   testnet: {
-    name: 'Aleph Zero',
+    name: 'Aleph Zero EVM Testnet',
     ChainIcon,
     NativeTokenIcon,
     id: 2039,

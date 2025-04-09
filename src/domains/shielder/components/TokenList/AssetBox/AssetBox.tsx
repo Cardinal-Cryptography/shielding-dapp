@@ -56,7 +56,6 @@ const AssetBox = ({
   accountAddress,
   accountType = 'public',
 }: Props) => {
-  console.log(maxAmount);
   const [manuallyEnteredPercentage, setManuallyEnteredPercentage] = useState<number>();
   const [isPrecise, setIsPrecise] = useState(false);
   const [inputTokenValue, setInputTokenValue] = useDecimalInputValue({

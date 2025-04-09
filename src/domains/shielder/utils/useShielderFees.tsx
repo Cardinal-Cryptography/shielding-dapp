@@ -11,10 +11,10 @@ type Props = {
   token: Token,
 };
 
-const useTransactionFees = ({ walletAddress, token }: Props) => {
+const useShielderFees = ({ walletAddress, token }: Props) => {
   const { data: shielderClient } = useShielderClient();
   const { data } = useQuery({
-    queryKey: walletAddress ? getQueryKey.estimateFeesPerGas(walletAddress) : [],
+    queryKey: walletAddress ? getQueryKey.shielderFees(walletAddress) : [],
     queryFn: !shielderClient ?
       skipToken :
       async () => {
@@ -27,4 +27,4 @@ const useTransactionFees = ({ walletAddress, token }: Props) => {
   return data;
 };
 
-export default useTransactionFees;
+export default useShielderFees;

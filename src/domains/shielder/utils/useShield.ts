@@ -28,7 +28,7 @@ export const useShield = () => {
       if (!token.isNative) {
         if (!publicClient) throw new Error('Public client is not ready');
         if (!walletClient) throw new Error('Wallet client is not ready');
-        if (!chainConfig?.shielderConfig) throw new Error('Shielder config is missing in chain configuration');
+        if (!chainConfig?.shielderConfig) throw new Error('Shielder is not configured for this chain.');
 
         const allowance = await publicClient.readContract({
           address: token.address,
@@ -70,9 +70,8 @@ export const useShield = () => {
       });
     },
     onError: error => {
-      if (!walletAddress || !chainId) return;
-
       console.error('Shielding failed:', error);
+      if (!walletAddress || !chainId) return;
       void queryClient.invalidateQueries({
         queryKey: getQueryKey.tokenPublicBalance('native', chainId, walletAddress),
       });

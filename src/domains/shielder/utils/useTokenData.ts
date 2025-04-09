@@ -1,18 +1,20 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
+import { Writable } from 'utility-types';
 import { erc20Abi } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 
 import { Token } from 'src/domains/chains/types/misc';
 import useChain from 'src/domains/chains/utils/useChain';
-import usePublicBalance from 'src/domains/chains/utils/usePublicBalance.ts';
+import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import { useShielderStore } from 'src/domains/shielder/stores/shielder';
-import tokenToSdkToken from 'src/domains/shielder/utils/tokenToSdkToken';
+import tokenToShielderToken from 'src/domains/shielder/utils/tokenToShielderToken';
 import useShielderClient from 'src/domains/shielder/utils/useShielderClient';
 
-type QueryNames = 'decimals' | 'name' | 'symbol' | 'publicBalance' | 'shieldedBalance';
+const queryNames = ['decimals', 'name', 'symbol', 'publicBalance', 'shieldedBalance'] as const;
+type QueryNames = typeof queryNames[number];
 
-const useToken = (token: Token, include?: QueryNames[]) => {
+const useTokenData = (token: Token, include: QueryNames[] = queryNames as Writable<typeof queryNames>) => {
   const { address: accountAddress } = useAccount();
   const chainConfig = useChain();
   const publicClient = usePublicClient();
@@ -23,7 +25,7 @@ const useToken = (token: Token, include?: QueryNames[]) => {
   const tokenAddress = token.isNative ? 'native' : token.address;
 
   const decimalsQuery = useQuery({
-    enabled: !include || include.includes('decimals'),
+    enabled: include.includes('decimals'),
     queryKey: getQueryKey.tokenDecimals(tokenAddress),
     queryFn: token.isNative ?
       () => chainConfig?.nativeCurrency.decimals :
@@ -38,7 +40,7 @@ const useToken = (token: Token, include?: QueryNames[]) => {
   });
 
   const nameQuery = useQuery({
-    enabled: !include || include.includes('name'),
+    enabled: include.includes('name'),
     queryKey: getQueryKey.tokenName(tokenAddress),
     queryFn: token.isNative ?
       () => chainConfig?.nativeCurrency.name :
@@ -53,7 +55,7 @@ const useToken = (token: Token, include?: QueryNames[]) => {
   });
 
   const symbolQuery = useQuery({
-    enabled: !include || include.includes('symbol'),
+    enabled: include.includes('symbol'),
     queryKey: getQueryKey.tokenSymbol(tokenAddress),
     queryFn: token.isNative ?
       () => chainConfig?.nativeCurrency.symbol :
@@ -71,20 +73,20 @@ const useToken = (token: Token, include?: QueryNames[]) => {
     token,
     accountAddress,
     options: {
-      enabled: selectedAccountType === 'public' && (!include || include.includes('publicBalance')),
+      enabled: selectedAccountType === 'public' && include.includes('publicBalance'),
     },
   });
 
   const shieldedBalanceQuery = useQuery({
-    enabled: selectedAccountType === 'shielded' && (!include || include.includes('shieldedBalance')),
+    enabled: selectedAccountType === 'shielded' && include.includes('shieldedBalance'),
     queryKey: accountAddress && chainConfig?.id ?
       getQueryKey.tokenShieldedBalance(tokenAddress, chainConfig.id, accountAddress) : [],
     queryFn: shielderClient ?
-      () => shielderClient.accountState(tokenToSdkToken(token)).then(res => res?.balance ?? 0n):
+      () => shielderClient.accountState(tokenToShielderToken(token)).then(res => res?.balance ?? 0n):
       skipToken,
   });
 
   return { nameQuery, symbolQuery, decimalsQuery, publicBalanceQuery, shieldedBalanceQuery };
 };
 
-export default useToken;
+export default useTokenData;

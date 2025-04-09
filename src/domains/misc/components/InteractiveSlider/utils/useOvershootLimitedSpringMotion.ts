@@ -10,7 +10,6 @@ export default (
     return Math.max(0, Math.min(safeX, range));
   });
 
-  // Применяем spring к ограниченному значению
   const bounceBackLimitedSpring = useSpring(clamped, {
     damping: 17,
     stiffness: 150,

@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
 import Modal from 'src/domains/misc/components/Modal';
-import useTransactionFees from 'src/domains/misc/utils/useTransactionFees';
 import useShield from 'src/domains/shielder/utils/useShield';
+import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import vars from 'src/domains/styling/utils/vars';
 
 import { Token } from '../../';
@@ -29,7 +29,7 @@ const SendModal = ({ children, token }: Props) => {
   const chainConfig = useChain();
   const { shield, isShielding, reset } = useShield();
 
-  const fees = useTransactionFees({ walletAddress: address, token });
+  const fees = useShielderFees({ walletAddress: address, token });
 
   const feeConfig = [
     {

@@ -1,5 +1,5 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
-import { ComponentProps, useMemo } from 'react';
+import { ComponentProps } from 'react';
 import styled from 'styled-components';
 import { type Address } from 'viem';
 import { usePublicClient } from 'wagmi';
@@ -12,10 +12,10 @@ import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
-import useTransactionFees from 'src/domains/misc/utils/useTransactionFees';
 import formatBalance from 'src/domains/numbers/utils/formatBalance';
 import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
 import { Token } from 'src/domains/shielder/components/TokenList';
+import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -38,7 +38,7 @@ const ConfirmPage = ({ token, feeConfig, amount, addressTo, onConfirm, loadingTe
   const publicClient = usePublicClient();
   const chainConfig = useChain();
 
-  const fees = useTransactionFees({ walletAddress: address, token });
+  const fees = useShielderFees({ walletAddress: address, token });
 
   const { data: publicNativeBalance } = useQuery({
     queryKey:
@@ -57,15 +57,10 @@ const ConfirmPage = ({ token, feeConfig, amount, addressTo, onConfirm, loadingTe
 
   const isButtonDisabled = amount <= 0n || hasInsufficientFees || !!loadingText;
 
-  const buttonLabel = useMemo(() => {
-    if (hasInsufficientFees) return `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance`;
-    if (loadingText) return loadingText;
-    return 'Confirm';
-  }, [
-    hasInsufficientFees,
-    chainConfig?.nativeCurrency.symbol,
-    loadingText,
-  ]);
+  const buttonLabel =
+    hasInsufficientFees ?
+      `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance` :
+      loadingText ?? 'Confirm';
 
   return (
     <Container>

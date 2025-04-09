@@ -3,7 +3,7 @@ import { Token as SDKToken } from '@cardinal-cryptography/shielder-sdk/dist/type
 
 import { Token } from 'src/domains/chains/types/misc';
 
-const tokenToSdkToken = (token: Token): SDKToken =>
+const tokenToShielderToken = (token: Token): SDKToken =>
   token.isNative ? nativeToken() : erc20Token(token.address);
 
-export default tokenToSdkToken;
+export default tokenToShielderToken;

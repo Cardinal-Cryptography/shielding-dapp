@@ -7,15 +7,14 @@ import CIcon from 'src/domains/misc/components/CIcon';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
-type ValueProps = { value: ReactElement | string };
-
 const MIN_SEPARATOR_WIDTH = 10;
 
 type Props = {
   label: ReactElement | string,
   className?: string,
   tooltipText?: string,
-} & ValueProps;
+  value: ReactElement | string,
+};
 
 const InfoPair = ({ label, className, tooltipText, ...props }: Props) => (
   <ContainerHorizontal className={className}>

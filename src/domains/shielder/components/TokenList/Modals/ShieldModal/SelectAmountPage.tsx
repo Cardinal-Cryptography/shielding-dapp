@@ -9,8 +9,8 @@ import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import fromDecimals from 'src/domains/misc/utils/fromDecimals';
-import useTransactionFees from 'src/domains/misc/utils/useTransactionFees';
 import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
+import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -35,7 +35,7 @@ const SelectAmountPage = ({ onContinue, token, feeConfig }: Props) => {
   const [value, setValue] = useState('');
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
 
-  const fees = useTransactionFees({ walletAddress: address, token });
+  const fees = useShielderFees({ walletAddress: address, token });
 
   const maxAmountToShield = useMemo(() => {
     if (isNullish(token.balance)) return token.balance;
@@ -54,18 +54,14 @@ const SelectAmountPage = ({ onContinue, token, feeConfig }: Props) => {
   const hasNotSelectedAmount = amount <= 0n;
   const isButtonDisabled = hasNotSelectedAmount || isExceedingBalance;
 
-  const buttonLabel = useMemo(() => {
-    if (hasInsufficientFees) return `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance`;
-    if (isExceedingBalance) return `Insufficient ${token.symbol} Balance`;
-    if (hasNotSelectedAmount) return 'Enter amount';
-    return 'Shield tokens';
-  }, [
-    hasInsufficientFees,
-    isExceedingBalance,
-    token.symbol,
-    hasNotSelectedAmount,
-    chainConfig?.nativeCurrency.symbol,
-  ]);
+  const buttonLabel =
+    hasInsufficientFees ?
+      `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance` :
+      isExceedingBalance ?
+        `Insufficient ${token.symbol} Balance` :
+        hasNotSelectedAmount ?
+          'Enter amount' :
+          'Shield tokens';
 
   return (
     <Container>
@@ -131,5 +127,8 @@ const InfoContainer = styled.div`
 
 const ShieldImage = styled.img`
   align-self: end;
-  height: fit-content;
+  height: 120px;
+  margin-bottom: -10px;
+  margin-right: -30px;
+  pointer-events: none;
 `;
