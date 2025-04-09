@@ -1,5 +1,5 @@
 ---
-name: (STAGE) Build and deploy frontend
+name: (PROD) Build and deploy frontend
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ jobs:
     name: Build and push
     runs-on: ubuntu-24.04
     environment:
-      name: stage
+      name: prod
     steps:
       - name: GIT | Checkout
         uses: actions/checkout@v4
@@ -22,12 +22,12 @@ jobs:
           to_envs() { jq -r "to_entries[] | select(.key|startswith(\"PUBLIC_VAR\")) | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""; }
           echo "$VARS_CONTEXT" | to_envs >> $GITHUB_ENV
 
-      - name: Build and deploy - STAGE
+      - name: Build and deploy - PROD
         uses: ./.github/actions/build-and-push
         with:
-          environment: stage
-          aws-access-key-id: ${{ secrets.AWS_S3_STAGE_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_S3_STAGE_SECRET_ACCESS_KEY }}
-          s3-bucket-name: ${{ secrets.AWS_S3_STAGE_BUCKET_NAME }}
-          amplify-app-id: ${{ secrets.AWS_AMPLIFY_STAGE_APP_ID }}
+          environment: prod
+          aws-access-key-id: ${{ secrets.AWS_S3_PROD_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_S3_PROD_SECRET_ACCESS_KEY }}
+          s3-bucket-name: ${{ secrets.AWS_S3_PROD_BUCKET_NAME }}
+          amplify-app-id: ${{ secrets.AWS_AMPLIFY_PROD_APP_ID }}
           npm-token: ${{ secrets.NPM_TOKEN }}
