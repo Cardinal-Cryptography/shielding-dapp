@@ -12,6 +12,7 @@ import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import fromDecimals from 'src/domains/misc/utils/fromDecimals.ts';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import isPresent from 'src/domains/misc/utils/isPresent';
+import shieldImage from 'src/domains/shielder/assets/shield.png';
 import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
 import { Token } from 'src/domains/shielder/components/TokenList';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
@@ -19,7 +20,6 @@ import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
 import AssetBox from '../../AssetBox';
-import shieldImage from '../shield.png';
 
 type Props = {
   token: Token & {

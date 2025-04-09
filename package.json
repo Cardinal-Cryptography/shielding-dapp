@@ -18,9 +18,9 @@
     "generate-icons": "tsx scripts/generateIcons.ts"
   },
   "dependencies": {
-    "@cardinal-cryptography/shielder-sdk": "0.2.0-beta.5",
-    "@cardinal-cryptography/shielder-sdk-crypto": "0.2.0-beta.2",
-    "@cardinal-cryptography/shielder-sdk-crypto-wasm": "0.2.0-beta.2",
+    "@cardinal-cryptography/shielder-sdk": "^0.2.0-beta.7",
+    "@cardinal-cryptography/shielder-sdk-crypto": "^0.2.0-beta.3",
+    "@cardinal-cryptography/shielder-sdk-crypto-wasm": "^0.2.0-beta.3",
     "@number-flow/react": "^0.5.7",
     "@radix-ui/react-dialog": "^1.1.6",
     "@react-hookz/web": "^25.1.0",

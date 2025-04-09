@@ -1,11 +1,11 @@
 import { arbitrum, arbitrumSepolia } from 'viem/chains';
 
+import NativeTokenIcon from '../../commonTokensIcons/eth.svg?react';
 import SpringIcon from '../../commonTokensIcons/spring.svg?react';
 import UsdtIcon from '../../commonTokensIcons/usdt.svg?react';
 import { ChainConfig } from '../../definitions';
 
 import ChainIcon from './arbitrum.svg?react';
-import NativeTokenIcon from './nativeToken.svg?react';
 
 const config: ChainConfig = {
   mainnet: {
@@ -17,7 +17,7 @@ const config: ChainConfig = {
   testnet: {
     ...arbitrumSepolia,
     shielderConfig: {
-      shielderContractAddress: '0x4691195fd10716b477B57b673939A99c6c0bc83A',
+      shielderContractAddress: '0xca2Ca45089Fa4E2BBef2BF26E632a8CA9CD1aFd0',
       relayerUrl: 'https://shielder-relayer-v2.dev.azero.dev/arbitrum-testnet',
     },
     ChainIcon,

@@ -9,6 +9,7 @@ import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import fromDecimals from 'src/domains/misc/utils/fromDecimals';
+import shieldImage from 'src/domains/shielder/assets/shield.png';
 import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import { typography } from 'src/domains/styling/utils/tokens';
@@ -16,7 +17,6 @@ import vars from 'src/domains/styling/utils/vars';
 
 import { Token } from '../../';
 import AssetBox from '../../AssetBox';
-import shieldImage from '../shield.png';
 
 type Props = {
   token: Token & {
