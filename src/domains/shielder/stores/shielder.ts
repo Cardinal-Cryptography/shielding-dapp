@@ -1,16 +1,21 @@
-import { objectEntries } from 'tsafe';
-import { Address } from 'viem';
+import { Address, Hex } from 'viem';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { NetworkEnvironment } from 'src/domains/chains/types/misc';
 import { AccountType } from 'src/domains/shielder/types/types';
 
+type AccountAddress = Address;
+type PrivateKey = Hex;
 type ShielderStore = {
-  shielderPrivateKeySeeds: Record<Address, Address>,
-  setShielderPrivateKeySeeds: (address: Address, privateKeySeed: Address) => void,
+  shielderPrivateKeys: Partial<Record<NetworkEnvironment, Record<AccountAddress, PrivateKey>>>,
+  setShielderPrivateKeys: (
+    networkEnvironment: NetworkEnvironment,
+    address: AccountAddress,
+    privateKey: PrivateKey,
+  ) => void,
   selectedAccountType: AccountType,
   setSelectedAccountType: (accountType:AccountType) => void,
-  removePrivateKeys: (addresses: Address[]) => void,
 };
 
 const useShielderInternalStore = create<ShielderStore>()(
@@ -20,46 +25,40 @@ const useShielderInternalStore = create<ShielderStore>()(
       setSelectedAccountType: accountType => {
         set({ selectedAccountType: accountType });
       },
-      shielderPrivateKeySeeds: {},
-      setShielderPrivateKeySeeds: (accountAddress, privateKeySeed) => {
+      shielderPrivateKeys: {},
+      setShielderPrivateKeys: (networkEnvironment, accountAddress, privateKey) => {
         set(state => ({
-          shielderPrivateKeySeeds: {
-            ...state.shielderPrivateKeySeeds,
-            [accountAddress]: privateKeySeed,
+          shielderPrivateKeys: {
+            ...state.shielderPrivateKeys,
+            [networkEnvironment]: {
+              ...state.shielderPrivateKeys[networkEnvironment],
+              [accountAddress]: privateKey,
+            },
           },
-        }));
-      },
-      removePrivateKeys: addresses => {
-        set(state => ({
-          shielderPrivateKeySeeds: Object.fromEntries(
-            objectEntries(state.shielderPrivateKeySeeds).filter(([key]) => !addresses.includes(key))
-          ),
         }));
       },
     }),
     {
       name: 'shielder',
       partialize: state => ({
-        shielderPrivateKeySeeds: state.shielderPrivateKeySeeds,
+        shielderPrivateKeys: state.shielderPrivateKeys,
         selectedAccountType: state.selectedAccountType,
       }),
     }
   )
 );
 
-export const useShielderStore = (address?: Address) => {
+export const useShielderStore = () => {
   const {
-    shielderPrivateKeySeeds,
-    setShielderPrivateKeySeeds,
-    removePrivateKeys,
+    shielderPrivateKeys,
+    setShielderPrivateKeys,
     selectedAccountType,
     setSelectedAccountType,
   } = useShielderInternalStore();
 
   return {
-    shielderPrivateKey: address ? shielderPrivateKeySeeds[address] : undefined,
-    setShielderPrivateKeySeeds,
-    removePrivateKeys,
+    shielderPrivateKeys,
+    setShielderPrivateKeys,
     selectedAccountType,
     setSelectedAccountType,
   };
