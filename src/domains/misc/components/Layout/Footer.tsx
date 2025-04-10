@@ -7,6 +7,7 @@ import {
   FEEDBACK_LINK,
   KNOWLEDGE_BASE_LINK, LANDING_PAGE_LINK,
   FAUCET_LINK,
+  FRAUD_PROTECTION_LINK, TERMS_OF_SERVICE_LINK, PRIVACY_POLICY_LINK,
 } from 'src/domains/misc/consts/consts';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -26,9 +27,20 @@ const Footer = () => (
       <Link href={LANDING_PAGE_LINK} target="_blank" rel="noopener noreferrer">common.fi</Link>
     </InnerContainer>
     <CopyrightContainer data-chromatic="ignore">
-      <Copyright>
-        Copyright © {new Date().getFullYear()} Common
-      </Copyright>
+      <InnerContainer>
+        <Copyright>
+          Copyright © {new Date().getFullYear()} Common, ver. {import.meta.env.APP_VERSION}
+        </Copyright>
+        <Link href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">
+          Terms of service
+        </Link>
+        <Link href={PRIVACY_POLICY_LINK} target="_blank" rel="noopener noreferrer">
+          Privacy policy
+        </Link>
+        <Link href={FRAUD_PROTECTION_LINK} target="_blank" rel="noopener noreferrer">
+          Fraud Protection Policy
+        </Link>
+      </InnerContainer>
       <Button
         variant="outline"
         size="extra-small"

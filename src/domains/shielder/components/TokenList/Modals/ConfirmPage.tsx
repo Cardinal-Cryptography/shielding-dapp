@@ -78,10 +78,16 @@ const ConfirmPage = ({ token, feeConfig, amount, addressTo, onConfirm, loadingTe
         )}
         <Content>
           <p>From</p>
-          <Address>
+          <AccountDetails>
             <AccountTypeIcon size={20} type={addressFrom ? 'public' : 'shielded'} />
-            <p>{addressFrom ? formatAddress(addressFrom) : 'Shielded'}</p>
-          </Address>
+            {addressFrom && (
+              <>
+                <p>Public</p>
+                <Divider />
+              </>
+            )}
+            {addressFrom ? <Address>{formatAddress(addressFrom)}</Address> : 'Shielded'}
+          </AccountDetails>
         </Content>
         {addressTo && (
           <Content>
@@ -134,10 +140,13 @@ const Content = styled(DoubleBorderBox.Content)`
   ${typography.web.body1};
 `;
 
-const Address = styled.div`
+const AccountDetails = styled.div`
   display: flex;
   gap: ${vars('--spacing-s')};
   align-items: center;
+`;
+
+const Address = styled.p`
   color: ${vars('--color-brand-foreground-1-rest')};
 `;
 
@@ -150,4 +159,10 @@ const TokenDetails = styled.div`
   align-items: center;
   gap: ${vars('--spacing-s')};
   ${typography.decorative.subtitle2};
+`;
+
+const Divider = styled.div`
+  height: 12px;
+  width: 1px;
+  background: ${vars('--color-neutral-stroke-2-rest')};
 `;
