@@ -53,7 +53,7 @@ const config: ChainConfig = {
     id: 2039,
     shielderConfig: {
       shielderContractAddress: '0x5B496EB83172B52885f80207426042eA21597077',
-      relayerUrl: 'https://shielder-relayer-v2.dev.azero.dev/azero-testnet',
+      relayerUrl: 'https://shielder-relayer-v2.test.azero.dev/azero-testnet',
     },
     nativeCurrency: {
       decimals: 18,
