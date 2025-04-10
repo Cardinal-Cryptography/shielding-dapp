@@ -23,8 +23,8 @@ const config: ChainConfig = {
     ChainIcon,
     NativeTokenIcon,
     whitelistedTokens: {
-      '0xaefC07E8821fB684DB23c7e3a6A1CC91B871a954': { icon: SpringIcon },
-      '0xbf97a6bea949aabe8324f78b2f5455f7b1f52a78': { icon: UsdtIcon },
+      '0x74d98435c773c1D68789Ee2720784E005588b448': { icon: SpringIcon },
+      '0x0037A4AAE611b931d626887Bd53028a2a7051A7e': { icon: UsdtIcon },
     },
   },
 };
