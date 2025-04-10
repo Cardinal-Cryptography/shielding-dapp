@@ -29,7 +29,7 @@ const Footer = () => (
     <CopyrightContainer data-chromatic="ignore">
       <InnerContainer>
         <Copyright>
-          Copyright © {new Date().getFullYear()} Common
+          Copyright © {new Date().getFullYear()} Common, ver. {import.meta.env.APP_VERSION}
         </Copyright>
         <Link href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">
           Terms of service
