@@ -1,7 +1,7 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
-import BigNumber from 'bignumber.js';
 import { ComponentProps, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { isNullish } from 'utility-types';
 import { usePublicClient } from 'wagmi';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
@@ -11,7 +11,6 @@ import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import fromDecimals from 'src/domains/misc/utils/fromDecimals.ts';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
-import isPresent from 'src/domains/misc/utils/isPresent';
 import shieldImage from 'src/domains/shielder/assets/shield.png';
 import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
 import { Token } from 'src/domains/shielder/components/TokenList';
@@ -42,10 +41,11 @@ const SelectAmountPage = ({ token, feeConfig, onContinue }: Props) => {
   const fees = useShielderFees({ walletAddress: address, token });
 
   const maxAmountToSend = useMemo(() => {
-    if (!isPresent(token.balance)) return token.balance;
-    if (!isPresent(fees)) return token.balance;
-    return BigInt(BigNumber.max((token.balance - fees.fee_details.total_cost_fee_token).toString(), 0).toString());
-  }, [token.balance, fees]);
+    if (isNullish(token.balance)) return token.balance;
+    if (isNullish(fees)) return token.balance;
+    const result = token.balance - fees.fee_details.total_cost_fee_token;
+    return result > 0n ? result : 0n;
+  }, [token, fees]);
 
   const { data: publicNativeBalance } = useQuery({
     queryKey:
