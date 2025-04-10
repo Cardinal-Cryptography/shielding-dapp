@@ -6,13 +6,13 @@ import path from 'path';
 import react from '@vitejs/plugin-react';
 import { objectEntries, objectFromEntries } from 'tsafe';
 import { defineConfig, loadEnv, normalizePath } from 'vite';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import vitePluginSvgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { parse } from 'yaml';
 
 import envVarsSchema from './envVarsSchema';
 import { version } from './package.json';
-
 const customHttpPath = path.resolve(__dirname, 'customHttp.yml');
 const customHttpContent = fs.readFileSync(customHttpPath, 'utf8');
 const { customHeaders } = parse(customHttpContent) as {
@@ -38,6 +38,14 @@ export default defineConfig({
     tsconfigPaths(),
     react(),
     vitePluginSvgr(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'customHttp.yml',
+          dest: '.',
+        },
+      ],
+    }),
     {
       name: 'configure-server',
       configureServer: server => {
