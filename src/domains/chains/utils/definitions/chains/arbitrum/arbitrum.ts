@@ -18,7 +18,7 @@ const config: ChainConfig = {
     ...arbitrumSepolia,
     shielderConfig: {
       shielderContractAddress: '0xca2Ca45089Fa4E2BBef2BF26E632a8CA9CD1aFd0',
-      relayerUrl: 'https://shielder-relayer-v2.dev.azero.dev/arbitrum-testnet',
+      relayerUrl: 'https://shielder-relayer-v2.test.azero.dev/arbitrum-testnet',
     },
     ChainIcon,
     NativeTokenIcon,
