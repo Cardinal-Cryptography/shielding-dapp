@@ -104,6 +104,7 @@ const Link = styled.a`
   
   & > a {
     color: ${vars('--color-brand-foreground-link-rest')};
+
     text-decoration: none;
   }
 `;
