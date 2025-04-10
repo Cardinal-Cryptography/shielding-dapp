@@ -79,8 +79,8 @@ const config: ChainConfig = {
       },
     },
     whitelistedTokens: {
-      '0xED5Fff1A9FE73CF0070F67A130a971f541a4f1e9': { icon: SpringIcon },
-      '0xFE84F7bCd619410d60153369aCF3FBe11a1f53B1': { icon: UsdtIcon },
+      '0xe907112ed7c64c7c9317ca742d848d0ef0198ffa': { icon: SpringIcon },
+      '0x57b7789b78a4606afbe8138f6f9d4820d100096e': { icon: UsdtIcon },
     },
   },
 };
