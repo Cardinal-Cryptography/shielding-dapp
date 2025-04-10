@@ -8,6 +8,7 @@ import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import PasteButton from 'src/domains/misc/components/PasteButton';
 import TextInput from 'src/domains/misc/components/TextInput';
+import { BEST_PRACTICES_LINK } from 'src/domains/misc/consts/consts';
 import shieldImage from 'src/domains/shielder/assets/shield.png';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -53,8 +54,8 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
         </InfoContainer>
         <ShieldImage src={shieldImage} alt="Shield icon" />
       </Disclaimer>
-      <Accordion onClick={() => void setIsExpanded(curr => !curr)}>
-        <AccordionHeader>
+      <Accordion>
+        <AccordionHeader onClick={() => void setIsExpanded(curr => !curr)}>
           <AccordionTitle>
             Improve your privacy
           </AccordionTitle>
@@ -76,6 +77,7 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
               <AccordionItem>Divide your transfers into a few smaller batches</AccordionItem>
               <AccordionItem>Use rounded amounts for transfers, like 5.00, 30.00, or 100.00 USDC</AccordionItem>
               <AccordionItem>Spread the transfers in time</AccordionItem>
+              <Link href={BEST_PRACTICES_LINK} target="_blank" rel="noopener noreferrer">Learn more</Link>
             </AccordionContent>
           )}
         </AnimatePresence>
@@ -116,13 +118,13 @@ const Disclaimer = styled(Content)`
 const Accordion = styled(Content)`
   gap: ${vars('--spacing-none')};
   padding: ${vars('--spacing-l')};
-  cursor: pointer;
 `;
 
 const AccordionHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
 `;
 
 const AccordionTitle = styled.p`
@@ -184,4 +186,11 @@ const ChevronIconWrapper = styled(motion.div)`
   align-self: center;
 
   justify-self: end;
+`;
+
+const Link = styled.a`
+  color: ${vars('--color-brand-foreground-link-rest')};
+
+  text-decoration: none;
+  ${typography.web.body1}
 `;

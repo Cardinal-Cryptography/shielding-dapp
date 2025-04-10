@@ -7,6 +7,7 @@ import CIcon from 'src/domains/misc/components/CIcon';
 import Modal from 'src/domains/misc/components/Modal';
 import { ModalRef } from 'src/domains/misc/components/Modal';
 import CheckedContainer from 'src/domains/misc/components/PatternContainer';
+import { PRIVACY_POLICY_LINK, TERMS_OF_SERVICE_LINK } from 'src/domains/misc/consts/consts.ts';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -40,11 +41,11 @@ const ConnectModal = (props: Props) => {
         <LinksWrapper>
           <Link>
             <CIcon icon="DocumentText" size={20} />
-            <p>Terms of service</p>
+            <a href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">Terms of service</a>
           </Link>
           <Link>
             <CIcon icon="DocumentText" size={20} />
-            <p>Privacy policy</p>
+            <a href={PRIVACY_POLICY_LINK} target="_blank" rel="noopener noreferrer">Privacy policy</a>
           </Link>
         </LinksWrapper>
         <Buttons>
@@ -100,6 +101,11 @@ const Link = styled.a`
   gap: ${vars('--spacing-xs')};
   color: ${vars('--color-brand-foreground-link-rest')};
   ${typography.web.body1};
+  
+  & > a {
+    color: ${vars('--color-brand-foreground-link-rest')};
+    text-decoration: none;
+  }
 `;
 const Branding = styled.div`
   display: flex;
@@ -108,7 +114,6 @@ const Branding = styled.div`
   align-items: center;
   color: ${vars('--color-neutral-foreground-2-rest')};
   ${typography.web.subtitle1};
-
 `;
 
 const LogoContainer = styled.div`
