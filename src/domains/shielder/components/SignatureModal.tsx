@@ -1,19 +1,20 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { signMessage } from '@wagmi/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { keccak256, toHex } from 'viem';
 import { useAccount } from 'wagmi';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
+import useConnectedChainNetworkEnvironment from 'src/domains/chains/utils/useConnectedChainNetworkEnvironment';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import Modal from 'src/domains/misc/components/Modal';
 import CheckedContainer from 'src/domains/misc/components/PatternContainer';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
-import { SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE } from 'src/domains/shielder/consts/consts';
-import { useShielderStore } from 'src/domains/shielder/stores/shielder';
+import { MAINNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE, TESTNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE } from 'src/domains/shielder/consts/consts';
+import useShielderPrivateKey from 'src/domains/shielder/utils/useShielderPrivateKey';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -21,27 +22,42 @@ const SignatureModal = () => {
   const [isTryingAgain, setIsTryingAgain] = useState(false);
   const { address, disconnect, isConnected } = useWallet();
   const { connector } = useAccount();
-  const { setShielderPrivateKeySeeds, shielderPrivateKey } = useShielderStore(address);
+  const { shielderPrivateKey, setShielderPrivateKey } = useShielderPrivateKey(address);
+  const networkEnvironment = useConnectedChainNetworkEnvironment();
+
   const getShielderPrivateKey = async () => {
+    if (!setShielderPrivateKey) throw new Error('Setting shielder private key not possible.');
+    if (!networkEnvironment) throw new Error('Can\'t generate shielder private key - network environment is not known.');
+
     if (!address) throw new Error('No address');
-    const signature = await signMessage(wagmiAdapter.wagmiConfig, {
-      message: SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE,
-    });
+
+    const message = {
+      mainnet: MAINNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE,
+      testnet: TESTNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE,
+    }[networkEnvironment];
+
+    const signature = await signMessage(wagmiAdapter.wagmiConfig, { message });
     const key = keccak256(toHex(signature));
-    setShielderPrivateKeySeeds(address, key);
     return key;
   };
 
-  const isReady = !!connector?.getChainId && isConnected;
+  const isReady =
+    !!connector?.getChainId &&
+    isConnected &&
+    address &&
+    networkEnvironment;
 
-  const { refetch, isError: isSigningError, isLoading } = useQuery({
+  const { refetch, isError: isSigningError, isLoading, data: shielderPrivateKeyFromRq } = useQuery({
     enabled: !shielderPrivateKey,
-    queryKey: address ? getQueryKey.shielderPrivateKey(address) : [],
+    queryKey: isReady ? getQueryKey.shielderPrivateKey(address, networkEnvironment) : [],
     queryFn: isReady ? getShielderPrivateKey : skipToken,
     staleTime: Infinity,
     gcTime: Infinity,
     retry: false,
   });
+  useEffect(() => {
+    if (shielderPrivateKeyFromRq) setShielderPrivateKey?.(shielderPrivateKeyFromRq);
+  }, [shielderPrivateKeyFromRq]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const retry = async () => {
     setIsTryingAgain(true);

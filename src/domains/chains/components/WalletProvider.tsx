@@ -7,7 +7,7 @@ import {
 import { Address } from 'viem';
 import { useAccount } from 'wagmi';
 
-import { useShielderStore } from 'src/domains/shielder/stores/shielder';
+import useShielderPrivateKey from 'src/domains/shielder/utils/useShielderPrivateKey';
 
 type WalletContextType = {
   openModal: ReturnType<typeof useAppKit>['open'],
@@ -24,7 +24,7 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
   const { open: openModal } = useAppKit();
   const { address, isConnected, status } = useAccount();
   const { disconnect } = useDisconnect();
-  const { shielderPrivateKey } = useShielderStore(address);
+  const { shielderPrivateKey } = useShielderPrivateKey(address);
 
   const value = {
     disconnect,

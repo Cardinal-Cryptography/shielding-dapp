@@ -1,5 +1,7 @@
 import type { Address } from 'viem';
 
+import { NetworkEnvironment } from 'src/domains/chains/types/misc';
+
 const getQueryKey = {
   shielderFees: (walletAddress: Address) => ['shielderFees', walletAddress] as const,
   shielderClient: (chainId: number, shielderPrivateKey: Address) => [
@@ -27,7 +29,7 @@ const getQueryKey = {
     chainId,
     walletAddress,
   ] as const,
-  shielderPrivateKey: (walletAddress: Address) => ['shielderPrivateKey', walletAddress] as const,
+  shielderPrivateKey: (walletAddress: Address, networkEnvironment: NetworkEnvironment) => ['shielderPrivateKey', networkEnvironment, walletAddress] as const,
   wasmCryptoClient: () => ['wasm-crypto-client'] as const,
 };
 
