@@ -55,7 +55,7 @@ const SignatureModal = () => {
   const isError = isTryingAgain || isSigningError || !isConnected;
 
   return (
-    <Modal isOpenInitially={isConnected && !shielderPrivateKey } nonDismissable>
+    <StyledModal isOpenInitially={isConnected && !shielderPrivateKey } nonDismissable>
       <Content>
         <CheckedContainer>
           <SignatureIcon size={60} icon="Signature" color={isError ? vars('--color-status-danger-foreground-1-rest') : undefined} />
@@ -73,18 +73,21 @@ const SignatureModal = () => {
           {isError && <Button variant="outline" onClick={() => void disconnect()}>Disconnect</Button>}
         </Buttons>
       </Content>
-    </Modal>
+    </StyledModal>
   );
 };
 
 export default SignatureModal;
+
+const StyledModal = styled(Modal)`
+  width: min(434px, 100vw);
+`;
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: ${vars('--spacing-l')};
-  width: 384px;
 `;
 
 const SignatureIcon = styled(CIcon)`

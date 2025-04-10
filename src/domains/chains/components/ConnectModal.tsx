@@ -23,7 +23,7 @@ const ConnectModal = (props: Props) => {
   }, [isConnected]);
 
   return (
-    <Modal ref={ref} {...props} title="Welcome">
+    <StyledModal ref={ref} {...props} title="Welcome">
       <Content>
         <CheckedContainer>
           <Branding>
@@ -53,18 +53,21 @@ const ConnectModal = (props: Props) => {
           </Button>
         </Buttons>
       </Content>
-    </Modal>
+    </StyledModal>
   );
 };
 
 export default ConnectModal;
+
+const StyledModal = styled(Modal)`
+  width: min(434px, 100vw);
+`;
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: ${vars('--spacing-l')};
-  width: 384px;
 `;
 
 const Title = styled.h3`
