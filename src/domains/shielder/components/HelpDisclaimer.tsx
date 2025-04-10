@@ -9,7 +9,9 @@ const HelpDisclaimer = () => (
   <Container>
     <CIcon size={20} icon="CheckmarkStarburst" />
     <Text>
-      Common's privacy system is protected from fraud. <Link href={FRAUD_PROTECTION_LINK}>Learn how</Link>
+      Common's privacy system is protected from fraud.
+      {' '}
+      <Link href={FRAUD_PROTECTION_LINK} target="_blank" rel="noopener noreferrer">Learn how</Link>
     </Text>
   </Container>
 );

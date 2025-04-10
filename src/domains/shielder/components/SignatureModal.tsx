@@ -12,6 +12,7 @@ import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import Modal from 'src/domains/misc/components/Modal';
 import CheckedContainer from 'src/domains/misc/components/PatternContainer';
+import { KEY_GENERATION_PROCESS_LINK } from 'src/domains/misc/consts/consts';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import { MAINNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE, TESTNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE } from 'src/domains/shielder/consts/consts';
 import useShielderPrivateKey from 'src/domains/shielder/utils/useShielderPrivateKey';
@@ -79,7 +80,7 @@ const SignatureModal = () => {
         <Title $isError={isError}>{isError ? 'Signature Declined' : 'Signature required'}</Title>
         <Text>To create a Shielded account, a one-time signature is required.</Text>
         <LearnMore>
-          <p>Learn more</p>
+          <a href={KEY_GENERATION_PROCESS_LINK} target="_blank" rel="noopener noreferrer">Learn more</a>
           <CIcon icon="Open" size={20} />
         </LearnMore>
         <Buttons>
@@ -131,6 +132,11 @@ const Buttons = styled.div`
 const LearnMore = styled.a`
   display: flex;
   gap: ${vars('--spacing-xs')};
-  color: ${vars('--color-brand-foreground-link-rest')};
   ${typography.web.body1};
+  
+  &, & > a {
+    color: ${vars('--color-brand-foreground-link-rest')};
+    
+    text-decoration: none;
+  }
 `;

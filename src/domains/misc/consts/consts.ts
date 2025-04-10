@@ -23,3 +23,4 @@ export const BEST_PRACTICES_LINK = 'https://docs.common.fi/knowledge-base/shield
 export const FRAUD_PROTECTION_LINK = 'https://docs.common.fi/knowledge-base/fraud-protection';
 export const TERMS_OF_SERVICE_LINK = 'https://common.fi/terms-of-service-webapp';
 export const PRIVACY_POLICY_LINK = 'https://common.fi/privacy-policy-webapp';
+export const KEY_GENERATION_PROCESS_LINK = 'https://docs.common.fi/knowledge-base/shielding/key-generation-process';

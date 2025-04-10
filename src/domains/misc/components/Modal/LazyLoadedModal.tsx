@@ -183,6 +183,9 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
                         ref={contentRef}
                         onOpenAutoFocus={e => void e.preventDefault()}
                         $withExtendedBottomPadding={!!isSlideInCardMode}
+                        onPointerDownOutside={e => {
+                          if(nonDismissable) e.preventDefault();
+                        }}
                         animate={{
                           opacity: 1, // adding an arbitrary, no-op style, because without it the "style" prop does not work
                         }}
