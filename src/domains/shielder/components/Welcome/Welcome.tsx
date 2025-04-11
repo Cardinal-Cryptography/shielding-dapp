@@ -1,34 +1,40 @@
 import styled from 'styled-components';
 
-import ConnectModal from 'src/domains/chains/components/ConnectModal';
+import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import Button from 'src/domains/misc/components/Button';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
-import { typography } from 'src/domains/styling/utils/tokens.ts';
-import vars from 'src/domains/styling/utils/vars.ts';
+import { typography } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
 
 import breakTheTrace from './breakTheTrace.png';
 
 const STEPS = ['Connect your EVM wallet', 'Shield your tokens', 'You\'re protected from tracking. Stay for a while!', 'Send them to a fresh address once you need them again'];
 
-const Welcome = () => (
-  <DoubleBorderBox.Wrapper>
-    <Content>
-      <BreakTheTrace src={breakTheTrace} />
-      <Steps>
-        <Title>Make your onchain actions private and secure with shielding.</Title>
-        <List>
-          {STEPS.map((step, index) => (
-            <Step key={index}>
-              <StepNumber>{index+1}</StepNumber>
-              <p>{step}</p>
-            </Step>
-          ))}
-        </List>
-      </Steps>
-      <ConnectModal triggerElement={<ConnectButton size="large" variant="primary">Connect Wallet</ConnectButton>} />
-    </Content>
-  </DoubleBorderBox.Wrapper>
-);
+const Welcome = () => {
+  const { openModal } = useWallet();
+
+  return (
+    <DoubleBorderBox.Wrapper>
+      <Content>
+        <BreakTheTrace src={breakTheTrace} />
+        <Steps>
+          <Title>Make your onchain actions private and secure with shielding.</Title>
+          <List>
+            {STEPS.map((step, index) => (
+              <Step key={index}>
+                <StepNumber>{index + 1}</StepNumber>
+                <p>{step}</p>
+              </Step>
+            ))}
+          </List>
+        </Steps>
+        <ConnectButton size="large" variant="primary" onClick={() => void openModal({ view: 'Connect' })}>
+          Connect Wallet
+        </ConnectButton>
+      </Content>
+    </DoubleBorderBox.Wrapper>
+  );
+};
 
 export default Welcome;
 

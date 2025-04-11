@@ -1,15 +1,14 @@
 import { useMediaQuery } from '@react-hookz/web';
 import styled from 'styled-components';
 
-import ChainIcon from 'src/domains/chains/components/ChainIcon.tsx';
-import ConnectModal from 'src/domains/chains/components/ConnectModal';
+import ChainIcon from 'src/domains/chains/components/ChainIcon';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import { BOTTOM_MENU_BREAKPOINT, BREAKPOINTS } from 'src/domains/misc/consts/consts';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
-import { typography } from 'src/domains/styling/utils/tokens.ts';
+import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
 import Navigation from '../Navigation';
@@ -58,9 +57,14 @@ const TopBar = () => {
               </Button>
             </AccountDetails>
           </AccountManager>
-        ) :
-          <ConnectModal triggerElement={<Button variant="primary">Connect</Button>} />
-        }
+        ) : (
+          <Button
+            variant="primary"
+            onClick={() => void openModal({ view: 'Connect' })}
+          >
+            Connect
+          </Button>
+        )}
       </NavBox.UserCanvas>
     </NavBox.Container>
   );
