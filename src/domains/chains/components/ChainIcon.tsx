@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import getChainConfigById from 'src/domains/chains/utils/getChainConfigById';
+import useChain from 'src/domains/chains/utils/useChain.ts';
 import vars from 'src/domains/styling/utils/vars.ts';
 
 type Props = {
@@ -9,11 +9,11 @@ type Props = {
   className?: string,
 };
 const ChainIcon = ({ chainId, size = 16, className }: Props) => {
-  const { ChainIcon } = getChainConfigById(chainId);
+  const { ChainIcon } = useChain(chainId) ?? {};
 
   return (
     <Container style={{ height: size, width: size, borderRadius: size * 0.25 }} className={className}>
-      <ChainIcon />
+      {ChainIcon && <ChainIcon />}
     </Container>
   );
 };

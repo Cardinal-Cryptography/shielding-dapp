@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
+import useChain from 'src/domains/chains/utils/useChain';
 import useConnectedChainNetworkEnvironment from 'src/domains/chains/utils/useConnectedChainNetworkEnvironment';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
@@ -22,6 +23,7 @@ import vars from 'src/domains/styling/utils/vars';
 const SignatureModal = () => {
   const [isTryingAgain, setIsTryingAgain] = useState(false);
   const { address, disconnect, isConnected } = useWallet();
+  const isNetworkSupported = !!useChain();
   const { connector } = useAccount();
   const { shielderPrivateKey, setShielderPrivateKey } = useShielderPrivateKey(address);
   const networkEnvironment = useConnectedChainNetworkEnvironment();
@@ -72,7 +74,7 @@ const SignatureModal = () => {
   const isError = isTryingAgain || isSigningError || !isConnected;
 
   return (
-    <StyledModal isOpenInitially={isConnected && !shielderPrivateKey } nonDismissable>
+    <StyledModal isOpenInitially={isConnected && !shielderPrivateKey && isNetworkSupported } nonDismissable>
       <Content>
         <CheckedContainer>
           <SignatureIcon size={60} icon="Signature" color={isError ? vars('--color-status-danger-foreground-1-rest') : undefined} />
