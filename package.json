@@ -37,6 +37,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-merge-refs": "^2.1.1",
+    "remeda": "^2.21.2",
     "rooks": "^8.0.0",
     "sonner": "^2.0.2",
     "styled-components": "^6.1.15",
