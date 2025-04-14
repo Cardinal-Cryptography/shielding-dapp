@@ -94,8 +94,8 @@ const SelectAmountPage = ({ token, feeConfig, onContinue }: Props) => {
         <InfoContainer>
           <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
           <p>
-            You're about to shield your tokens.
-            Your shielded account balance and actions will be private and secured.
+            You’re about to send tokens from your shielded account to a public account.
+            It will originate from the shielded pool, leaving your old transfer history behind.
           </p>
         </InfoContainer>
         <ShieldImage src={shieldImage} alt="Shield icon" />
