@@ -34,7 +34,7 @@ export default tseslint.config(
             'eslint.config.js',
             'commitlint.config.ts',
             'vite.config.ts',
-            '.storybook/*',
+            '.storybook/main.ts',
           ],
         },
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
