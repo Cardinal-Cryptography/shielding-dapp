@@ -26,6 +26,9 @@ createAppKit({
     'e0c2e199712878ed272e2c170b585baa0ff0eb50b07521ca586ebf7aeeffc598', //Talisman
     '18388be9ac2d02726dbac9777c96efaac06d744b2f6d580fccdd4127a6d01fd1', //Rabby
   ],
+  chainImages: wagmiAdapter.wagmiChains ?
+    Object.fromEntries(wagmiAdapter.wagmiChains.map(c => [c.id, `/chains/${c.id}.svg`])) :
+    undefined,
   features: {
     analytics: false,
     email: false,
