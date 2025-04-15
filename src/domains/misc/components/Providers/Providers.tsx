@@ -1,12 +1,12 @@
 import { createAppKit } from '@reown/appkit/react';
 import { LazyMotion, domAnimation } from 'motion/react';
 import { ReactNode } from 'react';
-import { Toaster } from 'sonner';
 import { WagmiProvider } from 'wagmi';
 
 import WalletProvider from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import { Definition } from 'src/domains/chains/utils/definitions';
+import { ToastsProvider } from 'src/domains/misc/components/Toast';
 import { PRIVACY_POLICY_LINK, TERMS_OF_SERVICE_LINK } from 'src/domains/misc/consts/consts';
 import { QueryClientProvider } from 'src/domains/misc/utils/queryClient';
 import WasmProvider from 'src/domains/shielder/utils/WasmProvider';
@@ -52,14 +52,15 @@ const Providers = ({ children }: Props) => {
     <LazyMotion features={domAnimation}>
       <GlobalStylesWithTheme>
         <QueryClientProvider>
-          <WagmiProvider config={wagmiAdapter.wagmiConfig}>
-            <WalletProvider>
-              <WasmProvider>
-                <Toaster visibleToasts={Infinity} />
-                {children}
-              </WasmProvider>
-            </WalletProvider>
-          </WagmiProvider>
+          <ToastsProvider ttlMs={10_000}>
+            <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+              <WalletProvider>
+                <WasmProvider>
+                  {children}
+                </WasmProvider>
+              </WalletProvider>
+            </WagmiProvider>
+          </ToastsProvider>
         </QueryClientProvider>
       </GlobalStylesWithTheme>
     </LazyMotion>

@@ -2,11 +2,11 @@ import {
   createShielderClient, ShielderTransaction,
 } from '@cardinal-cryptography/shielder-sdk';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { usePublicClient } from 'wagmi';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
+import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import { getShielderIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import { getTransactionsIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
@@ -15,6 +15,7 @@ import { useWasm } from 'src/domains/shielder/utils/WasmProvider';
 const useShielderClient = () => {
   const chainConfig = useChain();
   const { wasmCryptoClient, wasmLoaded } = useWasm();
+  const { showToast } = useToast();
 
   const publicClient = usePublicClient({ chainId: chainConfig?.id });
   const { address: accountAddress, privateKey } = useWallet();
@@ -51,8 +52,10 @@ const useShielderClient = () => {
             );
           },
           onCalldataGenerated: calldata => {
-            toast.info('Proof generated',{
-              description: `Proof generated in ${calldata.provingTimeMillis}ms`,
+            showToast({
+              title: 'Proof generated',
+              status: 'information',
+              body: `Proof generated in ${calldata.provingTimeMillis}ms`,
             });
           },
         },
