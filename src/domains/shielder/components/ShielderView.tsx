@@ -29,5 +29,4 @@ const Container = styled.div`
   flex-direction: column;
   gap: ${vars('--spacing-m')};
   max-width: 434px;
-  margin: auto;
 `;

@@ -77,11 +77,11 @@ const Main = styled.main`
   padding: ${vars('--spacing-s')};
   
   @media (width >= ${BREAKPOINTS.sm}) { /* stylelint-disable-line media-query-no-invalid */
-    padding: ${vars('--spacing-s')} ${vars('--spacing-xl')} ${vars('--spacing-xl')};
+    padding: ${vars('--spacing-xl')} ${vars('--spacing-xl')} ${vars('--spacing-xl')};
   }
   
   @media (width >= ${BREAKPOINTS.md}) { /* stylelint-disable-line media-query-no-invalid */
-    padding: ${vars('--spacing-s')} ${vars('--spacing-xxxl')} ${vars('--spacing-xxxl')};
+    padding: ${vars('--spacing-xxxl')} ${vars('--spacing-xxxl')} ${vars('--spacing-xxxl')};
   }
 `;
 
