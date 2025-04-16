@@ -1,5 +1,6 @@
 import { createAppKit } from '@reown/appkit/react';
 import { LazyMotion, domAnimation } from 'motion/react';
+import { PostHogProvider } from 'posthog-js/react';
 import { ReactNode } from 'react';
 import { WagmiProvider } from 'wagmi';
 
@@ -42,6 +43,10 @@ createAppKit({
   },
 });
 
+const posthogOptions = {
+  api_host: import.meta.env.PUBLIC_VAR_POSTHOG_HOST,
+};
+
 type Props = {
   children: ReactNode,
 };
@@ -49,21 +54,23 @@ type Props = {
 const Providers = ({ children }: Props) => {
 
   return (
-    <LazyMotion features={domAnimation}>
-      <GlobalStylesWithTheme>
-        <QueryClientProvider>
-          <ToastsProvider ttlMs={10_000}>
-            <WagmiProvider config={wagmiAdapter.wagmiConfig}>
-              <WalletProvider>
-                <WasmProvider>
-                  {children}
-                </WasmProvider>
-              </WalletProvider>
-            </WagmiProvider>
-          </ToastsProvider>
-        </QueryClientProvider>
-      </GlobalStylesWithTheme>
-    </LazyMotion>
+    <PostHogProvider apiKey={import.meta.env.PUBLIC_VAR_POSTHOG_KEY} options={posthogOptions}>
+      <LazyMotion features={domAnimation}>
+        <GlobalStylesWithTheme>
+          <QueryClientProvider>
+            <ToastsProvider ttlMs={10_000}>
+              <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+                <WalletProvider>
+                  <WasmProvider>
+                    {children}
+                  </WasmProvider>
+                </WalletProvider>
+              </WagmiProvider>
+            </ToastsProvider>
+          </QueryClientProvider>
+        </GlobalStylesWithTheme>
+      </LazyMotion>
+    </PostHogProvider>
   );
 };
 

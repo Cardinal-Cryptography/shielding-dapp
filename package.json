@@ -35,6 +35,7 @@
     "idb": "^8.0.2",
     "memoizee": "^0.4.17",
     "motion": "^12.4.12",
+    "posthog-js": "^1.236.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-merge-refs": "^2.1.1",
