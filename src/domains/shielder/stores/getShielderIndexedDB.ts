@@ -1,7 +1,10 @@
 import { ShielderTransaction } from '@cardinal-cryptography/shielder-sdk';
+import { getPublicClient } from '@wagmi/core';
 import { openDB, IDBPDatabase } from 'idb';
 import { Address, sha256 } from 'viem';
 import { z } from 'zod';
+
+import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 
 const DB_NAME = 'SHIELDER_STORAGE';
 const DB_VERSION = 2;
@@ -18,11 +21,15 @@ const transactionSchema = z.object({
   relayerFee: z.bigint().optional(),
   txHash: z.string().transform(val => val as `0x${string}`),
   block: z.bigint(),
-  token: z.object({ type: z.string() }).passthrough(),
+  token: z.object({ type: z.string(), address: z.string().optional() }).passthrough(),
   pocketMoney: z.bigint().optional(),
+  // Optional for backward compatibility — older records may not include it
+  timestamp: z.number().optional(),
+  // Optional for backward compatibility — older records may not include it
+  provingTimeMillis: z.number().optional(),
 });
 
- type Transactions = z.infer<ReturnType<typeof z.array<typeof transactionSchema>>>;
+type Transactions = z.infer<ReturnType<typeof z.array<typeof transactionSchema>>>;
 type StoredTransactions = ReturnType<typeof toStorageFormat>;
 type TransactionsByChain = Partial<Record<string, StoredTransactions>>;
 
@@ -111,7 +118,32 @@ export const getTransactionsIndexedDB = (accountAddress: string) => {
       const rawTransactions = allChains?.[chainId.toString()];
       return rawTransactions ? fromStorageFormat(rawTransactions) : null;
     },
-    addItem: async (chainId: number, tx: ShielderTransaction): Promise<void> => {
+    addItem: async (chainId: number, tx: ShielderTransaction, provingTimeMillis: number | undefined): Promise<void> => {
+      const getTimestamp = async () => {
+        const client = getPublicClient(wagmiAdapter.wagmiConfig);
+
+        if(!client) {
+          console.warn('No client available for fetching accurate timestamp');
+          return;
+        }
+
+        try {
+          const receipt = await client.getTransactionReceipt({ hash: tx.txHash });
+          const block = await client.getBlock({ blockHash: receipt.blockHash });
+          return Number(block.timestamp) * 1000;
+        } catch (error) {
+          console.warn('Failed to fetch accurate timestamp for tx', tx.txHash, error);
+          return;
+        }
+      };
+      const timestamp = await getTimestamp();
+
+      const txWithTimestamp = {
+        ...tx,
+        timestamp,
+        provingTimeMillis,
+      };
+
       const db = await initDbPromise;
       const currentAllChains = (await db.get(STORE_TRANSACTIONS, accountAddress)) ?? {};
       const chainKey = chainId.toString();
@@ -125,9 +157,9 @@ export const getTransactionsIndexedDB = (accountAddress: string) => {
 
       const updatedTransactions = isExistingTransaction ?
         existingTransactions.map(existing =>
-          existing.txHash === tx.txHash ? tx : existing
+          existing.txHash === tx.txHash ? txWithTimestamp : existing
         ) :
-        [...existingTransactions, tx];
+        [...existingTransactions, txWithTimestamp];
 
       const updatedAllChains = {
         ...currentAllChains,
