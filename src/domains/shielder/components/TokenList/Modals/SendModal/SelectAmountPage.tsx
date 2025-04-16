@@ -1,16 +1,14 @@
-import { skipToken, useQuery } from '@tanstack/react-query';
 import { ComponentProps, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { isNullish } from 'utility-types';
-import { usePublicClient } from 'wagmi';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
+import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import fromDecimals from 'src/domains/misc/utils/fromDecimals.ts';
-import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import shieldImage from 'src/domains/shielder/assets/shield.png';
 import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
 import { Token } from 'src/domains/shielder/components/TokenList';
@@ -32,7 +30,6 @@ type Props = {
 
 const SelectAmountPage = ({ token, feeConfig, onContinue }: Props) => {
   const { address } = useWallet();
-  const publicClient = usePublicClient();
   const chainConfig = useChain();
 
   const [value, setValue] = useState('');
@@ -47,16 +44,7 @@ const SelectAmountPage = ({ token, feeConfig, onContinue }: Props) => {
     return result > 0n ? result : 0n;
   }, [token, fees]);
 
-  const { data: publicNativeBalance } = useQuery({
-    queryKey:
-      address && chainConfig?.id ?
-        getQueryKey.tokenPublicBalance(address, chainConfig.id, address) :
-        [],
-    queryFn:
-      publicClient && address ?
-        () => publicClient.getBalance({ address }) :
-        skipToken,
-  });
+  const { data: publicNativeBalance } = usePublicBalance({ accountAddress: address, token: { isNative: true }});
 
   const hasInsufficientFees = publicNativeBalance && fees?.fee_details.total_cost_native ?
     publicNativeBalance < fees.fee_details.total_cost_native :
