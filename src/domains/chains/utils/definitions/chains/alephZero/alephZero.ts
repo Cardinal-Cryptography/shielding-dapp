@@ -1,8 +1,6 @@
 import SpringIcon from '../../commonTokensIcons/spring.svg?react';
 import UsdcIcon from '../../commonTokensIcons/usdc.svg?react';
 import UsdtIcon from '../../commonTokensIcons/usdt.svg?react';
-import WAzeroIcon from '../../commonTokensIcons/wAzero.svg?react';
-import WBtcIcon from '../../commonTokensIcons/wBtc.svg?react';
 import WEthIcon from '../../commonTokensIcons/wEth.svg?react';
 import { ChainConfig } from '../../definitions';
 
@@ -15,6 +13,10 @@ const config: ChainConfig = {
     ChainIcon,
     NativeTokenIcon,
     id: 41455,
+    shielderConfig: {
+      shielderContractAddress: '0xc95818427D5F53Af0747C1B95BFe8823c85c13f4',
+      relayerUrl: 'https://shielder-relayer-v2.azero.dev/azero',
+    },
     nativeCurrency: {
       decimals: 18,
       name: 'AZERO',
@@ -41,11 +43,9 @@ const config: ChainConfig = {
       },
     },
     whitelistedTokens: {
-      '0xb7Da55D7040ef9C887e20374D76A88F93A59119E': { icon: WAzeroIcon },
-      '0x5be9D19Ed24c8C31f4b1FA78A555a97eD462582D': { icon: WBtcIcon },
       '0xB3f0eE446723f4258862D949B4c9688e7e7d35d3': { icon: WEthIcon },
       '0x18d25B4e18165c97e1285212e5d1f80eDD6d3Aa7': { icon: UsdcIcon },
-      '0x27a1Bb249A2973D01264e8e43Ee9be2424F1a52B': { icon: UsdtIcon },
+      '0xD648529D4803d3467bA8850577BEd4e4b8Ae583C': { icon: UsdtIcon },
     },
   },
   testnet: {
