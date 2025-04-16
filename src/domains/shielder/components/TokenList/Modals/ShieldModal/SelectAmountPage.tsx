@@ -52,7 +52,7 @@ const SelectAmountPage = ({ onContinue, token, feeConfig }: Props) => {
 
   const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
   const hasNotSelectedAmount = amount <= 0n;
-  const isButtonDisabled = hasNotSelectedAmount || isExceedingBalance;
+  const isButtonDisabled = hasNotSelectedAmount || isExceedingBalance || hasInsufficientFees;
 
   const buttonLabel =
     hasInsufficientFees ?

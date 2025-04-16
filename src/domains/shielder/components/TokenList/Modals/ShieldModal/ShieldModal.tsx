@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
+import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
 import Modal from 'src/domains/misc/components/Modal';
 import useShield from 'src/domains/shielder/utils/useShield';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
@@ -31,6 +32,12 @@ const SendModal = ({ children, token }: Props) => {
 
   const fees = useShielderFees({ walletAddress: address, token });
 
+  const { data: publicNativeBalance } = usePublicBalance({ accountAddress: address, token: { isNative: true }});
+
+  const hasInsufficientFees = publicNativeBalance && fees?.fee_details.total_cost_native ?
+    publicNativeBalance < fees.fee_details.total_cost_native :
+    false;
+
   const feeConfig = [
     {
       label: 'Transaction fee',
@@ -38,6 +45,7 @@ const SendModal = ({ children, token }: Props) => {
       tokenSymbol: chainConfig?.nativeCurrency.symbol,
       tokenDecimals: chainConfig?.nativeCurrency.decimals,
       tokenIcon: chainConfig?.NativeTokenIcon,
+      isError: hasInsufficientFees,
     },
   ];
 

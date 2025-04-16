@@ -4,6 +4,7 @@ import { isAddress } from 'viem';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain.ts';
+import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
 import Modal from 'src/domains/misc/components/Modal';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import useWithdraw from 'src/domains/shielder/utils/useWithdraw';
@@ -37,6 +38,11 @@ const SendModal = ({ children, token }: Props) => {
   };
 
   const fees = useShielderFees({ walletAddress: address, token });
+  const { data: publicNativeBalance } = usePublicBalance({ accountAddress: address, token: { isNative: true }});
+
+  const hasInsufficientFees = publicNativeBalance && fees?.fee_details.total_cost_native ?
+    publicNativeBalance < fees.fee_details.total_cost_native :
+    false;
 
   const feeConfig = [
     {
@@ -45,6 +51,7 @@ const SendModal = ({ children, token }: Props) => {
       tokenSymbol: token.symbol,
       tokenDecimals: token.decimals,
       tokenIcon: token.icon,
+      isError: hasInsufficientFees,
     },
     {
       label: 'Network fee',
