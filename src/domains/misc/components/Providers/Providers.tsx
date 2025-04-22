@@ -7,7 +7,6 @@ import WalletProvider from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import { Definition } from 'src/domains/chains/utils/definitions';
 import { ToastsProvider } from 'src/domains/misc/components/Toast';
-import { PRIVACY_POLICY_LINK, TERMS_OF_SERVICE_LINK } from 'src/domains/misc/consts/consts';
 import { QueryClientProvider } from 'src/domains/misc/utils/queryClient';
 import TransactionsModal from 'src/domains/shielder/components/TransactionModal';
 import WasmProvider from 'src/domains/shielder/utils/WasmProvider';
@@ -19,8 +18,6 @@ createAppKit({
   adapters: [wagmiAdapter],
   networks: wagmiAdapter.wagmiChains as [Definition, ...Definition[]],
   projectId: import.meta.env.PUBLIC_VAR_REOWN_PROJECT_ID,
-  termsConditionsUrl: TERMS_OF_SERVICE_LINK,
-  privacyPolicyUrl: PRIVACY_POLICY_LINK,
   enableWalletGuide: false,
   // Using `featuredWalletIds` instead of `includeWalletIds`, as `includeWalletIds` still displays all installed wallets.
   featuredWalletIds: [
@@ -40,7 +37,6 @@ createAppKit({
     socials: false,
     swaps: false,
     onramp: false,
-    legalCheckbox: true,
   },
 });
 
