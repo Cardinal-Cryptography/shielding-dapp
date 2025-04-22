@@ -1,6 +1,5 @@
 import { createAppKit } from '@reown/appkit/react';
 import { LazyMotion, domAnimation } from 'motion/react';
-import { PostHogProvider } from 'posthog-js/react';
 import { ReactNode } from 'react';
 import { WagmiProvider } from 'wagmi';
 
@@ -14,6 +13,7 @@ import TransactionsModal from 'src/domains/shielder/components/TransactionModal'
 import WasmProvider from 'src/domains/shielder/utils/WasmProvider';
 
 import GlobalStylesWithTheme from './GlobalStylesWithTheme';
+import PostHogProvider from './PostHogProvider';
 
 createAppKit({
   adapters: [wagmiAdapter],
@@ -44,36 +44,29 @@ createAppKit({
   },
 });
 
-const posthogOptions = {
-  api_host: import.meta.env.PUBLIC_VAR_POSTHOG_HOST,
-};
-
 type Props = {
   children: ReactNode,
 };
 
-const Providers = ({ children }: Props) => {
-
-  return (
-    <PostHogProvider apiKey={import.meta.env.PUBLIC_VAR_POSTHOG_KEY} options={posthogOptions}>
-      <LazyMotion features={domAnimation}>
-        <GlobalStylesWithTheme>
-          <QueryClientProvider>
-            <WagmiProvider config={wagmiAdapter.wagmiConfig}>
-              <WalletProvider>
-                <WasmProvider>
-                  <ToastsProvider ttlMs={10_000}>
-                    {children}
-                    <TransactionsModal />
-                  </ToastsProvider>
-                </WasmProvider>
-              </WalletProvider>
-            </WagmiProvider>
-          </QueryClientProvider>
-        </GlobalStylesWithTheme>
-      </LazyMotion>
-    </PostHogProvider>
-  );
-};
+const Providers = ({ children }: Props) => (
+  <LazyMotion features={domAnimation}>
+    <GlobalStylesWithTheme>
+      <QueryClientProvider>
+        <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+          <WalletProvider>
+            <PostHogProvider>
+              <WasmProvider>
+                <ToastsProvider ttlMs={10_000}>
+                  {children}
+                  <TransactionsModal />
+                </ToastsProvider>
+              </WasmProvider>
+            </PostHogProvider>
+          </WalletProvider>
+        </WagmiProvider>
+      </QueryClientProvider>
+    </GlobalStylesWithTheme>
+  </LazyMotion>
+);
 
 export default Providers;
