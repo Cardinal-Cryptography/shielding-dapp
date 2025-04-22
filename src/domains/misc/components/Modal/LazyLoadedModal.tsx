@@ -7,7 +7,7 @@ import {
   FC,
   forwardRef,
   ReactElement,
-  ReactNode,
+  ReactNode, useCallback,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -19,6 +19,7 @@ import Button from 'src/domains/misc/components/Button';
 import { IconName } from 'src/domains/misc/components/CIcon';
 import Pager from 'src/domains/misc/components/Pager';
 import * as Title from 'src/domains/misc/components/Title';
+import { useToast } from 'src/domains/misc/components/Toast';
 import withPropAs from 'src/domains/misc/utils/withPropAs';
 import { backgroundFilters, boxShadows, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -59,11 +60,12 @@ type Props = PagedModalProps & {
      */
   triggerElement?: ReactElement,
   onClose?: () => unknown,
+  onInitiateClosing?: () => void,
   onOpen?: () => unknown,
   className?: string,
   style?: CSSProperties,
   additionalTitleRightSide?: ReactNode,
-  isOpenInitially?: boolean,
+  isModalOpen?: boolean,
   closeIcon?: IconName,
   nonDismissable?: boolean,
 };
@@ -77,20 +79,22 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
   onPreviousPageClick,
   FirstPageTitleComponent: CustomFirstPageTitleComponent,
   additionalTitleRightSide,
+  onInitiateClosing,
   onClose,
   onOpen,
   className,
   style,
-  isOpenInitially = false,
+  isModalOpen,
   closeIcon = 'Dismiss',
   nonDismissable,
 }, ref) => {
-  const [isOpen, setIsOpen] = useState(isOpenInitially);
-  const [isVisible, setIsVisible] = useState(isOpenInitially);
+  const [isOpen, setIsOpen] = useState(isModalOpen);
+  const [isVisible, setIsVisible] = useState(isModalOpen);
   const isSlideInCardMode = useIsSlideInCardMode();
   const onCloseFinishedRef = useRef<(() => unknown) | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const { open: isW3mOpen } = useAppKitState();
+  const { isDomNodeInToastsTree } = useToast();
 
   useEffect(() => {
     if (isOpen) {
@@ -99,22 +103,30 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  const initiateClosing = async () => {
+  const initiateClosing = useCallback(async (force?: boolean) => {
+    onInitiateClosing?.();
+    if (!force && isModalOpen !== undefined) {
+      // In controlled mode, let the parent handle closing
+      return;
+    }
+
     void setIsVisible(false);
 
     await new Promise<void>(resolve => {
       onCloseFinishedRef.current = resolve;
     });
-  };
+  }, [isModalOpen, onInitiateClosing, setIsVisible]);
 
   useEffect(() => {
-    if(isOpenInitially) {
+    if(isModalOpen === undefined) return;
+
+    if(isModalOpen) {
       setIsVisible(true);
       setIsOpen(true);
     } else {
-      void initiateClosing();
+      void initiateClosing(true);
     }
-  }, [isOpenInitially]);
+  }, [initiateClosing, isModalOpen]);
 
   const finishClosing = () => {
     setIsOpen(false);
@@ -184,7 +196,7 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
                         onOpenAutoFocus={e => void e.preventDefault()}
                         $withExtendedBottomPadding={!!isSlideInCardMode}
                         onPointerDownOutside={e => {
-                          if(nonDismissable) e.preventDefault();
+                          if(nonDismissable || isDomNodeInToastsTree(e.target as Node)) e.preventDefault();
                         }}
                         animate={{
                           opacity: 1, // adding an arbitrary, no-op style, because without it the "style" prop does not work

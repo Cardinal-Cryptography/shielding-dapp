@@ -54,6 +54,7 @@ import PersonFeedback from './icons/personFeedback.svg?react';
 import PersonFilled from './icons/personFilled.svg?react';
 import Power from './icons/power.svg?react';
 import QuestionCircle from './icons/questionCircle.svg?react';
+import RadioButton from './icons/radioButton.svg?react';
 import Settings from './icons/settings.svg?react';
 import ShieldError from './icons/shieldError.svg?react';
 import ShieldRegular from './icons/shieldRegular.svg?react';
@@ -124,6 +125,7 @@ export const icons = {
   PersonFilled,
   Power,
   QuestionCircle,
+  RadioButton,
   Settings,
   ShieldError,
   ShieldRegular,

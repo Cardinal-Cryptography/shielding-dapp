@@ -10,6 +10,7 @@ import { Definition } from 'src/domains/chains/utils/definitions';
 import { ToastsProvider } from 'src/domains/misc/components/Toast';
 import { PRIVACY_POLICY_LINK, TERMS_OF_SERVICE_LINK } from 'src/domains/misc/consts/consts';
 import { QueryClientProvider } from 'src/domains/misc/utils/queryClient';
+import TransactionsModal from 'src/domains/shielder/components/TransactionModal';
 import WasmProvider from 'src/domains/shielder/utils/WasmProvider';
 
 import GlobalStylesWithTheme from './GlobalStylesWithTheme';
@@ -58,15 +59,16 @@ const Providers = ({ children }: Props) => {
       <LazyMotion features={domAnimation}>
         <GlobalStylesWithTheme>
           <QueryClientProvider>
-            <ToastsProvider ttlMs={10_000}>
-              <WagmiProvider config={wagmiAdapter.wagmiConfig}>
-                <WalletProvider>
-                  <WasmProvider>
+            <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+              <WalletProvider>
+                <WasmProvider>
+                  <ToastsProvider ttlMs={10_000}>
                     {children}
-                  </WasmProvider>
-                </WalletProvider>
-              </WagmiProvider>
-            </ToastsProvider>
+                    <TransactionsModal />
+                  </ToastsProvider>
+                </WasmProvider>
+              </WalletProvider>
+            </WagmiProvider>
           </QueryClientProvider>
         </GlobalStylesWithTheme>
       </LazyMotion>

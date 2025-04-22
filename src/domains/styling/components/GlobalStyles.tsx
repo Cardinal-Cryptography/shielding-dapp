@@ -46,6 +46,11 @@ export default createGlobalStyle<{ currentTheme: keyof typeof themes }>`
     font: inherit;
   }
 
+  a {
+    color: currentcolor; 
+
+    text-decoration: none;
+  }
 
   body {
     color: ${vars('--color-neutral-foreground-1-rest')};
