@@ -22,5 +22,6 @@ export const CHANGELOG_LINK = 'https://feedback.common.fi/changelog';
 export const BEST_PRACTICES_LINK = 'https://docs.common.fi/knowledge-base/shielding/privacy-best-practices';
 export const FRAUD_PROTECTION_LINK = 'https://docs.common.fi/knowledge-base/fraud-protection';
 export const TERMS_OF_SERVICE_LINK = 'https://common.fi/terms-of-service-webapp';
+export const TERMS_OF_CONDITIONS_LINK = 'https://common.fi/terms-and-conditions-shielder-service';
 export const PRIVACY_POLICY_LINK = 'https://common.fi/privacy-policy-webapp';
 export const KEY_GENERATION_PROCESS_LINK = 'https://docs.common.fi/knowledge-base/shielding/key-generation-process';
