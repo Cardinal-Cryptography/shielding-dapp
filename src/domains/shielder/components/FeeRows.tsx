@@ -39,7 +39,7 @@ const FeeBreakdown = ({ config }: Props) => {
             {formatBalance({
               balance: mainFeeRow.amount,
               decimals: mainFeeRow.tokenDecimals,
-              options: { formatDecimals: 4 },
+              options: { formatDecimals: 5 },
             })}
             {' '}
             {mainFeeRow.tokenSymbol}
