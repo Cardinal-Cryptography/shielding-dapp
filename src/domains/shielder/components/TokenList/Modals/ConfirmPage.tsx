@@ -1,21 +1,15 @@
-import { skipToken, useQuery } from '@tanstack/react-query';
 import { ComponentProps } from 'react';
 import styled from 'styled-components';
 import { type Address } from 'viem';
-import { usePublicClient } from 'wagmi';
 
-import { useWallet } from 'src/domains/chains/components/WalletProvider';
-import useChain from 'src/domains/chains/utils/useChain';
 import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
 import Button from 'src/domains/misc/components/Button';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
-import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import formatBalance from 'src/domains/numbers/utils/formatBalance';
 import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
 import { Token } from 'src/domains/shielder/components/TokenList';
-import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -30,37 +24,24 @@ type Props = {
   feeConfig: ComponentProps<typeof FeeBreakdown>['config'],
   amount: bigint,
   onConfirm: () => void,
-  loadingText?: string,
+  isLoading?: boolean,
+  hasInsufficientFees?: boolean,
+  buttonLabel: string,
 };
 
-const ConfirmPage = ({ token, feeConfig, amount, addressTo, onConfirm, loadingText, addressFrom }: Props) => {
-  const { address } = useWallet();
-  const publicClient = usePublicClient();
-  const chainConfig = useChain();
+const ConfirmPage = ({
+  token,
+  feeConfig,
+  amount,
+  addressTo,
+  onConfirm,
+  isLoading,
+  addressFrom,
+  hasInsufficientFees,
+  buttonLabel,
+}: Props) => {
 
-  const fees = useShielderFees({ walletAddress: address, token });
-
-  const { data: publicNativeBalance } = useQuery({
-    queryKey:
-      address && chainConfig?.id ?
-        getQueryKey.tokenPublicBalance(address, chainConfig.id, address) :
-        [],
-    queryFn:
-      publicClient && address ?
-        () => publicClient.getBalance({ address }) :
-        skipToken,
-  });
-
-  const hasInsufficientFees = publicNativeBalance && fees?.fee_details.total_cost_native ?
-    publicNativeBalance < fees.fee_details.total_cost_native :
-    false;
-
-  const isButtonDisabled = amount <= 0n || hasInsufficientFees || !!loadingText;
-
-  const buttonLabel =
-    hasInsufficientFees ?
-      `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance` :
-      loadingText ?? 'Confirm';
+  const isButtonDisabled = amount <= 0n || !!hasInsufficientFees || !!isLoading;
 
   return (
     <Container>
@@ -98,7 +79,7 @@ const ConfirmPage = ({ token, feeConfig, amount, addressTo, onConfirm, loadingTe
       </Wrapper>
       <Footer>
         <FeeBreakdown config={feeConfig} />
-        <Button isLoading={!!loadingText} disabled={isButtonDisabled} variant="primary" onClick={onConfirm}>
+        <Button isLoading={!!isLoading} disabled={isButtonDisabled} variant="primary" onClick={onConfirm}>
           {buttonLabel}
         </Button>
       </Footer>

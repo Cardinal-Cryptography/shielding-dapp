@@ -4,7 +4,6 @@ import { isNullish } from 'utility-types';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
-import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
@@ -26,9 +25,10 @@ type Props = {
   },
   feeConfig: ComponentProps<typeof FeeBreakdown>['config'],
   onContinue: (amount: bigint) => void,
+  hasInsufficientFees: boolean,
 };
 
-const SelectAmountPage = ({ onContinue, token, feeConfig }: Props) => {
+const SelectAmountPage = ({ onContinue, token, feeConfig, hasInsufficientFees }: Props) => {
   const { address } = useWallet();
   const chainConfig = useChain();
 
@@ -43,12 +43,6 @@ const SelectAmountPage = ({ onContinue, token, feeConfig }: Props) => {
     const result = token.isNative ? token.balance - fees.fee_details.total_cost_native : token.balance;
     return result > 0n ? result : 0n;
   }, [token, fees]);
-
-  const { data: publicNativeBalance } = usePublicBalance({ accountAddress: address, token: { isNative: true }});
-
-  const hasInsufficientFees = publicNativeBalance && fees?.fee_details.total_cost_native ?
-    publicNativeBalance < fees.fee_details.total_cost_native :
-    false;
 
   const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
   const hasNotSelectedAmount = amount <= 0n;

@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { isAddress } from 'viem';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
-import useChain from 'src/domains/chains/utils/useChain.ts';
-import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
+import useChain from 'src/domains/chains/utils/useChain';
 import Modal from 'src/domains/misc/components/Modal';
+import isPresent from 'src/domains/misc/utils/isPresent';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import useWithdraw from 'src/domains/shielder/utils/useWithdraw';
 import vars from 'src/domains/styling/utils/vars';
@@ -38,10 +38,9 @@ const SendModal = ({ children, token }: Props) => {
   };
 
   const fees = useShielderFees({ walletAddress: address, token });
-  const { data: publicNativeBalance } = usePublicBalance({ accountAddress: address, token: { isNative: true }});
 
-  const hasInsufficientFees = publicNativeBalance && fees?.fee_details.total_cost_native ?
-    publicNativeBalance < fees.fee_details.total_cost_native :
+  const hasInsufficientFees = isPresent(token.balance) && fees?.fee_details.total_cost_fee_token ?
+    token.balance < fees.fee_details.total_cost_fee_token :
     false;
 
   const feeConfig = [
@@ -94,7 +93,13 @@ const SendModal = ({ children, token }: Props) => {
       {
         [
           <SelectAccountPage key="select-account" addressTo={addressTo} setAddressTo={setAddressTo} onConfirmClick={onConfirm} />,
-          <SelectAmountPage key="select-amount" token={token} feeConfig={feeConfig} onContinue={handleSelectAmount} />,
+          <SelectAmountPage
+            key="select-amount"
+            token={token}
+            feeConfig={feeConfig}
+            onContinue={handleSelectAmount}
+            hasInsufficientFees={hasInsufficientFees}
+          />,
           close => (
             <ConfirmPage
               key="confirmation"
@@ -102,8 +107,13 @@ const SendModal = ({ children, token }: Props) => {
               token={token}
               addressTo={validatedAddressTo}
               onConfirm={() => void handleWithdraw(close)}
-              loadingText={isWithdrawing ? 'Sending' : undefined}
+              isLoading={isWithdrawing}
               feeConfig={feeConfig}
+              buttonLabel={
+                hasInsufficientFees ?
+                  `Insufficient ${token.symbol} Balance` :
+                  isWithdrawing ? 'Sending' : 'Confirm'
+              }
             />
           ),
         ]
