@@ -131,7 +131,7 @@ const Buttons = styled.div`
   width: 100%;
 `;
 
-const LearnMore = styled.a`
+const LearnMore = styled.div`
   display: flex;
   gap: ${vars('--spacing-xs')};
   ${typography.web.body1};

@@ -1,8 +1,12 @@
+import { Buffer } from 'buffer';
+
 import {
   createShielderClient,
   ShielderTransaction,
 } from '@cardinal-cryptography/shielder-sdk';
 import { DepositCalldata } from '@cardinal-cryptography/shielder-sdk/dist/actions/deposit';
+import { NewAccountCalldata } from '@cardinal-cryptography/shielder-sdk/dist/actions/newAccount';
+import { WithdrawCalldata } from '@cardinal-cryptography/shielder-sdk/dist/actions/withdraw';
 import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
 import { usePublicClient } from 'wagmi';
@@ -65,16 +69,19 @@ const useShielderClient = () => {
           cryptoClient: wasmCryptoClient,
           callbacks: {
             onCalldataGenerated: calldata => {
-              const key = Buffer.from(
-                (calldata as DepositCalldata).calldata.pubInputs.hNoteNew.bytes
-              ).toString('hex');
+              const { calldata: cdataInner, provingTimeMillis } = calldata as
+                DepositCalldata | NewAccountCalldata | WithdrawCalldata;
 
-              provingTimeMap.set(key, calldata.provingTimeMillis);
+              const pubInputs = cdataInner.pubInputs;
+              const hNoteBytes = 'hNoteNew' in pubInputs ? pubInputs.hNoteNew.bytes : pubInputs.hNote.bytes;
+
+              const key = Buffer.from(hNoteBytes).toString('hex');
+              provingTimeMap.set(key, provingTimeMillis);
 
               showToast({
                 title: 'Proof generated',
                 status: 'information',
-                body: `Proof generated in ${(calldata as DepositCalldata).provingTimeMillis}ms`,
+                body: `Proof generated in ${provingTimeMillis}ms`,
               });
             },
             onNewTransaction: async (tx: ShielderTransaction) => {
