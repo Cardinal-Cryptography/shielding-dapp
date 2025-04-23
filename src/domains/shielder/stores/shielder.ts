@@ -1,6 +1,6 @@
 import { Address, Hex } from 'viem';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { NetworkEnvironment } from 'src/domains/chains/types/misc';
 import { AccountType } from 'src/domains/shielder/types/types';
@@ -40,6 +40,7 @@ const useShielderInternalStore = create<ShielderStore>()(
     }),
     {
       name: 'shielder',
+      storage: createJSONStorage(() => sessionStorage),
       partialize: state => ({
         shielderPrivateKeys: state.shielderPrivateKeys,
         selectedAccountType: state.selectedAccountType,
