@@ -14,7 +14,7 @@ const config: ChainConfig = {
     NativeTokenIcon,
     id: 41455,
     shielderConfig: {
-      shielderContractAddress: '0xc95818427D5F53Af0747C1B95BFe8823c85c13f4',
+      shielderContractAddress: '0x5A0dea46A96a5b578c9cf1730f461eD0bC9C32c6',
       relayerUrl: 'https://shielder-relayer-v2.azero.dev/azero',
     },
     nativeCurrency: {

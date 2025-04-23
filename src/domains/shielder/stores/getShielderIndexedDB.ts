@@ -1,10 +1,7 @@
 import { ShielderTransaction } from '@cardinal-cryptography/shielder-sdk';
-import { getPublicClient } from '@wagmi/core';
 import { openDB, IDBPDatabase } from 'idb';
 import { Address, sha256 } from 'viem';
 import { z } from 'zod';
-
-import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 
 const DB_NAME = 'SHIELDER_STORAGE';
 const DB_VERSION = 2;
@@ -118,26 +115,12 @@ export const getTransactionsIndexedDB = (accountAddress: string) => {
       const rawTransactions = allChains?.[chainId.toString()];
       return rawTransactions ? fromStorageFormat(rawTransactions) : null;
     },
-    addItem: async (chainId: number, tx: ShielderTransaction, provingTimeMillis: number | undefined): Promise<void> => {
-      const getTimestamp = async () => {
-        const client = getPublicClient(wagmiAdapter.wagmiConfig);
-
-        if(!client) {
-          console.warn('No client available for fetching accurate timestamp');
-          return;
-        }
-
-        try {
-          const receipt = await client.getTransactionReceipt({ hash: tx.txHash });
-          const block = await client.getBlock({ blockHash: receipt.blockHash });
-          return Number(block.timestamp) * 1000;
-        } catch (error) {
-          console.warn('Failed to fetch accurate timestamp for tx', tx.txHash, error);
-          return;
-        }
-      };
-      const timestamp = await getTimestamp();
-
+    addItem: async (
+      chainId: number,
+      tx: ShielderTransaction,
+      provingTimeMillis: number | undefined,
+      timestamp: number | undefined
+    ): Promise<void> => {
       const txWithTimestamp = {
         ...tx,
         timestamp,
