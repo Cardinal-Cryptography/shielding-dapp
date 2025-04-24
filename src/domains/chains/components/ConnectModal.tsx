@@ -23,41 +23,54 @@ const ConnectModal = (props: Props) => {
     ref.current.close();
   }, [isConnected]);
 
+  const handleAgreeClick = async (close: () => Promise<unknown>) => {
+    await close();
+    void openModal({ view: 'Connect' });
+  };
+
   return (
     <StyledModal ref={ref} {...props} title="Welcome">
-      <Content>
-        <CheckedContainer>
-          <Branding>
-            <LogoContainer><CIcon icon="Common" size={26} color="#406EB2" /></LogoContainer>
-            <p>Common Web App</p>
-          </Branding>
-        </CheckedContainer>
-        <Title>
-          We value your privacy!
-        </Title>
-        <Text>
-          By clicking the button "Agree and continue" below, you confirm that you have read and that you accept our:
-        </Text>
-        <LinksWrapper>
-          <Link>
-            <CIcon icon="DocumentText" size={20} />
-            <a href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">Terms of service</a>
-          </Link>
-          <Link>
-            <CIcon icon="DocumentText" size={20} />
-            <a href={TERMS_OF_CONDITIONS_LINK} target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
-          </Link>
-          <Link>
-            <CIcon icon="DocumentText" size={20} />
-            <a href={PRIVACY_POLICY_LINK} target="_blank" rel="noopener noreferrer">Privacy policy</a>
-          </Link>
-        </LinksWrapper>
-        <Buttons>
-          <Button variant="primary" onClick={() => void openModal({ view: 'Connect' })}>
-            Agree and continue
-          </Button>
-        </Buttons>
-      </Content>
+      {close => (
+        <Content>
+          <CheckedContainer>
+            <Branding>
+              <LogoContainer>
+                <CIcon icon="Common" size={26} color="#406EB2" />
+              </LogoContainer>
+              <p>Common Web App</p>
+            </Branding>
+          </CheckedContainer>
+          <Title>
+            We value your privacy!
+          </Title>
+          <Text>
+            By clicking the button "Agree and continue" below, you confirm that you have read and that you accept our:
+          </Text>
+          <LinksWrapper>
+            <Link>
+              <CIcon icon="DocumentText" size={20} />
+              <a href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">Terms of service</a>
+            </Link>
+            <Link>
+              <CIcon icon="DocumentText" size={20} />
+              <a href={TERMS_OF_CONDITIONS_LINK} target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
+            </Link>
+            <Link>
+              <CIcon icon="DocumentText" size={20} />
+              <a href={PRIVACY_POLICY_LINK} target="_blank" rel="noopener noreferrer">Privacy policy</a>
+            </Link>
+          </LinksWrapper>
+          <Buttons>
+            <Button variant="primary"
+              onClick={() => {
+                void handleAgreeClick(close);
+              }}
+            >
+              Agree and continue
+            </Button>
+          </Buttons>
+        </Content>
+      )}
     </StyledModal>
   );
 };
