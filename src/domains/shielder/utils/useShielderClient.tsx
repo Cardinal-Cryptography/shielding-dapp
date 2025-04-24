@@ -121,7 +121,7 @@ const useShielderClient = () => {
               });
               if (timestamp && Date.now() - timestamp <= TWO_MINUTES) {
                 showToast({
-                  title: tx.type === 'Deposit' ? 'Shielded' : 'Sent privately',
+                  title: tx.type === 'Withdraw' ? 'Sent privately' : 'Shielded',
                   status: 'success',
                   body: (
                     <DetailsButton

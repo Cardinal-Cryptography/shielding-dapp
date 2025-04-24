@@ -23,7 +23,7 @@ const TransactionsModal = () => {
   return (
     <StyledModal
       side="right"
-      title={selectedTransaction?.type === 'Deposit' ? 'Shielded' : 'Sent privately'}
+      title={selectedTransaction?.type === 'Withdraw' ? 'Sent privately' : 'Shielded'}
       isModalOpen={open}
       onInitiateClosing={() => void setOpen(false)}
       onClose={() => void clearSelectedTransaction()}
