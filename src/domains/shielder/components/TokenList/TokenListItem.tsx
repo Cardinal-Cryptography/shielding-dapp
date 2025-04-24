@@ -5,7 +5,7 @@ import Skeleton from 'src/domains/misc/components/Skeleton';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import formatBalance from 'src/domains/numbers/utils/formatBalance';
-import { useShielderStore } from 'src/domains/shielder/stores/shielder';
+import useShielderStore from 'src/domains/shielder/stores/shielder';
 import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';

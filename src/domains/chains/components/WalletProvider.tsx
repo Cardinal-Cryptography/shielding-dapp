@@ -1,4 +1,5 @@
 import { useAppKit, useDisconnect } from '@reown/appkit/react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   createContext,
   useContext,
@@ -7,6 +8,10 @@ import {
 import { Address } from 'viem';
 import { useAccount } from 'wagmi';
 
+import useConnectedChainNetworkEnvironment from 'src/domains/chains/utils/useConnectedChainNetworkEnvironment';
+import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import { clearShielderIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
+import useShielderStore from 'src/domains/shielder/stores/shielder';
 import useShielderPrivateKey from 'src/domains/shielder/utils/useShielderPrivateKey';
 
 type WalletContextType = {
@@ -25,9 +30,30 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
   const { address, isConnected, status } = useAccount();
   const { disconnect } = useDisconnect();
   const { shielderPrivateKey } = useShielderPrivateKey(address);
+  const clearShielderPrivateKeys = useShielderStore(store => store.clearShielderPrivateKeys);
+
+  const queryClient = useQueryClient();
+
+  const networkEnvironment = useConnectedChainNetworkEnvironment();
+
+  const handleDisconnect = async () => {
+    if(address && networkEnvironment) {
+      queryClient.removeQueries({
+        queryKey: getQueryKey.shielderPrivateKey(address, networkEnvironment),
+      });
+    }
+    void queryClient.removeQueries({
+      predicate: query =>
+        query.queryKey[0] === 'shielder-client',
+    });
+
+    clearShielderPrivateKeys();
+    await clearShielderIndexedDB();
+    await disconnect();
+  };
 
   const value = {
-    disconnect,
+    disconnect: handleDisconnect,
     openModal,
     address,
     isConnected,

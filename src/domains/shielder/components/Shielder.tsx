@@ -9,7 +9,7 @@ import Title from 'src/domains/misc/components/Title.tsx';
 import shieldImage from 'src/domains/shielder/assets/shield.png';
 import AccountTypeSelector from 'src/domains/shielder/components/AccountTypeSelector';
 import TokenList from 'src/domains/shielder/components/TokenList';
-import { useShielderStore } from 'src/domains/shielder/stores/shielder';
+import useShielderStore from 'src/domains/shielder/stores/shielder';
 import useShielderClient from 'src/domains/shielder/utils/useShielderClient';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';

@@ -153,3 +153,11 @@ export const getTransactionsIndexedDB = (accountAddress: string) => {
     },
   };
 };
+
+export const clearShielderIndexedDB = async () => {
+  const db = await openDB(DB_NAME, DB_VERSION);
+  await Promise.all([
+    db.clear(STORE_CLIENTS),
+    db.clear(STORE_TRANSACTIONS),
+  ]);
+};
