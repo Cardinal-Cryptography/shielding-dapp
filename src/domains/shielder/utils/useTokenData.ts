@@ -7,7 +7,7 @@ import { Token } from 'src/domains/chains/types/misc';
 import useChain from 'src/domains/chains/utils/useChain';
 import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
-import { useShielderStore } from 'src/domains/shielder/stores/shielder';
+import useShielderStore from 'src/domains/shielder/stores/shielder';
 import tokenToShielderToken from 'src/domains/shielder/utils/tokenToShielderToken';
 import useShielderClient from 'src/domains/shielder/utils/useShielderClient';
 
