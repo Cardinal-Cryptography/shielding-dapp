@@ -25,12 +25,10 @@ const config: ChainConfig = {
     rpcUrls: {
       default: {
         http: [
-          'https://rpc.alephzero.raas.gelato.cloud/7389bac48ed94fcca9534d4a814e7441',
           'https://rpc.alephzero.raas.gelato.cloud',
           'https://alephzero.drpc.org',
         ],
         webSocket: [
-          'wss://ws.alephzero.raas.gelato.cloud/7389bac48ed94fcca9534d4a814e7441',
           'wss://ws.alephzero.raas.gelato.cloud',
           'wss://alephzero.drpc.org',
         ],
