@@ -1,6 +1,5 @@
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { useMediaQuery } from '@react-hookz/web';
-import { useAppKitState } from '@reown/appkit/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   CSSProperties,
@@ -93,7 +92,6 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
   const isSlideInCardMode = useIsSlideInCardMode();
   const onCloseFinishedRef = useRef<(() => unknown) | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const { open: isW3mOpen } = useAppKitState();
   const { isDomNodeInToastsTree } = useToast();
 
   useEffect(() => {
@@ -166,63 +164,114 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
             {triggerElement}
           </RadixDialog.Trigger>
           <RadixDialog.Portal>
-            {!isW3mOpen && (
-              <OverlayContainer $side={side ?? 'center'}>
-                <AnimatePresence>
-                  {isVisible && (
-                    <Overlay
-                      variants={overlayAnimationVariants}
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
-                      onAnimationComplete={variant => {
-                        if (variant === 'exit') finishClosing();
+            <OverlayContainer $side={side ?? 'center'}>
+              <AnimatePresence>
+                {isVisible && (
+                  <Overlay
+                    variants={overlayAnimationVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    onAnimationComplete={variant => {
+                      if (variant === 'exit') finishClosing();
+                    }}
+                  />
+                )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {isVisible && (
+                  <ExitAnimationContainer
+                    variants={
+                      isSlideInCardMode ? slideInCardAnimationVariants : getRegularModalAnimationVariants(side)
+                    }
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                  >
+                    <ContentContainer
+                      ref={contentRef}
+                      onOpenAutoFocus={e => void e.preventDefault()}
+                      $withExtendedBottomPadding={!!isSlideInCardMode}
+                      onPointerDownOutside={e => {
+                        if(nonDismissable || isDomNodeInToastsTree(e.target as Node)) e.preventDefault();
                       }}
-                    />
-                  )}
-                </AnimatePresence>
-                <AnimatePresence>
-                  {isVisible && (
-                    <ExitAnimationContainer
-                      variants={
-                        isSlideInCardMode ? slideInCardAnimationVariants : getRegularModalAnimationVariants(side)
-                      }
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
+                      animate={{
+                        opacity: 1, // adding an arbitrary, no-op style, because without it the "style" prop does not work
+                      }}
+                      layout
+                      style={{
+                        ...style,
+                        // set as an inline style for scale correction during transition (https://www.framer.com/motion/layout-animations/##scale-correction)
+                        borderRadius: vars('--border-radius-l'),
+                      }}
                     >
-                      <ContentContainer
-                        ref={contentRef}
-                        onOpenAutoFocus={e => void e.preventDefault()}
-                        $withExtendedBottomPadding={!!isSlideInCardMode}
-                        onPointerDownOutside={e => {
-                          if(nonDismissable || isDomNodeInToastsTree(e.target as Node)) e.preventDefault();
-                        }}
-                        animate={{
-                          opacity: 1, // adding an arbitrary, no-op style, because without it the "style" prop does not work
-                        }}
-                        layout
-                        style={{
-                          ...style,
-                          // set as an inline style for scale correction during transition (https://www.framer.com/motion/layout-animations/##scale-correction)
-                          borderRadius: vars('--border-radius-l'),
-                        }}
-                      >
-                        <RadixDialog.Description
-                          hidden //  @radix requires `Description` or `aria-describedby={undefined}` for DialogContent
-                        />
-                        <Pager
-                          currentPageIndex={currentPageIndex ?? 0}
-                          pages={[
-                            () => (
+                      <RadixDialog.Description
+                        hidden //  @radix requires `Description` or `aria-describedby={undefined}` for DialogContent
+                      />
+                      <Pager
+                        currentPageIndex={currentPageIndex ?? 0}
+                        pages={[
+                          () => (
+                            <Content
+                              key="first page"
+                              className={className}
+                              inert={currentPageIndex ? false : undefined}
+                              $isSlideInCardMode={!!isSlideInCardMode}
+                              $isRightSide={side === 'right'}
+                            >
+                              {titles[0] ? (
+                                <FirstPageTitleComponent
+                                  size="medium"
+                                  // @ts-expect-error TS2322: "withPropAs" loses some type information in case of union types
+                                  closeButton={[
+                                    additionalTitleRightSide,
+                                    !nonDismissable && (
+                                      <RadixDialog.Close key="close button" asChild>
+                                        <CloseButton size="small" variant="transparent" leftIcon={closeIcon} />
+                                      </RadixDialog.Close>
+                                    ),
+                                  ] as Iterable<ReactNode>}
+                                >
+                                  {typeof titles[0] === 'string' ? (
+                                    <RadixDialog.Title>
+                                      {titles[0]}
+                                    </RadixDialog.Title>
+                                  ) : titles[0](RadixDialog.Title)}
+                                </FirstPageTitleComponent>
+                              ) : <RadixDialog.Title hidden />}
+                              {typeof childrens[0] === 'function' ? childrens[0](initiateClosing) : childrens[0]}
+                            </Content>
+                          ),
+                          ...childrens.slice(1).map((children, i) => {
+                            const title = titles[i + 1];
+                            return () => (
                               <Content
-                                key="first page"
+                                key={i + 1}
                                 className={className}
-                                inert={currentPageIndex ? false : undefined}
+                                inert={currentPageIndex === i + 1 ? undefined : false}
                                 $isSlideInCardMode={!!isSlideInCardMode}
                                 $isRightSide={side === 'right'}
                               >
-                                {titles[0] ? (
+                                {title ? onPreviousPageClick ? (
+                                  <SecondPageTitle>
+                                    <Button
+                                      variant="transparent"
+                                      size="small"
+                                      leftIcon="ChevronLeft"
+                                      onClick={onPreviousPageClick}
+                                    />
+                                    {typeof title === 'string' ? (
+                                      <RadixDialog.Title>
+                                        {title}
+                                      </RadixDialog.Title>
+                                    ) : title(RadixDialog.Title)}
+                                    {!nonDismissable && (
+                                      <RadixDialog.Close asChild>
+                                        <CloseButton size="small" variant="transparent" leftIcon="Dismiss" />
+                                      </RadixDialog.Close>
+                                    )}
+                                  </SecondPageTitle>
+                                ) : (
                                   <FirstPageTitleComponent
                                     size="medium"
                                     // @ts-expect-error TS2322: "withPropAs" loses some type information in case of union types
@@ -235,77 +284,24 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
                                       ),
                                     ] as Iterable<ReactNode>}
                                   >
-                                    {typeof titles[0] === 'string' ? (
+                                    {typeof title === 'string' ? (
                                       <RadixDialog.Title>
-                                        {titles[0]}
+                                        {title}
                                       </RadixDialog.Title>
-                                    ) : titles[0](RadixDialog.Title)}
+                                    ) : title(RadixDialog.Title)}
                                   </FirstPageTitleComponent>
                                 ) : <RadixDialog.Title hidden />}
-                                {typeof childrens[0] === 'function' ? childrens[0](initiateClosing) : childrens[0]}
+                                {typeof children === 'function' ? children(initiateClosing) : children}
                               </Content>
-                            ),
-                            ...childrens.slice(1).map((children, i) => {
-                              const title = titles[i + 1];
-                              return () => (
-                                <Content
-                                  key={i + 1}
-                                  className={className}
-                                  inert={currentPageIndex === i + 1 ? undefined : false}
-                                  $isSlideInCardMode={!!isSlideInCardMode}
-                                  $isRightSide={side === 'right'}
-                                >
-                                  {title ? onPreviousPageClick ? (
-                                    <SecondPageTitle>
-                                      <Button
-                                        variant="transparent"
-                                        size="small"
-                                        leftIcon="ChevronLeft"
-                                        onClick={onPreviousPageClick}
-                                      />
-                                      {typeof title === 'string' ? (
-                                        <RadixDialog.Title>
-                                          {title}
-                                        </RadixDialog.Title>
-                                      ) : title(RadixDialog.Title)}
-                                      {!nonDismissable && (
-                                        <RadixDialog.Close asChild>
-                                          <CloseButton size="small" variant="transparent" leftIcon="Dismiss" />
-                                        </RadixDialog.Close>
-                                      )}
-                                    </SecondPageTitle>
-                                  ) : (
-                                    <FirstPageTitleComponent
-                                      size="medium"
-                                      // @ts-expect-error TS2322: "withPropAs" loses some type information in case of union types
-                                      closeButton={[
-                                        additionalTitleRightSide,
-                                        !nonDismissable && (
-                                          <RadixDialog.Close key="close button" asChild>
-                                            <CloseButton size="small" variant="transparent" leftIcon={closeIcon} />
-                                          </RadixDialog.Close>
-                                        ),
-                                      ] as Iterable<ReactNode>}
-                                    >
-                                      {typeof title === 'string' ? (
-                                        <RadixDialog.Title>
-                                          {title}
-                                        </RadixDialog.Title>
-                                      ) : title(RadixDialog.Title)}
-                                    </FirstPageTitleComponent>
-                                  ) : <RadixDialog.Title hidden />}
-                                  {typeof children === 'function' ? children(initiateClosing) : children}
-                                </Content>
-                              );
-                            }),
-                          ]}
-                        />
-                      </ContentContainer>
-                    </ExitAnimationContainer>
-                  )}
-                </AnimatePresence>
-              </OverlayContainer>
-            )}
+                            );
+                          }),
+                        ]}
+                      />
+                    </ContentContainer>
+                  </ExitAnimationContainer>
+                )}
+              </AnimatePresence>
+            </OverlayContainer>
           </RadixDialog.Portal>
         </RadixDialog.Root>
       </Title.ProvideLeftBarAdditionalShift>
