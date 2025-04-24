@@ -1,7 +1,7 @@
 import { Address, Hex } from 'viem';
 
 import useConnectedChainNetworkEnvironment from 'src/domains/chains/utils/useConnectedChainNetworkEnvironment';
-import { useShielderStore } from 'src/domains/shielder/stores/shielder';
+import useShielderStore from 'src/domains/shielder/stores/shielder';
 
 export default (address: Address | undefined) => {
   const { shielderPrivateKeys, setShielderPrivateKeys } = useShielderStore();
