@@ -156,7 +156,7 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
               setIsVisible(true);
               setIsOpen(true);
             } else {
-              void initiateClosing();
+              void initiateClosing(!nonDismissable);
             }
           }}
         >
