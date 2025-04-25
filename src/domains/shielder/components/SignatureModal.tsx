@@ -74,7 +74,7 @@ const SignatureModal = () => {
   const isError = isTryingAgain || isSigningError || !isConnected;
 
   return (
-    <StyledModal isModalOpen={isConnected && !shielderPrivateKey && isNetworkSupported } nonDismissable>
+    <StyledModal isModalOpen={isConnected && !shielderPrivateKey && isNetworkSupported }>
       <Content>
         <CheckedContainer>
           <SignatureIcon size={60} icon="Signature" color={isError ? vars('--color-status-danger-foreground-1-rest') : undefined} />
