@@ -101,7 +101,7 @@ const useShielderClient = () => {
                 }
 
                 try {
-                  const receipt = await client.getTransactionReceipt({ hash: tx.txHash });
+                  const receipt = await client.waitForTransactionReceipt({ hash: tx.txHash });
                   const block = await client.getBlock({ blockHash: receipt.blockHash });
                   return Number(block.timestamp) * 1000;
                 } catch (error) {
