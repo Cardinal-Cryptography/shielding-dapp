@@ -54,7 +54,7 @@ const SendModal = ({ children, token }: Props) => {
     },
     {
       label: 'Network fee',
-      amount: fees?.fee_details.relayer_cost_native,
+      amount: fees?.fee_details.gas_cost_native,
       tokenSymbol: chainConfig?.nativeCurrency.symbol,
       tokenDecimals: chainConfig?.nativeCurrency.decimals,
       tokenIcon: chainConfig?.NativeTokenIcon,
