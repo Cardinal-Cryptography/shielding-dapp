@@ -25,11 +25,11 @@ const useTokenData = (token: Token, include: QueryNames[] = queryNames as Writab
 
   const tokenIdentifier = token.isNative ? 'native' : token.address;
 
-  const decimalsQuery = useQuery({
+  const decimalsQuery = useQuery(chainConfig ? {
     enabled: include.includes('decimals'),
-    queryKey: getQueryKey.tokenDecimals(tokenIdentifier),
+    queryKey: getQueryKey.tokenDecimals(tokenIdentifier, chainConfig.id),
     queryFn: token.isNative ?
-      () => chainConfig?.nativeCurrency.decimals :
+      () => chainConfig.nativeCurrency.decimals :
       publicClient ?
         () =>
           publicClient.readContract({
@@ -38,35 +38,35 @@ const useTokenData = (token: Token, include: QueryNames[] = queryNames as Writab
             functionName: 'decimals',
           }) :
         skipToken,
-  });
+  } : { queryFn: skipToken, queryKey: [] });
 
-  const nameQuery = useQuery({
+  const nameQuery = useQuery(chainConfig ? {
     enabled: include.includes('name'),
-    queryKey: getQueryKey.tokenName(tokenIdentifier),
+    queryKey: getQueryKey.tokenName(tokenIdentifier, chainConfig.id),
     queryFn: token.isNative ?
-      () => chainConfig?.nativeCurrency.name :
+      () => chainConfig.nativeCurrency.name :
       publicClient ?
-        withArbitrumUsdtPatch(token.address, chainConfig?.id, () => publicClient.readContract({
+        withArbitrumUsdtPatch(token.address, chainConfig.id, () => publicClient.readContract({
           address: token.address,
           abi: erc20Abi,
           functionName: 'name',
         })) :
         skipToken,
-  });
+  } : { queryFn: skipToken, queryKey: [] });
 
-  const symbolQuery = useQuery({
+  const symbolQuery = useQuery(chainConfig ? {
     enabled: include.includes('symbol'),
-    queryKey: getQueryKey.tokenSymbol(tokenIdentifier),
+    queryKey: getQueryKey.tokenSymbol(tokenIdentifier, chainConfig.id),
     queryFn: token.isNative ?
-      () => chainConfig?.nativeCurrency.symbol :
+      () => chainConfig.nativeCurrency.symbol :
       publicClient ?
-        withArbitrumUsdtPatch(token.address, chainConfig?.id, () => publicClient.readContract({
+        withArbitrumUsdtPatch(token.address, chainConfig.id, () => publicClient.readContract({
           address: token.address,
           abi: erc20Abi,
           functionName: 'symbol',
         })) :
         skipToken,
-  });
+  } : { queryFn: skipToken, queryKey: [] });
 
   const publicBalanceQuery = usePublicBalance({
     token,
