@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { isAddress } from 'viem';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
-import useChain from 'src/domains/chains/utils/useChain';
 import Modal from 'src/domains/misc/components/Modal';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
@@ -30,7 +29,6 @@ const SendModal = ({ children, token }: Props) => {
   const [addressTo, setAddressTo] = useState('');
   const [page, setPage] = useState(0);
   const [amount, setAmount] = useState(0n);
-  const chainConfig = useChain();
   const { withdraw, isWithdrawing } = useWithdraw();
 
   const onConfirm = () => {
@@ -54,17 +52,17 @@ const SendModal = ({ children, token }: Props) => {
     },
     {
       label: 'Network fee',
-      amount: fees?.fee_details.gas_cost_native,
-      tokenSymbol: chainConfig?.nativeCurrency.symbol,
-      tokenDecimals: chainConfig?.nativeCurrency.decimals,
-      tokenIcon: chainConfig?.NativeTokenIcon,
+      amount: fees?.fee_details.gas_cost_fee_token,
+      tokenSymbol: token.symbol,
+      tokenDecimals: token.decimals,
+      tokenIcon: token.icon,
     },
     {
       label: 'Relayer fee',
-      amount: fees?.fee_details.commission_native,
-      tokenSymbol: chainConfig?.nativeCurrency.symbol,
-      tokenDecimals: chainConfig?.nativeCurrency.decimals,
-      tokenIcon: chainConfig?.NativeTokenIcon,
+      amount: fees?.fee_details.commission_fee_token,
+      tokenSymbol: token.symbol,
+      tokenDecimals: token.decimals,
+      tokenIcon: token.icon,
     },
   ];
 
