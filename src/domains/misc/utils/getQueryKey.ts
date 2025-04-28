@@ -14,16 +14,16 @@ const getQueryKey = {
     accountAddress,
     chainId,
   ] ,
-  tokenDecimals: (tokenAddress: Address | 'native', chainId: string | number) => ['token-decimals', chainId, tokenAddress],
-  tokenName: (tokenAddress: Address | 'native', chainId: string | number) => ['token-name', chainId, tokenAddress] ,
-  tokenSymbol: (tokenAddress: Address | 'native', chainId: string | number) => ['token-symbol', chainId, tokenAddress] ,
-  tokenPublicBalance: (tokenAddress: Address | 'native', chainId: string | number, walletAddress: Address) => [
+  tokenDecimals: (tokenAddress: Address | 'native', chainId: string) => ['token-decimals', chainId, tokenAddress],
+  tokenName: (tokenAddress: Address | 'native', chainId: string) => ['token-name', chainId, tokenAddress] ,
+  tokenSymbol: (tokenAddress: Address | 'native', chainId: string) => ['token-symbol', chainId, tokenAddress] ,
+  tokenPublicBalance: (tokenAddress: Address | 'native', chainId: string, walletAddress: Address) => [
     'token-public-balance',
     tokenAddress,
     chainId,
     walletAddress,
   ] ,
-  tokenShieldedBalance: (tokenAddress: Address | 'native', chainId: string | number, walletAddress: Address) => [
+  tokenShieldedBalance: (tokenAddress: Address | 'native', chainId: string, walletAddress: Address) => [
     'token-shielded-balance',
     tokenAddress,
     chainId,
