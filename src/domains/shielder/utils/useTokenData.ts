@@ -27,7 +27,7 @@ const useTokenData = (token: Token, include: QueryNames[] = queryNames as Writab
 
   const decimalsQuery = useQuery(chainConfig ? {
     enabled: include.includes('decimals'),
-    queryKey: getQueryKey.tokenDecimals(tokenIdentifier, chainConfig.id),
+    queryKey: getQueryKey.tokenDecimals(tokenIdentifier, chainConfig.id.toString()),
     queryFn: token.isNative ?
       () => chainConfig.nativeCurrency.decimals :
       publicClient ?
@@ -42,7 +42,7 @@ const useTokenData = (token: Token, include: QueryNames[] = queryNames as Writab
 
   const nameQuery = useQuery(chainConfig ? {
     enabled: include.includes('name'),
-    queryKey: getQueryKey.tokenName(tokenIdentifier, chainConfig.id),
+    queryKey: getQueryKey.tokenName(tokenIdentifier, chainConfig.id.toString()),
     queryFn: token.isNative ?
       () => chainConfig.nativeCurrency.name :
       publicClient ?
@@ -56,7 +56,7 @@ const useTokenData = (token: Token, include: QueryNames[] = queryNames as Writab
 
   const symbolQuery = useQuery(chainConfig ? {
     enabled: include.includes('symbol'),
-    queryKey: getQueryKey.tokenSymbol(tokenIdentifier, chainConfig.id),
+    queryKey: getQueryKey.tokenSymbol(tokenIdentifier, chainConfig.id.toString()),
     queryFn: token.isNative ?
       () => chainConfig.nativeCurrency.symbol :
       publicClient ?
@@ -79,7 +79,7 @@ const useTokenData = (token: Token, include: QueryNames[] = queryNames as Writab
   const shieldedBalanceQuery = useQuery({
     enabled: selectedAccountType === 'shielded' && include.includes('shieldedBalance'),
     queryKey: accountAddress && chainConfig?.id ?
-      getQueryKey.tokenShieldedBalance(tokenIdentifier, chainConfig.id, accountAddress) : [],
+      getQueryKey.tokenShieldedBalance(tokenIdentifier, chainConfig.id.toString(), accountAddress) : [],
     queryFn: shielderClient ?
       () => shielderClient.accountState(tokenToShielderToken(token)).then(res => res?.balance ?? 0n):
       skipToken,

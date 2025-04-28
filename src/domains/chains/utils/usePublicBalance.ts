@@ -23,7 +23,7 @@ const usePublicBalance = ({ token, accountAddress, options }: Props) => {
   return useQuery({
     enabled: options?.enabled,
     queryKey: accountAddress && chainConfig?.id ?
-      getQueryKey.tokenPublicBalance(tokenAddress, chainConfig.id, accountAddress) : [],
+      getQueryKey.tokenPublicBalance(tokenAddress, chainConfig.id.toString(), accountAddress) : [],
     queryFn: publicClient && accountAddress ?
       token.isNative ? () => publicClient.getBalance({ address: accountAddress }) :
       () =>

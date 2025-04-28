@@ -43,11 +43,11 @@ export const useWithdraw = () => {
       const tokenAddress = token.isNative ? 'native' : token.address;
 
       void queryClient.invalidateQueries({
-        queryKey: getQueryKey.tokenShieldedBalance(tokenAddress, chainId, walletAddress),
+        queryKey: getQueryKey.tokenShieldedBalance(tokenAddress, chainId.toString(), walletAddress),
       });
 
       void queryClient.invalidateQueries({
-        queryKey: getQueryKey.tokenPublicBalance(tokenAddress, chainId, walletAddress),
+        queryKey: getQueryKey.tokenPublicBalance(tokenAddress, chainId.toString(), walletAddress),
       });
     },
     onError: error => {
