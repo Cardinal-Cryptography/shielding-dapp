@@ -26,6 +26,12 @@ createAppKit({
     'e0c2e199712878ed272e2c170b585baa0ff0eb50b07521ca586ebf7aeeffc598', //Talisman
     '18388be9ac2d02726dbac9777c96efaac06d744b2f6d580fccdd4127a6d01fd1', //Rabby
   ],
+  excludeWalletIds: [
+    '9ce87712b99b3eb57396cc8621db8900ac983c712236f48fb70ad28760be3f6a', // SubWallet
+    'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a', // Uniswap
+    'a797aa35c0fadbfc1a53e7f675162ed5226968b44a19ee3d24385c64d1d3c393', // Phantom
+    '4119a5b3e5ebc809b6a3680a280ae517b92fead02e4c07b7cec0d3385c87aee2', // xPortal
+  ],
   // Hiding the "All Wallets" button so only featured wallets are shown.
   allWallets: 'HIDE',
   chainImages: wagmiAdapter.wagmiChains ?
