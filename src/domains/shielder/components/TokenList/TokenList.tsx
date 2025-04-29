@@ -1,25 +1,28 @@
+import { ComponentType } from 'react';
 import styled from 'styled-components';
 
+import { Token as TokenBase } from 'src/domains/chains/types/misc';
+import definitions from 'src/domains/chains/utils/definitions';
 import ScrollShadow from 'src/domains/misc/components/ScrollShadow';
-import { Token } from 'src/domains/misc/types/types';
 
 import TokenListItem from './TokenListItem';
 
+export type Token = TokenBase & {
+  chain: keyof typeof definitions,
+  icon: ComponentType | undefined,
+};
+
 type Props = {
   tokens: Token[],
-  onTokenClick: (token: Token) => void,
-  selectedTokens?: Token[],
   className?: string,
 };
 
-const TokenList = ({ tokens, onTokenClick, className, selectedTokens }: Props) => (
+const TokenList = ({ tokens, className }: Props) => (
   <Container className={className}>
     {tokens.map(token => (
       <TokenListItem
-        onTokenClick={onTokenClick}
-        key={token.address}
+        key={`${token.address ?? 'native'}-${token.chain}`}
         token={token}
-        isSelected={selectedTokens?.some(t => t.address === token.address) ?? false}
       />
     )
     )}
@@ -29,5 +32,13 @@ const TokenList = ({ tokens, onTokenClick, className, selectedTokens }: Props) =
 export default TokenList;
 
 const Container = styled(ScrollShadow)`
-  width: min(100vw, 440px);
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 `;

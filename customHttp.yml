@@ -1,0 +1,10 @@
+# These headers must be enabled to use SharedArrayBuffer
+# (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements)
+# which is a requirement of multithreaded version of @cardinal-cryptography/shielder-sdk-crypto-wasm
+customHeaders:
+  - pattern: '**/*'
+    headers:
+      - key: 'Cross-Origin-Opener-Policy'
+        value: 'same-origin'
+      - key: 'Cross-Origin-Embedder-Policy'
+        value: 'require-corp'

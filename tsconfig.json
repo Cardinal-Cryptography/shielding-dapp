@@ -20,7 +20,15 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "src/*": ["./src/*"]
-    }
+    },
+    "types": [
+      "vite/client", // https://vitejs.dev/guide/features.html#client-types
+    ]
   },
-  "include": ["src", "scripts"]
+  "include": [
+    "src",
+    "scripts",
+    "vite-env.d.ts",
+  ]
 }
+

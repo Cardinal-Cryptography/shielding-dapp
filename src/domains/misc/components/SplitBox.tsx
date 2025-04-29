@@ -5,7 +5,7 @@ import vars from 'src/domains/styling/utils/vars';
 export const Section = styled.section`
   padding-block: ${vars('--spacing-m')};
   padding-inline: ${vars('--spacing-l')};
-  background-color: ${vars('--color-neutral-background-2-rest')};
+  background-color: ${vars('--color-neutral-background-3-rest')};
 `;
 
 export const Container = styled.div`

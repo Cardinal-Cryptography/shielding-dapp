@@ -14,6 +14,7 @@ import ArrowDownload from './icons/arrowDownload.svg?react';
 import ArrowImport from './icons/arrowImport.svg?react';
 import ArrowRight from './icons/arrowRight.svg?react';
 import ArrowSort from './icons/arrowSort.svg?react';
+import ArrowTurnDownLeft from './icons/arrowTurnDownLeft.svg?react';
 import ArrowUpRight from './icons/arrowUpRight.svg?react';
 import ArrowUpRightRegular from './icons/arrowUpRightRegular.svg?react';
 import Azero from './icons/azero.svg?react';
@@ -48,16 +49,21 @@ import Lock from './icons/lock.svg?react';
 import MoreVertical from './icons/moreVertical.svg?react';
 import Network from './icons/network.svg?react';
 import Open from './icons/open.svg?react';
+import Pencil from './icons/pencil.svg?react';
 import PersonFeedback from './icons/personFeedback.svg?react';
 import PersonFilled from './icons/personFilled.svg?react';
+import Power from './icons/power.svg?react';
 import QuestionCircle from './icons/questionCircle.svg?react';
+import RadioButton from './icons/radioButton.svg?react';
 import Settings from './icons/settings.svg?react';
 import ShieldError from './icons/shieldError.svg?react';
 import ShieldRegular from './icons/shieldRegular.svg?react';
 import ShieldTask from './icons/shieldTask.svg?react';
 import Shielded from './icons/shielded.svg?react';
 import ShieldedFilled from './icons/shieldedFilled.svg?react';
+import Signature from './icons/signature.svg?react';
 import SmartContractRegular from './icons/smartContractRegular.svg?react';
+import Spinner from './icons/spinner.svg?react';
 import TelegramSM from './icons/telegramSM.svg?react';
 import Usdc from './icons/usdc.svg?react';
 import Usdt from './icons/usdt.svg?react';
@@ -79,6 +85,7 @@ export const icons = {
   ArrowImport,
   ArrowRight,
   ArrowSort,
+  ArrowTurnDownLeft,
   ArrowUpRight,
   ArrowUpRightRegular,
   Azero,
@@ -113,16 +120,21 @@ export const icons = {
   MoreVertical,
   Network,
   Open,
+  Pencil,
   PersonFeedback,
   PersonFilled,
+  Power,
   QuestionCircle,
+  RadioButton,
   Settings,
   ShieldError,
   ShieldRegular,
   ShieldTask,
   Shielded,
   ShieldedFilled,
+  Signature,
   SmartContractRegular,
+  Spinner,
   TelegramSM,
   Usdc,
   Usdt,

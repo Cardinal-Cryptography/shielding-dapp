@@ -1,6 +1,6 @@
 import { useDebouncedCallback } from '@react-hookz/web';
 import { motion } from 'framer-motion';
-import { type ReactNode, useState } from 'react';
+import { MouseEvent, type ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { isNullish } from 'utility-types';
 
@@ -25,8 +25,9 @@ const CopyButton = ({
 
   const clearSuccessState = useDebouncedCallback(() => void setIsSuccess(false), [], 1000);
 
-  const handleCopy = async () => {
+  const handleCopy = async (e: MouseEvent) => {
     if (isNullish(data)) throw new Error('No data to copy. Should never happen!');
+    e.stopPropagation();
 
     await navigator.clipboard.writeText(data);
     setIsSuccess(true);
@@ -40,7 +41,7 @@ const CopyButton = ({
     <StyledButton
       as="button"
       type="button"
-      onClick={() => void handleCopy()}
+      onClick={e => void handleCopy(e)}
       disabled={isNullish(data)}
       className={className}
     >

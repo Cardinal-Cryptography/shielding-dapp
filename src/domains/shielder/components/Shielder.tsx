@@ -1,169 +1,134 @@
-import { useState } from 'react';
 import styled from 'styled-components';
+import { objectEntries } from 'tsafe';
 
-import Button from 'src/domains/misc/components/Button';
-import CopyButton from 'src/domains/misc/components/CopyButton';
+import useChain from 'src/domains/chains/utils/useChain';
+import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
-import { Token } from 'src/domains/misc/types/types';
-import formatAddress from 'src/domains/misc/utils/formatAddress';
-import Balance from 'src/domains/shielder/components/Balance';
+import Skeleton from 'src/domains/misc/components/Skeleton';
+import Title from 'src/domains/misc/components/Title.tsx';
+import shieldImage from 'src/domains/shielder/assets/shield.png';
+import AccountTypeSelector from 'src/domains/shielder/components/AccountTypeSelector';
 import TokenList from 'src/domains/shielder/components/TokenList';
+import { useShielderStore } from 'src/domains/shielder/stores/shielder';
+import useShielderClient from 'src/domains/shielder/utils/useShielderClient';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
 const Shielder = () => {
-  //todo Replace with store
-  const [selectedAccountType, setSelectedAccountType] = useState<'public' | 'shielded'>('public');
-  const [selectedTokens, setSelectedTokens] = useState<Token[]>([]);
+  const chainConfig = useChain();
+  const { isSuccess } = useShielderClient();
+  const { selectedAccountType } = useShielderStore();
 
-  const handleSelect = (token: Token) => {
-    setSelectedTokens(curr => {
-      if(curr.some(t => t.address === token.address)) {
-        return curr.filter(t => t.address !== token.address);
-      } else {
-        return [...curr, token];
-      }});
-  };
+  const nonNativeTokens = chainConfig ?
+    objectEntries(chainConfig.whitelistedTokens).map(([address, token]) => ({
+      ...token,
+      address,
+      isNative: false as const,
+      chain: chainConfig.chain,
+    })) :
+    [];
+
+  const nativeToken = chainConfig ? {
+    address: undefined,
+    isNative: true as const,
+    chain: chainConfig.chain,
+    icon: chainConfig.NativeTokenIcon,
+  } : undefined;
+
+  const tokens = [...(nativeToken ? [nativeToken] : []), ...nonNativeTokens];
+
+  const content = isSuccess ? (
+    <>
+      <Title size="medium">Your accounts</Title>
+      <AccountTypeSelector />
+      {selectedAccountType === 'public' && (
+        <InfoBox>
+          <CIcon icon="Info" size={20} />
+          <p>Tokens that can be moved to shielded account:</p>
+        </InfoBox>
+      )}
+      <TokensWrapper>
+        <TokenList tokens={tokens} />
+      </TokensWrapper>
+      {selectedAccountType === 'shielded' && (
+        <Disclaimer>
+          <InfoContainer>
+            <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
+            <p>
+              Shielded account is created based on your connected public account.
+              You can access it only from the Trace Breaker.
+            </p>
+          </InfoContainer>
+          <ShieldImage src={shieldImage} alt="Shield icon" />
+        </Disclaimer>
+      )}
+    </>
+  ) : <Skeleton style={{ height: '100%', minHeight: '400px', width: '100%', borderRadius: vars('--border-radius-m') }} />;
 
   return (
-    <Container>
-      <BalanceWrapper>
-        <Header>
-          <Title>Your Assets</Title>
-          <AddressWrapper><Address size={18} data="Text">{formatAddress('0x4b8e2d4f9a1c3e7d5b6f8a2e9c7d4f3b1a0c9e8d')}</Address></AddressWrapper>
-        </Header>
-        <Balance
-          selectedAccountType={selectedAccountType}
-          setSelectedAccountType={setSelectedAccountType}
-          publicBalance={5678n * 10n ** 18n}
-          privateBalance={123n * 10n ** 18n}
-          nativeAssetDecimals={18}
-          nativeAssetUsdPrice={0.51}
-          publicTokensUsdValue={123.45}
-        />
-      </BalanceWrapper>
-      <TokensWrapper>
-        <TokenList
-          selectedTokens={selectedTokens}
-          onTokenClick={handleSelect}
-          tokens={[
-            {
-              address: '0x1',
-              name: 'Ethereum',
-              chain: 'alephEvm',
-              icon: 'Eth',
-              decimals: 18,
-              balance: {
-                atomic: '1500000000000000000',
-                usd: 4500,
-              },
-              usdPrice: 3000,
-              symbol: 'ETH',
-            },
-            {
-              address: '0x2',
-              name: 'Aleph Zero',
-              icon: 'Azero',
-              chain: 'alephEvm',
-              decimals: 8,
-              balance: {
-                atomic: '50000000000',
-                usd: 75,
-              },
-              usdPrice: 0.15,
-              symbol: 'AZERO',
-            },
-            {
-              address: '0x3',
-              name: 'Bitcoin',
-              icon: 'WBtc',
-              chain: 'alephEvm',
-              decimals: 8,
-              balance: {
-                atomic: '25000000',
-                usd: 12500,
-              },
-              usdPrice: 50000,
-              symbol: 'BTC',
-            },
-            {
-              address: '0x4',
-              name: 'Tether',
-              icon: 'Usdt',
-              chain: 'alephEvm',
-              decimals: 6,
-              balance: {
-                atomic: '1000000000',
-                usd: 1000,
-              },
-              usdPrice: 1,
-              symbol: 'USDT',
-            },
-            {
-              address: '0x5',
-              name: 'USD Coin',
-              icon: 'Usdc',
-              chain: 'alephEvm',
-              decimals: 6,
-              balance: {
-                atomic: '500000000',
-                usd: 500,
-              },
-              usdPrice: 1,
-              symbol: 'USDC',
-            },
-          ]}
-        />
-      </TokensWrapper>
-      <ButtonWrapper>
-        <StyledButton variant="primary">Shield tokens</StyledButton>
-      </ButtonWrapper>
-    </Container>
+    <Wrapper>
+      <Container>
+        {content}
+      </Container>
+    </Wrapper>
   );
 };
 
 export default Shielder;
 
 const Container = styled(DoubleBorderBox.Content)`
-  padding: ${vars('--spacing-none')}
-`;
-
-const BalanceWrapper = styled.div`
-  padding-inline: ${vars('--spacing-m')};
-  box-shadow: 0 10px 10px ${vars('--color-neutral-background-alpha-1-rest')};
+  display: flex;
+  flex-direction: column;
+  gap: ${vars('--spacing-l')};
+  padding: ${vars('--spacing-l')};
 `;
 
 const TokensWrapper = styled.div`
-  padding-inline: ${vars('--spacing-m')};
-  padding-block: ${vars('--spacing-l')};
+  flex: 1;
+  overflow: hidden;
 `;
 
-const ButtonWrapper = styled.div`
-  padding: ${vars('--spacing-m')};
-`;
-
-const StyledButton = styled(Button)`
-  width: 100%;
-`;
-
-const Header = styled.div`
+const InfoBox = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: 60px;
-`;
-
-const Title = styled.h2`
-  ${typography.decorative.subtitle2};
-`;
-
-const AddressWrapper = styled.div`
-  display: flex;
   gap: ${vars('--spacing-s')};
+  padding-left: ${vars('--spacing-s')};
+  color: ${vars('--color-neutral-foreground-3-rest')};
+  ${typography.web.body1Strong};
 `;
 
-const Address = styled(CopyButton)`
-  ${typography.web.body1};
+const Wrapper = styled(DoubleBorderBox.Wrapper)`
+  width: 100%;
+  overflow: hidden;
+`;
+
+const Disclaimer = styled(DoubleBorderBox.Content)`
+  display: flex;
+
+  flex-direction: row;
+  justify-content: space-between;
+  gap: ${vars('--spacing-m')};
+
+  margin: ${vars('--spacing-none')};
+  padding: ${vars('--spacing-m')};
+  padding: ${vars('--spacing-xs')} 0 0 0;
+
+  background: ${vars('--color-neutral-background-4a-rest')};
+`;
+
+const InfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: ${vars('--spacing-xs')};
-  color: ${vars('--color-brand-foreground-2-rest')};
+  padding: ${vars('--spacing-m')} ${vars('--spacing-l')} ${vars('--spacing-l')};
+  color: ${vars('--color-neutral-foreground-2-rest')};
+  ${typography.web.caption1};
+`;
+
+const ShieldImage = styled.img`
+  align-self: end;
+  height: 120px;
+  margin-bottom: -2px;
+  margin-right: -32px;
+  pointer-events: none;
 `;
