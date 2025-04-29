@@ -7,7 +7,7 @@ on:
 jobs:
   install: # Warm up node_modules cache for the following jobs
     name: Set up Node.js and install npm dependencies
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-project
@@ -16,7 +16,7 @@ jobs:
 
   lint-commits:
     name: Lint commits
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: [install]
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
   type-check:
     name: Type check with TS
     needs: [install]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-project
@@ -41,7 +41,7 @@ jobs:
   lint:
     name: Lint code
     needs: [install]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-project
@@ -52,7 +52,7 @@ jobs:
   test:
     name: Run tests
     needs: [install]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     environment: dev
     steps:
       - uses: actions/checkout@v4
