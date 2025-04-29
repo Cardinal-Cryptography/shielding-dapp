@@ -7,7 +7,7 @@ import {
   FEEDBACK_LINK,
   KNOWLEDGE_BASE_LINK, LANDING_PAGE_LINK,
   FAUCET_LINK,
-  FRAUD_PROTECTION_LINK, TERMS_OF_SERVICE_LINK, PRIVACY_POLICY_LINK,
+  FRAUD_PROTECTION_LINK, TERMS_OF_SERVICE_LINK, PRIVACY_POLICY_LINK, STATISTICS_LINK,
 } from 'src/domains/misc/consts/consts';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -21,6 +21,7 @@ const Footer = () => (
       <Link href={FEEDBACK_LINK} target="_blank" rel="noopener noreferrer">Feedback</Link>
       <Link href={CHANGELOG_LINK} target="_blank" rel="noopener noreferrer">Changelog</Link>
       <Link href={KNOWLEDGE_BASE_LINK} target="_blank" rel="noopener noreferrer">Help center</Link>
+      <Link href={STATISTICS_LINK} target="_blank" rel="noopener noreferrer">Statistics</Link>
       <Link href={FAUCET_LINK} target="_blank" rel="noopener noreferrer">
         Get Testnet Tokens
       </Link>
