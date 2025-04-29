@@ -3,34 +3,34 @@ import type { Address } from 'viem';
 import { NetworkEnvironment } from 'src/domains/chains/types/misc';
 
 const getQueryKey = {
-  shielderFees: (walletAddress: Address) => ['shielderFees', walletAddress] as const,
+  shielderFees: (walletAddress: Address, chainId: string) => ['shielderFees', walletAddress, chainId] ,
   shielderClient: (chainId: number, shielderPrivateKey: Address) => [
     'shielder-client',
     chainId,
     shielderPrivateKey,
-  ] as const,
+  ] ,
   shielderTransactions: (accountAddress: Address, chainId: number) => [
     'shielder-transactions',
     accountAddress,
     chainId,
-  ] as const,
-  tokenDecimals: (tokenAddress: Address | 'native') => ['token-decimals', tokenAddress] as const,
-  tokenName: (tokenAddress: Address | 'native') => ['token-name', tokenAddress] as const,
-  tokenSymbol: (tokenAddress: Address | 'native') => ['token-symbol', tokenAddress] as const,
-  tokenPublicBalance: (tokenAddress: Address | 'native', chainId: string | number, walletAddress: Address) => [
+  ] ,
+  tokenDecimals: (tokenAddress: Address | 'native', chainId: string) => ['token-decimals', chainId, tokenAddress],
+  tokenName: (tokenAddress: Address | 'native', chainId: string) => ['token-name', chainId, tokenAddress] ,
+  tokenSymbol: (tokenAddress: Address | 'native', chainId: string) => ['token-symbol', chainId, tokenAddress] ,
+  tokenPublicBalance: (tokenAddress: Address | 'native', chainId: string, walletAddress: Address) => [
     'token-public-balance',
     tokenAddress,
     chainId,
     walletAddress,
-  ] as const,
-  tokenShieldedBalance: (tokenAddress: Address | 'native', chainId: string | number, walletAddress: Address) => [
+  ] ,
+  tokenShieldedBalance: (tokenAddress: Address | 'native', chainId: string, walletAddress: Address) => [
     'token-shielded-balance',
     tokenAddress,
     chainId,
     walletAddress,
-  ] as const,
-  shielderPrivateKey: (walletAddress: Address, networkEnvironment: NetworkEnvironment) => ['shielderPrivateKey', networkEnvironment, walletAddress] as const,
-  wasmCryptoClient: () => ['wasm-crypto-client'] as const,
+  ] ,
+  shielderPrivateKey: (walletAddress: Address, networkEnvironment: NetworkEnvironment) => ['shielderPrivateKey', networkEnvironment, walletAddress] ,
+  wasmCryptoClient: () => ['wasm-crypto-client'] ,
 };
 
 export default getQueryKey;

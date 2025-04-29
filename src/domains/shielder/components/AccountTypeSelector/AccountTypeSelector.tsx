@@ -7,7 +7,7 @@ import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
 import CIcon from 'src/domains/misc/components/CIcon';
 import CopyButton from 'src/domains/misc/components/CopyButton';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
-import { useShielderStore } from 'src/domains/shielder/stores/shielder';
+import useShielderStore from 'src/domains/shielder/stores/shielder';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 

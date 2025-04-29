@@ -60,20 +60,20 @@ export const useShield = () => {
       const tokenAddress = token.isNative ? 'native' : token.address;
 
       void queryClient.invalidateQueries({
-        queryKey: getQueryKey.tokenShieldedBalance(tokenAddress, chainId, walletAddress),
+        queryKey: getQueryKey.tokenShieldedBalance(tokenAddress, chainId.toString(), walletAddress),
       });
       void queryClient.invalidateQueries({
-        queryKey: getQueryKey.tokenPublicBalance(tokenAddress, chainId, walletAddress),
+        queryKey: getQueryKey.tokenPublicBalance(tokenAddress, chainId.toString(), walletAddress),
       });
       void queryClient.invalidateQueries({
-        queryKey: getQueryKey.tokenPublicBalance('native', chainId, walletAddress),
+        queryKey: getQueryKey.tokenPublicBalance('native', chainId.toString(), walletAddress),
       });
     },
     onError: error => {
       console.error('Shielding failed:', error);
       if (!walletAddress || !chainId) return;
       void queryClient.invalidateQueries({
-        queryKey: getQueryKey.tokenPublicBalance('native', chainId, walletAddress),
+        queryKey: getQueryKey.tokenPublicBalance('native', chainId.toString(), walletAddress),
       });
     },
   });

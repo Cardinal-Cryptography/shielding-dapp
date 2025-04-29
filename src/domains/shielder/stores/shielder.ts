@@ -16,9 +16,10 @@ type ShielderStore = {
   ) => void,
   selectedAccountType: AccountType,
   setSelectedAccountType: (accountType:AccountType) => void,
+  clearShielderPrivateKeys: () => void,
 };
 
-const useShielderInternalStore = create<ShielderStore>()(
+const useShielderStore = create<ShielderStore>()(
   persist(
     set => ({
       selectedAccountType: 'public',
@@ -37,6 +38,9 @@ const useShielderInternalStore = create<ShielderStore>()(
           },
         }));
       },
+      clearShielderPrivateKeys: () => {
+        set({ shielderPrivateKeys: {}});
+      },
     }),
     {
       name: 'shielder',
@@ -49,18 +53,4 @@ const useShielderInternalStore = create<ShielderStore>()(
   )
 );
 
-export const useShielderStore = () => {
-  const {
-    shielderPrivateKeys,
-    setShielderPrivateKeys,
-    selectedAccountType,
-    setSelectedAccountType,
-  } = useShielderInternalStore();
-
-  return {
-    shielderPrivateKeys,
-    setShielderPrivateKeys,
-    selectedAccountType,
-    setSelectedAccountType,
-  };
-};
+export default useShielderStore;

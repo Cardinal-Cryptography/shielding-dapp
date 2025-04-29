@@ -10,31 +10,41 @@ type Props = {
 
 const ChainActions = ({ provingTimeMillis }: Props) => (
   <ChainActionsContainer>
-    <FirstStep>
-      <div>
-        <FirstStepProofIconWrapper>
-          <CIcon size={16} icon="RadioButton" />
-        </FirstStepProofIconWrapper>
+    {provingTimeMillis ? (
+      <HighlightedStep>
         <div>
+          <HighlightedStepIconWrapper>
+            <CIcon size={16} icon="RadioButton" />
+          </HighlightedStepIconWrapper>
+          <div>
+            <StepText>
+              Generating ZK Proof
+            </StepText>
+            <HighlightedStepText>
+              <>{Math.round(provingTimeMillis / 10) / 100} sec</>
+            </HighlightedStepText>
+          </div>
+        </div>
+        <CIcon icon="CheckmarkCircle" color={vars('--color-status-success-foreground-1-rest')} />
+      </HighlightedStep>
+    ): (
+      <Step>
+        <div>
+          <IconWrapper>
+            <CIcon size={16} icon="RadioButton" />
+          </IconWrapper>
           <StepText>
             Generating ZK Proof
           </StepText>
-          <HighlightedStepText>
-            {
-              provingTimeMillis ?
-                <>{Math.round(provingTimeMillis / 10) / 100} sec</> :
-                'N/A'
-            }
-          </HighlightedStepText>
         </div>
-      </div>
-      <CIcon icon="CheckmarkCircle" color={vars('--color-status-success-foreground-1-rest')} />
-    </FirstStep>
+        <CIcon icon="CheckmarkCircle" color={vars('--color-status-success-foreground-1-rest')} />
+      </Step>
+    )}
     <Step>
       <div>
-        <RelayerIconWrapper>
+        <IconWrapper>
           <CIcon size={16} icon="RadioButton" />
-        </RelayerIconWrapper>
+        </IconWrapper>
         <StepText>
           Sending to relayer
         </StepText>
@@ -68,7 +78,7 @@ const Step = styled.div`
     }
 `;
 
-const FirstStep = styled(Step)`
+const HighlightedStep = styled(Step)`
     padding-block: ${vars('--spacing-l')};
     background: ${vars('--color-neutral-background-3-rest')};
     border-radius: ${vars('--border-radius-s')};
@@ -105,12 +115,12 @@ const ProofIconWrapper = styled.div`
     }
 `;
 
-const FirstStepProofIconWrapper = styled(ProofIconWrapper)`
+const HighlightedStepIconWrapper = styled(ProofIconWrapper)`
     align-self: start;
     margin-top: ${vars('--spacing-xs')};
 `;
 
-const RelayerIconWrapper = styled.div`
+const IconWrapper = styled.div`
     position: relative;
     color: ${ vars('--color-brand-background-compound-rest')};
 

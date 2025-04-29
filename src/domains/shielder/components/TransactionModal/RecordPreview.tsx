@@ -119,6 +119,7 @@ const RecordPreview = ({ selectedTransaction }: Props) => {
                   {formatBalance({
                     balance: fees.fee_details.total_cost_native,
                     decimals: chainConfig.nativeCurrency.decimals,
+                    options: { formatDecimals: 5 },
                   })}
                 </RowValue>
               }
@@ -133,6 +134,7 @@ const RecordPreview = ({ selectedTransaction }: Props) => {
                     {formatBalance({
                       balance: fees.fee_details.total_cost_fee_token,
                       decimals,
+                      options: { formatDecimals: 5 },
                     })}
                   </RowValue>
                 }

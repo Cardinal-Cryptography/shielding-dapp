@@ -8,10 +8,12 @@ import { DepositCalldata } from '@cardinal-cryptography/shielder-sdk/dist/action
 import { NewAccountCalldata } from '@cardinal-cryptography/shielder-sdk/dist/actions/newAccount';
 import { WithdrawCalldata } from '@cardinal-cryptography/shielder-sdk/dist/actions/withdraw';
 import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getPublicClient } from '@wagmi/core';
 import styled from 'styled-components';
 import { usePublicClient } from 'wagmi';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
+import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import useChain from 'src/domains/chains/utils/useChain';
 import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
@@ -20,6 +22,8 @@ import { getTransactionsIndexedDB } from 'src/domains/shielder/stores/getShielde
 import useSelectedTransactionModal from 'src/domains/shielder/stores/selectedTransaction';
 import { useWasm } from 'src/domains/shielder/utils/WasmProvider';
 import vars from 'src/domains/styling/utils/vars';
+
+const TWO_MINUTES = 2 * 60 * 1000;
 
 const provingTimeMap = new Map<string, number>();
 
@@ -88,7 +92,26 @@ const useShielderClient = () => {
               const key = Buffer.from(tx.newNote.bytes).toString('hex');
               const provingTimeMillis = provingTimeMap.get(key);
 
-              await transactionsStorage.addItem(chainConfig.id, tx, provingTimeMillis);
+              const getTimestamp = async () => {
+                const client = getPublicClient(wagmiAdapter.wagmiConfig);
+
+                if(!client) {
+                  console.warn('No client available for fetching accurate timestamp');
+                  return;
+                }
+
+                try {
+                  const receipt = await client.waitForTransactionReceipt({ hash: tx.txHash });
+                  const block = await client.getBlock({ blockHash: receipt.blockHash });
+                  return Number(block.timestamp) * 1000;
+                } catch (error) {
+                  console.warn('Failed to fetch accurate timestamp for tx', tx.txHash, error);
+                  return;
+                }
+              };
+              const timestamp = await getTimestamp();
+
+              await transactionsStorage.addItem(chainConfig.id, tx, provingTimeMillis, timestamp);
 
               await queryClient.invalidateQueries({
                 queryKey: getQueryKey.shielderTransactions(
@@ -96,19 +119,19 @@ const useShielderClient = () => {
                   chainId
                 ),
               });
-
-              showToast({
-                title:
-                  tx.type === 'Deposit' ? 'Shielded' : 'Sent privately',
-                status: 'success',
-                body: (
-                  <DetailsButton
-                    onClick={() => void openTransactionModal(tx.txHash)}
-                  >
-                    See details
-                  </DetailsButton>
-                ),
-              });
+              if (timestamp && Date.now() - timestamp <= TWO_MINUTES) {
+                showToast({
+                  title: tx.type === 'Withdraw' ? 'Sent privately' : 'Shielded',
+                  status: 'success',
+                  body: (
+                    <DetailsButton
+                      onClick={() => void openTransactionModal(tx.txHash)}
+                    >
+                      See details
+                    </DetailsButton>
+                  ),
+                });
+              }
             },
           },
         });

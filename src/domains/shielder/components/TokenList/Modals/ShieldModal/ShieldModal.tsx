@@ -5,6 +5,7 @@ import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
 import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
 import Modal from 'src/domains/misc/components/Modal';
+import isPresent from 'src/domains/misc/utils/isPresent';
 import useShield from 'src/domains/shielder/utils/useShield';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import vars from 'src/domains/styling/utils/vars';
@@ -34,7 +35,7 @@ const SendModal = ({ children, token }: Props) => {
 
   const { data: publicNativeBalance } = usePublicBalance({ accountAddress: address, token: { isNative: true }});
 
-  const hasInsufficientFees = publicNativeBalance && fees?.fee_details.total_cost_native ?
+  const hasInsufficientFees = isPresent(publicNativeBalance) && fees?.fee_details.total_cost_native ?
     publicNativeBalance < fees.fee_details.total_cost_native :
     false;
 
@@ -72,16 +73,28 @@ const SendModal = ({ children, token }: Props) => {
     >
       {
         [
-          <SelectAmountPage key="select-amount" token={token} feeConfig={feeConfig} onContinue={handleSelectAmount} />,
+          <SelectAmountPage
+            key="select-amount"
+            token={token}
+            feeConfig={feeConfig}
+            onContinue={handleSelectAmount}
+            hasInsufficientFees={hasInsufficientFees}
+          />,
           close => (
             <ConfirmPage
               key="confirmation"
               amount={amount}
               token={token}
               onConfirm={() => void handleShield(close)}
-              loadingText={isShielding ? 'Shielding' : undefined}
+              isLoading={isShielding}
+              buttonLabel={
+                hasInsufficientFees ?
+                  `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance` :
+                  isShielding ? 'Shielding' : 'Confirm'
+              }
               feeConfig={feeConfig}
               addressFrom={address}
+              hasInsufficientFees={hasInsufficientFees}
             />
           ),
         ]

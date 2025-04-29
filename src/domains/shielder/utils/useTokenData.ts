@@ -1,13 +1,14 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { Writable } from 'utility-types';
 import { erc20Abi } from 'viem';
+import { arbitrum } from 'viem/chains';
 import { useAccount, usePublicClient } from 'wagmi';
 
 import { Token } from 'src/domains/chains/types/misc';
 import useChain from 'src/domains/chains/utils/useChain';
 import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
-import { useShielderStore } from 'src/domains/shielder/stores/shielder';
+import useShielderStore from 'src/domains/shielder/stores/shielder';
 import tokenToShielderToken from 'src/domains/shielder/utils/tokenToShielderToken';
 import useShielderClient from 'src/domains/shielder/utils/useShielderClient';
 
@@ -22,13 +23,13 @@ const useTokenData = (token: Token, include: QueryNames[] = queryNames as Writab
 
   const { data: shielderClient } = useShielderClient();
 
-  const tokenAddress = token.isNative ? 'native' : token.address;
+  const tokenIdentifier = token.isNative ? 'native' : token.address;
 
-  const decimalsQuery = useQuery({
+  const decimalsQuery = useQuery(chainConfig ? {
     enabled: include.includes('decimals'),
-    queryKey: getQueryKey.tokenDecimals(tokenAddress),
+    queryKey: getQueryKey.tokenDecimals(tokenIdentifier, chainConfig.id.toString()),
     queryFn: token.isNative ?
-      () => chainConfig?.nativeCurrency.decimals :
+      () => chainConfig.nativeCurrency.decimals :
       publicClient ?
         () =>
           publicClient.readContract({
@@ -37,37 +38,35 @@ const useTokenData = (token: Token, include: QueryNames[] = queryNames as Writab
             functionName: 'decimals',
           }) :
         skipToken,
-  });
+  } : { queryFn: skipToken, queryKey: [] });
 
-  const nameQuery = useQuery({
+  const nameQuery = useQuery(chainConfig ? {
     enabled: include.includes('name'),
-    queryKey: getQueryKey.tokenName(tokenAddress),
+    queryKey: getQueryKey.tokenName(tokenIdentifier, chainConfig.id.toString()),
     queryFn: token.isNative ?
-      () => chainConfig?.nativeCurrency.name :
+      () => chainConfig.nativeCurrency.name :
       publicClient ?
-        () =>
-          publicClient.readContract({
-            address: token.address,
-            abi: erc20Abi,
-            functionName: 'name',
-          }) :
+        withArbitrumUsdtPatch(token.address, chainConfig.id, () => publicClient.readContract({
+          address: token.address,
+          abi: erc20Abi,
+          functionName: 'name',
+        })) :
         skipToken,
-  });
+  } : { queryFn: skipToken, queryKey: [] });
 
-  const symbolQuery = useQuery({
+  const symbolQuery = useQuery(chainConfig ? {
     enabled: include.includes('symbol'),
-    queryKey: getQueryKey.tokenSymbol(tokenAddress),
+    queryKey: getQueryKey.tokenSymbol(tokenIdentifier, chainConfig.id.toString()),
     queryFn: token.isNative ?
-      () => chainConfig?.nativeCurrency.symbol :
+      () => chainConfig.nativeCurrency.symbol :
       publicClient ?
-        () =>
-          publicClient.readContract({
-            address: token.address,
-            abi: erc20Abi,
-            functionName: 'symbol',
-          }) :
+        withArbitrumUsdtPatch(token.address, chainConfig.id, () => publicClient.readContract({
+          address: token.address,
+          abi: erc20Abi,
+          functionName: 'symbol',
+        })) :
         skipToken,
-  });
+  } : { queryFn: skipToken, queryKey: [] });
 
   const publicBalanceQuery = usePublicBalance({
     token,
@@ -80,7 +79,7 @@ const useTokenData = (token: Token, include: QueryNames[] = queryNames as Writab
   const shieldedBalanceQuery = useQuery({
     enabled: selectedAccountType === 'shielded' && include.includes('shieldedBalance'),
     queryKey: accountAddress && chainConfig?.id ?
-      getQueryKey.tokenShieldedBalance(tokenAddress, chainConfig.id, accountAddress) : [],
+      getQueryKey.tokenShieldedBalance(tokenIdentifier, chainConfig.id.toString(), accountAddress) : [],
     queryFn: shielderClient ?
       () => shielderClient.accountState(tokenToShielderToken(token)).then(res => res?.balance ?? 0n):
       skipToken,
@@ -90,3 +89,18 @@ const useTokenData = (token: Token, include: QueryNames[] = queryNames as Writab
 };
 
 export default useTokenData;
+
+const withArbitrumUsdtPatch = (
+  tokenAddress: string,
+  chainId: number | undefined,
+  fn: () => Promise<string>
+) => async () => {
+  if (
+    chainId === arbitrum.id &&
+    tokenAddress.toLowerCase() === '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9'
+  ) {
+    return 'USDT';
+  }
+
+  return fn();
+};
