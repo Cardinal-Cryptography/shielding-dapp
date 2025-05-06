@@ -15,7 +15,7 @@ export const STATUS_ICONS_DATA: Record<string, { icon: IconName, color: string |
     color: vars('--color-neutral-foreground-2-rest'),
   },
   error: {
-    icon: 'Dismiss',
+    icon: 'DismissCircle',
     color: vars('--color-status-danger-foreground-1-rest'),
   },
   inProgress: {
