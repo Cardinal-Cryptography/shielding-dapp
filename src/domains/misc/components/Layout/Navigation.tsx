@@ -6,7 +6,7 @@ import router from 'src/domains/routing/utils/router';
 const tabsConfig = [
   {
     key: 'shield',
-    label: 'Trace Breaker',
+    label: 'Shielded Account',
     routeNames: ['Shielded-Account'],
     onClick: () => void router.push('Shielded-Account'),
   },
