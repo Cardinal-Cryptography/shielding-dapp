@@ -1,15 +1,13 @@
 import { useMediaQuery } from '@react-hookz/web';
 import styled from 'styled-components';
 
-import ChainIcon from 'src/domains/chains/components/ChainIcon.tsx';
+import ChainSelector from 'src/domains/chains/components/ChainSelector';
 import ConnectModal from 'src/domains/chains/components/ConnectModal';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
-import useChain from 'src/domains/chains/utils/useChain';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
-import { BOTTOM_MENU_BREAKPOINT, BREAKPOINTS } from 'src/domains/misc/consts/consts';
+import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
-import { typography } from 'src/domains/styling/utils/tokens.ts';
+import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
 import Navigation from '../Navigation';
@@ -21,10 +19,7 @@ import UserIcon from './userIcon.svg?react';
 
 const TopBar = () => {
   const isSmallScreen = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
-  const isLargeScreen = useMediaQuery(`(min-width: ${BREAKPOINTS.sm})`);
-
-  const chainConfig = useChain();
-  const { openModal, disconnect, isConnected , address } = useWallet();
+  const { disconnect, isConnected , address } = useWallet();
 
   return (
     <NavBox.Container>
@@ -37,15 +32,7 @@ const TopBar = () => {
       <NavBox.UserCanvas>
         {isConnected ? (
           <AccountManager>
-            <ChainSelector variant="secondary" onClick={() => void openModal({ view: 'Networks' })}>
-              {chainConfig ? (
-                <ButtonLeftContent>
-                  <ChainIcon chainId={chainConfig.id} size={24} />
-                  {isLargeScreen && chainConfig.name}
-                </ButtonLeftContent>
-              ) : 'Select Network'}
-              <ChevronIcon icon="ChevronLeft" />
-            </ChainSelector>
+            <ChainSelector />
             <AccountDetails>
               <AccountIcon />
               {address && formatAddress(address)}
@@ -82,36 +69,6 @@ const BrandContainer = styled.div`
 
     container: ${BRAND_CONTAINER_TITLE} / inline-size;
   }
-`;
-
-const ChainSelector = styled(Button)`
-  display: flex;
-
-  gap: ${vars('--spacing-s')};
-  align-items: center;
-  justify-content: space-between;
-
-  padding-inline: ${vars('--spacing-s')};
-  width: 246px;
-
-  background: ${vars('--color-neutral-background-1-rest')};
-  border-color: ${vars('--color-neutral-stroke-2-rest')};
-  
-  ${typography.web.body1};
-
-  @media (width <= ${BOTTOM_MENU_BREAKPOINT}) { /* stylelint-disable-line media-query-no-invalid */
-    width: fit-content;
-  }
-`;
-
-const ButtonLeftContent = styled.div`
-  display: flex;
-  gap: ${vars('--spacing-s')};
-  align-items: center;
-`;
-
-const ChevronIcon = styled(CIcon)`
-  transform: rotate(180deg);
 `;
 
 const AccountDetails = styled.div`

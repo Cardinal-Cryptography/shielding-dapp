@@ -32,7 +32,7 @@ const CIcon = ({
   );
 };
 
-export default CIcon;
+export default styled(CIcon)``;
 
 const Icon = styled.div<{
   $size: Size,

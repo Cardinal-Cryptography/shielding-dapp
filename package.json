@@ -24,6 +24,7 @@
     "@faker-js/faker": "^9.7.0",
     "@number-flow/react": "^0.5.7",
     "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-popover": "^1.1.13",
     "@react-hookz/web": "^25.1.0",
     "@reown/appkit": "^1.7.0",
     "@reown/appkit-adapter-wagmi": "^1.7.0",
