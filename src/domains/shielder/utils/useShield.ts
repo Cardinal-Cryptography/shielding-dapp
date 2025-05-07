@@ -1,13 +1,13 @@
 import { erc20Token, nativeToken } from '@cardinal-cryptography/shielder-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRef } from 'react';
-import { erc20Abi, TransactionExecutionError, UserRejectedRequestError } from 'viem';
+import { erc20Abi } from 'viem';
 import { useAccount, usePublicClient, useSendTransaction, useWalletClient } from 'wagmi';
 
 import { Token } from 'src/domains/chains/types/misc';
 import useChain from 'src/domains/chains/utils/useChain';
 import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import { getWalletErrorName, handleWalletError } from 'src/domains/shielder/utils/walletErrors';
 
 import useShielderClient from './useShielderClient';
 
@@ -20,7 +20,6 @@ export const useShield = () => {
   const queryClient = useQueryClient();
   const chainConfig = useChain();
   const { showToast } = useToast();
-  const rejectedTxRef = useRef(false);
 
   const sendTransactionWithToast = async (params: Parameters<typeof sendTransactionAsync>[0]) => {
     const toast = showToast({
@@ -34,36 +33,20 @@ export const useShield = () => {
       toast.updateToast({
         subtitle: 'Still waiting? Make sure you signed the transaction from your wallet.',
       });
-    }, 30_000);
+    }, 10_000);
 
     try {
-      const tx = await sendTransactionAsync(params);
-      clearTimeout(timeoutId);
-      toast.dismissToast();
-      return tx;
+      return await sendTransactionAsync(params);
     } catch (error) {
+      return handleWalletError(error);
+    } finally {
       clearTimeout(timeoutId);
       toast.dismissToast();
-
-      const isRejected = error instanceof TransactionExecutionError && error.cause instanceof UserRejectedRequestError;
-
-      if(isRejected) {
-        rejectedTxRef.current = true;
-        showToast({
-          status: 'error',
-          title: 'Transaction rejected',
-          subtitle: 'Transaction has been rejected in the wallet',
-        });
-      }
-
-      throw error;
     }
   };
 
   const { mutateAsync: shield, isPending: isShielding, ...meta } = useMutation({
     mutationFn: async ({ token, amount }: { token: Token, amount: bigint, onSuccess?: () => void }) => {
-      rejectedTxRef.current = false;
-
       if (!shielderClient) throw new Error('Shielder is not ready');
       if (!walletAddress) throw new Error('Address is not available');
 
@@ -120,11 +103,30 @@ export const useShield = () => {
         queryKey: getQueryKey.tokenPublicBalance('native', chainId.toString(), walletAddress),
       });
 
-      if (!rejectedTxRef.current) {
-        showToast({
-          status: 'error',
-          title: 'Shielding failed',
-        });
+      const knowErrorName = getWalletErrorName(error);
+
+      switch (knowErrorName) {
+        case 'USER_REJECTED_REQUEST':
+          showToast({
+            status: 'error',
+            title: 'Transaction rejected',
+            subtitle: 'Transaction has been rejected in the wallet',
+          });
+          break;
+
+        case 'LOCKED_OR_UNAUTHORIZED':
+          showToast({
+            status: 'error',
+            title: 'Transaction not initiated',
+            subtitle: 'Make sure your wallet is unlocked and your account is authorized.',
+          });
+          break;
+
+        default:
+          showToast({
+            status: 'error',
+            title: 'Shielding failed',
+          });
       }
     },
   });
