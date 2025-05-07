@@ -9,6 +9,7 @@ import { Address } from 'viem';
 import { useAccount } from 'wagmi';
 
 import useConnectedChainNetworkEnvironment from 'src/domains/chains/utils/useConnectedChainNetworkEnvironment';
+import useSyncChainWithUrl from 'src/domains/chains/utils/useSyncChainWithUrl';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import { clearShielderIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import useShielderStore from 'src/domains/shielder/stores/shielder';
@@ -35,6 +36,8 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
 
   const networkEnvironment = useConnectedChainNetworkEnvironment();
+
+  useSyncChainWithUrl();
 
   const handleDisconnect = async () => {
     if(address && networkEnvironment) {
