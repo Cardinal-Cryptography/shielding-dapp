@@ -47,6 +47,7 @@ const config: ChainConfig = {
       '0x18d25B4e18165c97e1285212e5d1f80eDD6d3Aa7': { icon: UsdcIcon },
       '0xD648529D4803d3467bA8850577BEd4e4b8Ae583C': { icon: UsdtIcon },
     },
+    urlPathSegment: 'aleph-zero',
   },
   testnet: {
     name: 'Aleph Zero EVM Testnet',
@@ -86,6 +87,7 @@ const config: ChainConfig = {
       '0xE907112ed7c64c7C9317Ca742d848D0Ef0198fFA': { icon: SpringIcon },
       '0x57b7789b78A4606aFbe8138f6F9D4820D100096E': { icon: UsdtIcon },
     },
+    urlPathSegment: 'aleph-zero-testnet',
   },
 };
 export default config;

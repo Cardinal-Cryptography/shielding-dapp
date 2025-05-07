@@ -23,6 +23,7 @@ const config: ChainConfig = {
       '0xaf88d065e77c8cC2239327C5EDb3A432268e5831': { icon: UsdcIcon },
       '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9': { icon: UsdtIcon },
     },
+    urlPathSegment: 'arbitrum',
   },
   testnet: {
     ...arbitrumSepolia,
@@ -36,6 +37,7 @@ const config: ChainConfig = {
       '0x44D7d80723649E3e18fC60Ab632f886057B2229B': { icon: SpringIcon },
       '0x60765dCa7209fBD482fEE331114F764BF3BF55BD': { icon: UsdtIcon },
     },
+    urlPathSegment: 'arbitrum-sepolia',
   },
 };
 export default config;
