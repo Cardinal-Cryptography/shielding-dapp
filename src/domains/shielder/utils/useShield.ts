@@ -1,7 +1,7 @@
 import { erc20Token, nativeToken } from '@cardinal-cryptography/shielder-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { erc20Abi, TransactionExecutionError, UserRejectedRequestError } from 'viem';
+import { erc20Abi, TransactionExecutionError } from 'viem';
 import { useAccount, usePublicClient, useSendTransaction, useWalletClient } from 'wagmi';
 
 import { Token } from 'src/domains/chains/types/misc';
@@ -20,7 +20,7 @@ export const useShield = () => {
   const queryClient = useQueryClient();
   const chainConfig = useChain();
   const { showToast } = useToast();
-  const rejectedTxRef = useRef(false);
+  const isErrorHandled = useRef(false);
 
   const sendTransactionWithToast = async (params: Parameters<typeof sendTransactionAsync>[0]) => {
     const toast = showToast({
@@ -45,14 +45,31 @@ export const useShield = () => {
       clearTimeout(timeoutId);
       toast.dismissToast();
 
-      const isRejected = error instanceof TransactionExecutionError && error.cause instanceof UserRejectedRequestError;
+      const isTransactionError = error instanceof TransactionExecutionError;
+      const cause = isTransactionError ? error.cause as { code?: number } : undefined;
+      const code = cause?.code;
 
-      if(isRejected) {
-        rejectedTxRef.current = true;
+      // EIP-1193 standard error codes: https://eips.ethereum.org/EIPS/eip-1193#error-standards
+      // 4001: UserRejectedRequest – user rejected request in wallet
+      // 4100: Unauthorized – wallet locked or account not authorized
+      const isRejected = code === 4001;
+      const isUnauthorized = code === 4100;
+
+      if (isRejected) {
+        isErrorHandled.current = true;
         showToast({
           status: 'error',
           title: 'Transaction rejected',
           subtitle: 'Transaction has been rejected in the wallet',
+        });
+      }
+
+      if (isUnauthorized) {
+        isErrorHandled.current = true;
+        showToast({
+          status: 'error',
+          title: 'Transaction not initiated',
+          subtitle: 'Make sure your wallet is unlocked and your account is authorized.',
         });
       }
 
@@ -62,7 +79,7 @@ export const useShield = () => {
 
   const { mutateAsync: shield, isPending: isShielding, ...meta } = useMutation({
     mutationFn: async ({ token, amount }: { token: Token, amount: bigint, onSuccess?: () => void }) => {
-      rejectedTxRef.current = false;
+      isErrorHandled.current = false;
 
       if (!shielderClient) throw new Error('Shielder is not ready');
       if (!walletAddress) throw new Error('Address is not available');
@@ -120,7 +137,7 @@ export const useShield = () => {
         queryKey: getQueryKey.tokenPublicBalance('native', chainId.toString(), walletAddress),
       });
 
-      if (!rejectedTxRef.current) {
+      if (!isErrorHandled.current) {
         showToast({
           status: 'error',
           title: 'Shielding failed',
