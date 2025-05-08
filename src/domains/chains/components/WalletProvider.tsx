@@ -3,13 +3,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   createContext,
   useContext,
-  ReactNode,
+  ReactNode, useEffect,
 } from 'react';
 import { Address } from 'viem';
 import { useAccount } from 'wagmi';
 
-import useConnectedChainNetworkEnvironment from 'src/domains/chains/utils/useConnectedChainNetworkEnvironment';
-import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import { QUERY_KEYS } from 'src/domains/misc/utils/getQueryKey';
 import { clearShielderIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import useShielderStore from 'src/domains/shielder/stores/shielder';
 import useShielderPrivateKey from 'src/domains/shielder/utils/useShielderPrivateKey';
@@ -27,37 +26,36 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 const WalletProvider = ({ children }: { children: ReactNode }) => {
   const { open: openModal } = useAppKit();
-  const { address, isConnected, status } = useAccount();
+  const { address, isReconnecting, isConnecting, isConnected, isDisconnected } = useAccount();
   const { disconnect } = useDisconnect();
   const { shielderPrivateKey } = useShielderPrivateKey(address);
   const clearShielderPrivateKeys = useShielderStore(store => store.clearShielderPrivateKeys);
 
   const queryClient = useQueryClient();
 
-  const networkEnvironment = useConnectedChainNetworkEnvironment();
+  useEffect(() => {
+    if (!isDisconnected) return;
 
-  const handleDisconnect = async () => {
-    if(address && networkEnvironment) {
-      queryClient.removeQueries({
-        queryKey: getQueryKey.shielderPrivateKey(address, networkEnvironment),
-      });
-    }
+    queryClient.removeQueries({
+      predicate: query =>
+        query.queryKey[0] === QUERY_KEYS.shielderPrivateKey,
+    });
+
     void queryClient.removeQueries({
       predicate: query =>
-        query.queryKey[0] === 'shielder-client',
+        query.queryKey[0] === QUERY_KEYS.shielderClient,
     });
 
     clearShielderPrivateKeys();
-    await clearShielderIndexedDB();
-    await disconnect();
-  };
+    void clearShielderIndexedDB();
+  }, [address, queryClient, clearShielderPrivateKeys, isDisconnected]);
 
   const value = {
-    disconnect: handleDisconnect,
+    disconnect,
     openModal,
     address,
     isConnected,
-    isLoading: status !== 'connected' && status !== 'disconnected',
+    isLoading: isReconnecting || isConnecting,
     privateKey: shielderPrivateKey,
   };
 
