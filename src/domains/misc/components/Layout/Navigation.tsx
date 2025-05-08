@@ -8,7 +8,7 @@ const tabsConfig = [
     key: 'shield',
     label: 'Trace Breaker',
     routeNames: ['Shielded-Account'],
-    onClick: () => void router.push('Shielded-Account'),
+    onClick: () => void router.push('Shielded-Account', { chainName: '' }),
   },
   {
     key: 'yield',

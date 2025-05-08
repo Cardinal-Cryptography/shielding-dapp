@@ -15,7 +15,7 @@ const useSyncChainWithUrl = () => {
   const initialChainPath = useRef<string | null>(null);
   const chainConfig = useChain();
   const { switchChainAsync } = useSwitchChain();
-  const shieldedAccountWithChainRoute = router.useRoute(['Shielded-Account-With-Chain']);
+  const shieldedAccountRoute = router.useRoute(['Shielded-Account']);
 
   const { mutate: switchChain } = useMutation({
     mutationFn: async (chainId: number) => {
@@ -31,7 +31,7 @@ const useSyncChainWithUrl = () => {
   });
 
   useEffect(() => {
-    const chainName = shieldedAccountWithChainRoute?.params.chainName;
+    const chainName = shieldedAccountRoute?.params.chainName;
     if (chainName && !initialChainPath.current) {
       const foundChain = allChainsDefinitions.find(c => c.urlPathSegment === chainName);
       if (foundChain) {
@@ -39,14 +39,14 @@ const useSyncChainWithUrl = () => {
         switchChain(foundChain.id);
       }
     }
-  }, [shieldedAccountWithChainRoute?.params.chainName, switchChain]);
+  }, [shieldedAccountRoute?.params.chainName, switchChain]);
 
   useEffect(() => {
     if (initialChainPath.current && initialChainPath.current !== chainConfig?.urlPathSegment) return;
 
     const foundChain = allChainsDefinitions.find(({ id }) => id === chainConfig?.id);
     if (foundChain) {
-      router.push('Shielded-Account-With-Chain', { chainName: foundChain.urlPathSegment });
+      router.push('Shielded-Account', { chainName: foundChain.urlPathSegment });
     }
   }, [chainConfig]);
 };
