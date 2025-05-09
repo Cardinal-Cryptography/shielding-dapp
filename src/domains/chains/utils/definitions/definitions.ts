@@ -18,6 +18,7 @@ export type Definition = {
     shielderContractAddress: Address,
     relayerUrl: string,
   },
+  urlPathSegment: string,
 } & Pick<Chain, 'id' | 'nativeCurrency' | 'rpcUrls' | 'blockExplorers'>;
 
 export type ChainConfig = Record<NetworkEnvironment, Definition>;

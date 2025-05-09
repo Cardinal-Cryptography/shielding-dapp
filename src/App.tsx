@@ -7,15 +7,16 @@ import router from 'src/domains/routing/utils/router';
 import ShielderView from 'src/domains/shielder/components/ShielderView';
 
 const App = () => {
-  const route = router.useRoute(['Shield']);
+  const route = router.useRoute(['Shielded-Account', 'Shielded-Account-With-Chain']);
 
   return (
     <Providers>
       <Layout>
         {
           match(route)
-            .with({ name: 'Shield' }, () => <ShielderView />)
-            .otherwise(() => <Redirect to="/" />)
+            .with({ name: 'Shielded-Account' }, () => <ShielderView />)
+            .with({ name: 'Shielded-Account-With-Chain' }, () => <ShielderView />)
+            .otherwise(() => <Redirect to="/shielded-account" />)
         }
       </Layout>
     </Providers>

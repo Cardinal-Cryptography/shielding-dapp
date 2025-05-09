@@ -21,6 +21,7 @@ const config: ChainConfig = {
       '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913': { icon: UsdcIcon },
       '0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2': { icon: UsdtIcon },
     },
+    urlPathSegment: 'base',
   },
   testnet: {
     ...baseSepolia,
@@ -39,6 +40,7 @@ const config: ChainConfig = {
       '0xf7464321dE37BdE4C03AAeeF6b1e7b71379A9a64': { icon: UsdcIcon },
       '0xd7e9C75C6C05FdE929cAc19bb887892de78819B7': { icon: UsdtIcon },
     },
+    urlPathSegment: 'base-sepolia',
   },
 };
 export default config;

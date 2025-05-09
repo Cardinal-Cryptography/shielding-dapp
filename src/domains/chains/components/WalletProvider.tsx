@@ -3,11 +3,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   createContext,
   useContext,
-  ReactNode, useEffect,
+  ReactNode,
+  useEffect,
 } from 'react';
 import { Address } from 'viem';
 import { useAccount } from 'wagmi';
 
+import useSyncChainWithUrl from 'src/domains/chains/utils/useSyncChainWithUrl';
 import { QUERY_KEYS } from 'src/domains/misc/utils/getQueryKey';
 import { clearShielderIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import useShielderStore from 'src/domains/shielder/stores/shielder';
@@ -32,6 +34,8 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
   const clearShielderPrivateKeys = useShielderStore(store => store.clearShielderPrivateKeys);
 
   const queryClient = useQueryClient();
+
+  useSyncChainWithUrl();
 
   useEffect(() => {
     if (!isDisconnected) return;
