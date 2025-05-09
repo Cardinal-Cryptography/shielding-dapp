@@ -93,6 +93,7 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
   const onCloseFinishedRef = useRef<(() => unknown) | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const { isDomNodeInToastsTree } = useToast();
+  const isControlled = isModalOpen !== undefined;
 
   useEffect(() => {
     if (isOpen) {
@@ -103,7 +104,7 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
 
   const initiateClosing = useCallback(async (force?: boolean) => {
     onInitiateClosing?.();
-    if (!force && isModalOpen !== undefined) {
+    if (!force && isControlled) {
       // In controlled mode, let the parent handle closing
       return;
     }
@@ -113,10 +114,10 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
     await new Promise<void>(resolve => {
       onCloseFinishedRef.current = resolve;
     });
-  }, [isModalOpen, onInitiateClosing, setIsVisible]);
+  }, [isControlled, onInitiateClosing]);
 
   useEffect(() => {
-    if(isModalOpen === undefined) return;
+    if(!isControlled) return;
 
     if(isModalOpen) {
       setIsVisible(true);
@@ -124,7 +125,7 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
     } else {
       void initiateClosing(true);
     }
-  }, [initiateClosing, isModalOpen]);
+  }, [initiateClosing, isControlled, isModalOpen]);
 
   const finishClosing = () => {
     setIsOpen(false);
@@ -156,7 +157,7 @@ const LazyLoadedModal = forwardRef<ModalRef, Props>(({
               setIsVisible(true);
               setIsOpen(true);
             } else {
-              void initiateClosing(!nonDismissable);
+              void initiateClosing(!nonDismissable && !isControlled);
             }
           }}
         >
