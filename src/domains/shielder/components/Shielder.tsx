@@ -55,8 +55,9 @@ const Shielder = () => {
           <InfoContainer>
             <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
             <p>
-              Shielded account is created based on your connected public account.
-              You can access it only from the Trace Breaker.
+              Shielded account is created based on your connected account.
+              It's specific to the platform you use – accounts created in
+              the Web App can be retrieved from the Web App on another device.
             </p>
           </InfoContainer>
           <ShieldImage src={shieldImage} alt="Shield icon" />
