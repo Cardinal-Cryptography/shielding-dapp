@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
 import { type ReactNode } from 'react';
 
+import { useWallet } from 'src/domains/chains/components/WalletProvider.tsx';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 
 import { wasmCryptoClientRead } from './wasmCryptoClientRead';
@@ -17,7 +18,10 @@ const WasmContext = createContext<WasmContextType | undefined>(undefined);
 type Props = { children: ReactNode };
 
 const WasmProvider = ({ children }: Props) => {
+  const { isConnected } = useWallet();
+
   const { data, isSuccess } = useQuery({
+    enabled: isConnected,
     queryKey: getQueryKey.wasmCryptoClient(),
     queryFn: () => wasmCryptoClientRead(),
     staleTime: Infinity,
