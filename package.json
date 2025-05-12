@@ -34,6 +34,7 @@
     "@walletconnect/ethereum-provider": "^2.19.1",
     "bignumber.js": "^9.1.2",
     "buffer": "^6.0.3",
+    "fake-indexeddb": "^6.0.1",
     "idb": "^8.0.2",
     "memoizee": "^0.4.17",
     "motion": "^12.4.12",

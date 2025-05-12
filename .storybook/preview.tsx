@@ -1,6 +1,7 @@
 import { Preview } from '@storybook/react';
 
 import Providers from '../src/domains/misc/components/Providers';
+import './utils/mockIndexedDb';
 
 // TODO: Add after chromatic setup
 // MotionGlobalConfig.skipAnimations = isChromatic();
