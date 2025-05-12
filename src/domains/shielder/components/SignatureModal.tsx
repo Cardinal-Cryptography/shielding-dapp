@@ -14,6 +14,7 @@ import CIcon from 'src/domains/misc/components/CIcon';
 import Modal from 'src/domains/misc/components/Modal';
 import CheckedContainer from 'src/domains/misc/components/PatternContainer';
 import { KEY_GENERATION_PROCESS_LINK } from 'src/domains/misc/consts/consts';
+import { NEVER_CHANGING_DATA_OPTIONS } from 'src/domains/misc/consts/dataOptions.ts';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import { MAINNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE, TESTNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE } from 'src/domains/shielder/consts/consts';
 import useShielderPrivateKey from 'src/domains/shielder/utils/useShielderPrivateKey';
@@ -50,12 +51,11 @@ const SignatureModal = () => {
     address &&
     networkEnvironment;
 
-  const { refetch, isError: isSigningError, isLoading, data: shielderPrivateKeyFromRq } = useQuery({
+  const { refetch, isError: isSigningError, isLoading, isSuccess, data: shielderPrivateKeyFromRq } = useQuery({
     enabled: !shielderPrivateKey,
     queryKey: isReady ? getQueryKey.shielderPrivateKey(address, networkEnvironment) : [],
     queryFn: isReady ? getShielderPrivateKey : skipToken,
-    staleTime: Infinity,
-    gcTime: Infinity,
+    ...NEVER_CHANGING_DATA_OPTIONS,
     retry: false,
   });
   useEffect(() => {
@@ -80,16 +80,21 @@ const SignatureModal = () => {
           <SignatureIcon size={60} icon="Signature" color={isError ? vars('--color-status-danger-foreground-1-rest') : undefined} />
         </CheckedContainer>
         <Title $isError={isError}>{isError ? 'Signature Declined' : 'Signature required'}</Title>
-        <Text>To create a Shielded account, a one-time signature is required.</Text>
+        <Text>
+          To create a Shielded account, a one-time signature is required.
+          Approve message in your wallet to automatically continue or disconnect.
+        </Text>
         <LearnMore>
           <a href={KEY_GENERATION_PROCESS_LINK} target="_blank" rel="noopener noreferrer">Learn more</a>
           <CIcon icon="Open" size={20} />
         </LearnMore>
         <Buttons>
-          <Button variant="primary" onClick={() => void retry()} isLoading={isLoading}>
-            {isLoading ? 'Waiting for Signature' : 'Try again'}
-          </Button>
-          {isError && <Button variant="outline" onClick={() => void disconnect()}>Disconnect</Button>}
+          {!isLoading && !isSuccess && (
+            <Button variant="primary" onClick={() => void retry()} isLoading={isLoading}>
+              Try again
+            </Button>
+          )}
+          <Button variant="outline" onClick={() => void disconnect()}>Disconnect</Button>
         </Buttons>
       </Content>
     </StyledModal>
