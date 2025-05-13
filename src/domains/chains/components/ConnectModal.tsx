@@ -47,17 +47,17 @@ const ConnectModal = (props: Props) => {
             By clicking the button "Agree and continue" below, you confirm that you have read and that you accept our:
           </Text>
           <LinksWrapper>
-            <Link>
+            <Link href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">
               <CIcon icon="DocumentText" size={20} />
-              <a href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">Terms of service</a>
+              <p>Terms of service</p>
             </Link>
-            <Link>
+            <Link href={TERMS_OF_CONDITIONS_LINK} target="_blank" rel="noopener noreferrer">
               <CIcon icon="DocumentText" size={20} />
-              <a href={TERMS_OF_CONDITIONS_LINK} target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
+              <p>Terms and Conditions</p>
             </Link>
-            <Link>
+            <Link href={PRIVACY_POLICY_LINK} target="_blank" rel="noopener noreferrer">
               <CIcon icon="DocumentText" size={20} />
-              <a href={PRIVACY_POLICY_LINK} target="_blank" rel="noopener noreferrer">Privacy policy</a>
+              <p>Privacy policy</p>
             </Link>
           </LinksWrapper>
           <Buttons>
