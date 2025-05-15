@@ -1,13 +1,11 @@
 import { ReactElement,useState } from 'react';
-import styled from 'styled-components';
 import { isAddress } from 'viem';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
-import Modal from 'src/domains/misc/components/Modal';
+import Modal, { useModalControls } from 'src/domains/misc/components/ModalNew';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import useWithdraw from 'src/domains/shielder/utils/useWithdraw';
-import vars from 'src/domains/styling/utils/vars';
 
 import { Token } from '../../';
 import ConfirmPage from '../ConfirmPage';
@@ -24,12 +22,13 @@ type Props = {
   },
 };
 
-const SendModal = ({ children, token }: Props) => {
+const SendModal = ({ token }: Props) => {
   const { address } = useWallet();
   const [addressTo, setAddressTo] = useState('');
-  const [page, setPage] = useState(0);
   const [amount, setAmount] = useState(0n);
   const { withdraw, isWithdrawing } = useWithdraw();
+  const [page, setPage] = useState(0);
+  const { close } = useModalControls();
 
   const onConfirm = () => {
     setPage(1);
@@ -73,56 +72,65 @@ const SendModal = ({ children, token }: Props) => {
 
   const validatedAddressTo = isAddress(addressTo) ? addressTo : undefined;
 
-  const handleWithdraw = (close: () => Promise<unknown>) => {
+  const handleWithdraw = () => {
     if(!validatedAddressTo) {
       throw new Error('Address to is not available'); // should never happen
     }
 
-    void withdraw({ token, amount, addressTo: validatedAddressTo }).then(() => close());
+    void withdraw({ token, amount, addressTo: validatedAddressTo }).then(() => void close());
   };
 
   return (
-    <StyledModal
-      currentPageIndex={page}
-      title={['Send', 'Send', 'Send']}
-      triggerElement={children}
-      onClose={() => void setPage(0)}
-    >
-      {
+    <Modal
+      page={page}
+      config={
         [
-          <SelectAccountPage key="select-account" addressTo={addressTo} setAddressTo={setAddressTo} onConfirmClick={onConfirm} />,
-          <SelectAmountPage
-            key="select-amount"
-            token={token}
-            feeConfig={feeConfig}
-            onContinue={handleSelectAmount}
-            hasInsufficientFees={hasInsufficientFees}
-          />,
-          close => (
-            <ConfirmPage
-              key="confirmation"
-              amount={amount}
-              token={token}
-              addressTo={validatedAddressTo}
-              onConfirm={() => void handleWithdraw(close)}
-              isLoading={isWithdrawing}
-              feeConfig={feeConfig}
-              buttonLabel={
-                hasInsufficientFees ?
-                  `Insufficient ${token.symbol} Balance` :
-                  isWithdrawing ? 'Sending' : 'Confirm'
-              }
-            />
-          ),
+          {
+            title: 'Send',
+            content: (
+              <SelectAccountPage
+                key="select-account"
+                addressTo={addressTo}
+                setAddressTo={setAddressTo}
+                onConfirmClick={onConfirm}
+              />
+            ),
+          },
+          {
+            title: 'Send',
+            content: (
+              <SelectAmountPage
+                key="select-amount"
+                token={token}
+                feeConfig={feeConfig}
+                onContinue={handleSelectAmount}
+                hasInsufficientFees={hasInsufficientFees}
+              />
+            ),
+          },
+          {
+            title: 'Send',
+            content: (
+              <ConfirmPage
+                key="confirmation"
+                amount={amount}
+                token={token}
+                addressTo={validatedAddressTo}
+                onConfirm={handleWithdraw}
+                isLoading={isWithdrawing}
+                feeConfig={feeConfig}
+                buttonLabel={
+                  hasInsufficientFees ?
+                    `Insufficient ${token.symbol} Balance` :
+                    isWithdrawing ? 'Sending' : 'Confirm'
+                }
+              />
+            ),
+          },
         ]
       }
-    </StyledModal>
+    />
   );
 };
 
 export default SendModal;
-
-const StyledModal = styled(Modal)`
-  padding: ${vars('--spacing-l')};
-  width: min(434px, 100vw);
-`;

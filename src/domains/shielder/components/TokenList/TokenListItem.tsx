@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import Button from 'src/domains/misc/components/Button';
+import { useModal } from 'src/domains/misc/components/ModalNew';
 import Skeleton from 'src/domains/misc/components/Skeleton';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import isPresent from 'src/domains/misc/utils/isPresent';
@@ -10,7 +11,8 @@ import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
-import { ShieldModal, SendModal } from './Modals';
+import SendModal from './Modals/SendModal';
+import ShieldModal from './Modals/ShieldModal';
 
 import { Token } from '.';
 
@@ -33,6 +35,15 @@ const TokenListItem = ({ token }: Props) => {
   const activeBalance = isPublic ? publicBalance : shieldedBalance;
   const isDisabled = !activeBalance || activeBalance <= 0n;
 
+  const selectedToken = { ...token, symbol, decimals, balance: publicBalance };
+
+  const { open: openShieldModal } = useModal(
+    <ShieldModal token={selectedToken} />
+  );
+  const { open: openSendModal } = useModal(
+    <SendModal token={selectedToken} />
+  );
+
   return (
     <Container>
       <TokenIcon size={40} Icon={token.icon} />
@@ -48,27 +59,25 @@ const TokenListItem = ({ token }: Props) => {
         </Subtitle>
       </Column>
       {isPublic ? (
-        <ShieldModal token={{ ...token, symbol, decimals, balance: publicBalance }}>
-          <Button
-            variant="primary"
-            size="small"
-            leftIcon="Shielded"
-            disabled={isDisabled}
-          >
-            Shield
-          </Button>
-        </ShieldModal>
+        <Button
+          variant="primary"
+          size="small"
+          leftIcon="Shielded"
+          disabled={isDisabled}
+          onClick={openShieldModal}
+        >
+          Shield
+        </Button>
       ) : (
-        <SendModal token={{ ...token, symbol, decimals, balance: shieldedBalance }}>
-          <Button
-            variant="primary"
-            size="small"
-            leftIcon="ArrowUpRight"
-            disabled={isDisabled}
-          >
-            Send
-          </Button>
-        </SendModal>
+        <Button
+          variant="primary"
+          size="small"
+          leftIcon="ArrowUpRight"
+          disabled={isDisabled}
+          onClick={openSendModal}
+        >
+          Send
+        </Button>
       )}
     </Container>
   );
