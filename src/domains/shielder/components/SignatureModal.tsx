@@ -1,30 +1,33 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { signMessage } from '@wagmi/core';
-import { useEffect, useState } from 'react';
+import { ComponentProps, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { keccak256, toHex } from 'viem';
 import { useAccount } from 'wagmi';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
-import useChain from 'src/domains/chains/utils/useChain';
 import useConnectedChainNetworkEnvironment from 'src/domains/chains/utils/useConnectedChainNetworkEnvironment';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
-import Modal from 'src/domains/misc/components/Modal';
+import Modal from 'src/domains/misc/components/ModalNew';
 import CheckedContainer from 'src/domains/misc/components/PatternContainer';
 import { KEY_GENERATION_PROCESS_LINK } from 'src/domains/misc/consts/consts';
-import { NEVER_CHANGING_DATA_OPTIONS } from 'src/domains/misc/consts/dataOptions.ts';
+import { NEVER_CHANGING_DATA_OPTIONS } from 'src/domains/misc/consts/dataOptions';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
-import { MAINNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE, TESTNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE } from 'src/domains/shielder/consts/consts';
+import {
+  MAINNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE,
+  TESTNET_SHIELDER_PRIVATE_KEY_SIGNING_MESSAGE,
+} from 'src/domains/shielder/consts/consts';
 import useShielderPrivateKey from 'src/domains/shielder/utils/useShielderPrivateKey';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
-const SignatureModal = () => {
+type Props = Omit<ComponentProps<typeof Modal>, 'config'>;
+
+const SignatureModal = (props: Props) => {
   const [isTryingAgain, setIsTryingAgain] = useState(false);
   const { address, disconnect, isConnected } = useWallet();
-  const isNetworkSupported = !!useChain();
   const { connector } = useAccount();
   const { shielderPrivateKey, setShielderPrivateKey } = useShielderPrivateKey(address);
   const networkEnvironment = useConnectedChainNetworkEnvironment();
@@ -71,41 +74,43 @@ const SignatureModal = () => {
     }
   };
 
-  const isError = isTryingAgain || isSigningError || !isConnected;
+  const isError = isTryingAgain || isSigningError;
 
   return (
-    <StyledModal isModalOpen={isConnected && !shielderPrivateKey && isNetworkSupported }>
-      <Content>
-        <CheckedContainer>
-          <SignatureIcon size={60} icon="Signature" color={isError ? vars('--color-status-danger-foreground-1-rest') : undefined} />
-        </CheckedContainer>
-        <Title $isError={isError}>{isError ? 'Signature Declined' : 'Signature required'}</Title>
-        <Text>
-          To create a Shielded account, a one-time signature is required.
-          Approve message in your wallet to automatically continue or disconnect.
-        </Text>
-        <LearnMore>
-          <a href={KEY_GENERATION_PROCESS_LINK} target="_blank" rel="noopener noreferrer">Learn more</a>
-          <CIcon icon="Open" size={20} />
-        </LearnMore>
-        <Buttons>
-          {!isLoading && !isSuccess && (
-            <Button variant="primary" onClick={() => void retry()} isLoading={isLoading}>
-              Try again
-            </Button>
-          )}
-          <Button variant="outline" onClick={() => void disconnect()}>Disconnect</Button>
-        </Buttons>
-      </Content>
-    </StyledModal>
+    <Modal
+      {...props}
+      nonDismissible
+      config={{
+        content: (
+          <Content>
+            <CheckedContainer>
+              <SignatureIcon size={60} icon="Signature" color={isError ? vars('--color-status-danger-foreground-1-rest') : undefined} />
+            </CheckedContainer>
+            <Title $isError={isError}>{isError ? 'Signature Declined' : 'Signature required'}</Title>
+            <Text>
+              To create a Shielded account, a one-time signature is required.
+              Approve message in your wallet to automatically continue or disconnect.
+            </Text>
+            <LearnMore>
+              <a href={KEY_GENERATION_PROCESS_LINK} target="_blank" rel="noopener noreferrer">Learn more</a>
+              <CIcon icon="Open" size={20} />
+            </LearnMore>
+            <Buttons>
+              {isReady && !isLoading && !isSuccess && (
+                <Button variant="primary" onClick={() => void retry()} isLoading={isLoading}>
+                  Try again
+                </Button>
+              )}
+              <Button variant="outline" onClick={() => void disconnect()}>Disconnect</Button>
+            </Buttons>
+          </Content>
+        ),
+      }}
+    />
   );
 };
 
 export default SignatureModal;
-
-const StyledModal = styled(Modal)`
-  width: min(434px, 100vw);
-`;
 
 const Content = styled.div`
   display: flex;

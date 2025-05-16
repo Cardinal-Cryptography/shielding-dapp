@@ -1,1 +1,1 @@
-export { default } from './ShieldModal';
+export { default } from './ShieldModal.tsx';
