@@ -7,6 +7,7 @@ import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import { useModalControls } from 'src/domains/misc/components/ModalNew';
 import Pager from 'src/domains/misc/components/Pager';
 import * as Title from 'src/domains/misc/components/Title';
+import { useToast } from 'src/domains/misc/components/Toast';
 import { boxShadows } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -32,6 +33,7 @@ const Modal = ({
   const { isLast, close, isTopModal } = useModalControls();
   const ref = useRef<HTMLDivElement>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const { isDomNodeInToastsTree } = useToast();
 
   const triggerClose = useCallback(() => {
     if(isLast) {
@@ -43,10 +45,9 @@ const Modal = ({
   const handleClickOutside = (e: MouseEvent<HTMLDivElement>) => {
     if (nonDismissible) return;
     if (!ref.current || ref.current.contains(e.target as Node)) return;
-    const toastRoot = document.getElementById('toast-root');
     const walletConnectModal = document.querySelector('[class*="walletconnect"]');
     if (
-      toastRoot?.contains(e.target as Node) ||
+      isDomNodeInToastsTree(e.target as Node) ||
       walletConnectModal?.contains(e.target as Node)
     ) {
       return;

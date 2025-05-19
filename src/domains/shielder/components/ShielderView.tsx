@@ -6,7 +6,7 @@ import useChain from 'src/domains/chains/utils/useChain';
 import { useModal } from 'src/domains/misc/components/ModalNew';
 import HelpDisclaimer from 'src/domains/shielder/components/HelpDisclaimer';
 import Shielder from 'src/domains/shielder/components/Shielder';
-import SignatureModal from 'src/domains/shielder/components/SignatureModal.tsx';
+import SignatureModal from 'src/domains/shielder/components/SignatureModal';
 import Welcome from 'src/domains/shielder/components/Welcome';
 import vars from 'src/domains/styling/utils/vars';
 

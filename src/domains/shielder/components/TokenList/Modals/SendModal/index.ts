@@ -1,1 +1,1 @@
-export { default } from './SendModal.tsx';
+export { default } from './SendModal';
