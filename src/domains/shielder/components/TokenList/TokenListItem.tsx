@@ -90,14 +90,24 @@ const Container = styled.div`
   
   position: relative;
 
+  align-items: center;
   grid-template-columns: auto 1fr auto;
 
   width: 100%;
   padding: ${vars('--spacing-s')};
 
+  border-radius: ${vars('--border-radius-s')};
   transition: background 0.1s;
 
   column-gap: ${vars('--spacing-m')};
+
+  &:hover {
+    background: ${vars('--color-neutral-background-1a-hover')};
+  }
+
+  &:active {
+    background: ${vars('--color-neutral-background-1a-pressed')};
+  }
 `;
 
 const Column = styled.div`

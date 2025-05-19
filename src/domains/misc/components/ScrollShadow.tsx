@@ -1,26 +1,37 @@
-import { useMotionValueEvent, useScroll } from 'motion/react';
+import { useMotionValueEvent, useScroll } from 'framer-motion';
 import { ReactNode, useEffect, useRef, useState } from 'react';
+import SimpleBar from 'simplebar-react';
 import styled, { css } from 'styled-components';
+
+import vars from 'src/domains/styling/utils/vars';
+import 'simplebar-react/dist/simplebar.min.css';
 
 type Props = {
   children: ReactNode,
   className?: string,
+  fadePosition?: 'top' | 'bottom' | 'both',
+  maxHeight?: `${string}px` | `${string}%`,
 };
 
-const ScrollShadow = ({ children, className }: Props) => {
+const ScrollShadow = ({ children, className, fadePosition = 'both', maxHeight }: Props) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const { scrollY } = useScroll({ container: ref });
   const [isScrolledTop, setIsScrolledTop] = useState(false);
   const [isScrolledBottom, setIsScrolledBottom] = useState(false);
+
+  const isTopFadeVisible = (fadePosition === 'top' || fadePosition === 'both') && isScrolledTop;
+  const isBottomFadeVisible = (fadePosition === 'bottom' || fadePosition === 'both') && isScrolledBottom;
 
   const updateScrollState = () => {
     const el = ref.current;
     if (!el) return;
 
     const { clientHeight, scrollHeight, scrollTop } = el;
+    const isTop = scrollTop > 0;
+    const isBottom = scrollHeight > clientHeight && scrollTop < scrollHeight - clientHeight;
 
-    setIsScrolledTop(scrollTop > 0);
-    setIsScrolledBottom(scrollHeight > clientHeight && scrollTop < (scrollHeight - clientHeight));
+    setIsScrolledTop(isTop);
+    setIsScrolledBottom(isBottom);
   };
 
   useEffect(() => {
@@ -31,10 +42,11 @@ const ScrollShadow = ({ children, className }: Props) => {
 
   return (
     <Container
-      $isScrolledTop={isScrolledTop}
-      $isScrolledBottom={isScrolledBottom}
-      ref={ref}
+      scrollableNodeProps={{ ref }}
       className={className}
+      $isScrolledTop={isTopFadeVisible}
+      $isScrolledBottom={isBottomFadeVisible}
+      style={{ maxHeight }}
     >
       {children}
     </Container>
@@ -43,8 +55,8 @@ const ScrollShadow = ({ children, className }: Props) => {
 
 export default ScrollShadow;
 
-const Container = styled.div<{ $isScrolledTop: boolean, $isScrolledBottom: boolean }>`
-  width: min(100vw, 440px);
+/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+const Container = styled(SimpleBar)<{ $isScrolledTop: boolean, $isScrolledBottom: boolean }>`
   overflow-y: auto;
 
   mask-composite: intersect;
@@ -69,4 +81,18 @@ const Container = styled.div<{ $isScrolledTop: boolean, $isScrolledBottom: boole
       `;
     }
   }}
+  
+  .simplebar-scrollbar::before {
+    background-color: ${vars('--color-neutral-background-scrollbar-overlay-rest')}; 
+    opacity: 1;
+  }
+
+  .simplebar-track { 
+    width: ${vars('--spacing-s')};
+    background: transparent;
+  }
+
+  &:hover .simplebar-scrollbar::before {
+    background-color: ${vars('--color-neutral-background-scrollbar-overlay-rest')};
+  }
 `;
