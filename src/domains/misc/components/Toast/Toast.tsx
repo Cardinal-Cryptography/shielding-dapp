@@ -1,7 +1,7 @@
 import { useDocumentVisibility } from '@react-hookz/web';
 import dayjs from 'dayjs';
 import { ComponentProps, MouseEvent, MouseEventHandler, PointerEvent, ReactNode } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
@@ -52,8 +52,8 @@ const Toast = ({
 
   return (
     <Container title="Toast">
-      <IconContainer $fillColorToken={color}>
-        <CIcon size={16} icon={icon} />
+      <IconContainer>
+        {status === 'inProgress' ? <Spinner icon="Spinner" size={16} /> : <CIcon size={16} icon={icon} color={color} />}
       </IconContainer>
       <RightSection>
         <Header>
@@ -111,16 +111,10 @@ const Container = styled.article`
   ${boxShadows.shadow16}
 `;
 
-const IconContainer = styled.div<{ $fillColorToken: string | undefined }>`
+const IconContainer = styled.div`
   display: grid;
   place-items: center;
   line-height: 0;
-  
-  & * {
-    ${({ $fillColorToken }) => $fillColorToken && css`
-      fill: ${$fillColorToken};
-    `}
-  }
 `;
 
 const RightSection = styled.section`
@@ -217,4 +211,26 @@ const ProgressBar = styled.div`
   border-radius: ${vars('--border-radius-circular')};
 
   transform-origin: center left;
+`;
+
+const Spinner = styled(CIcon)`
+  animation: spin 2s infinite linear;
+
+  path:first-of-type {
+    fill: ${vars('--color-brand-stroke-2-contrast-rest')};
+  }
+
+  path:last-of-type {
+    fill: ${vars('--color-neutral-stroke-1-rest')};
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
 `;
