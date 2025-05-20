@@ -1,13 +1,17 @@
-// @ts-expect-error fake-indexeddb does not expose FDBFactory in package.json "exports" — using internal path
-import FDBFactory from 'fake-indexeddb/lib/FDBFactory';
-// @ts-expect-error fake-indexeddb does not expose FDBKeyRange in package.json "exports" — using internal path
-import FDBKeyRange from 'fake-indexeddb/lib/FDBKeyRange';
+import {
+  IDBFactory,
+  IDBKeyRange,
+  IDBRequest,
+} from 'fake-indexeddb';
 
 Object.defineProperty(window, 'indexedDB', {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  value: new FDBFactory(),
+  value: new IDBFactory(),
 });
 
 Object.defineProperty(window, 'IDBKeyRange', {
-  value: FDBKeyRange,
+  value: IDBKeyRange,
+});
+
+Object.defineProperty(window, 'IDBRequest', {
+  value: IDBRequest,
 });

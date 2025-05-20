@@ -6,6 +6,7 @@ import { WagmiProvider } from 'wagmi';
 import WalletProvider from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import { Definition } from 'src/domains/chains/utils/definitions';
+import { ModalProvider } from 'src/domains/misc/components/ModalNew';
 import { ToastsProvider } from 'src/domains/misc/components/Toast';
 import { QueryClientProvider } from 'src/domains/misc/utils/queryClient';
 import TransactionsModal from 'src/domains/shielder/components/TransactionModal';
@@ -59,7 +60,9 @@ const Providers = ({ children }: Props) => (
             <PostHogProvider>
               <WasmProvider>
                 <ToastsProvider ttlMs={10_000}>
-                  {children}
+                  <ModalProvider>
+                    {children}
+                  </ModalProvider>
                   <TransactionsModal />
                 </ToastsProvider>
               </WasmProvider>

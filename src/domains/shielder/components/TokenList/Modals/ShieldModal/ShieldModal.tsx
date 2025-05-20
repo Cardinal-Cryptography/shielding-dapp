@@ -1,14 +1,12 @@
-import { ReactElement,useState } from 'react';
-import styled from 'styled-components';
+import { useState } from 'react';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
 import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
-import Modal from 'src/domains/misc/components/Modal';
+import Modal from 'src/domains/misc/components/ModalNew';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import useShield from 'src/domains/shielder/utils/useShield';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
-import vars from 'src/domains/styling/utils/vars';
 
 import { Token } from '../../';
 import ConfirmPage from '../ConfirmPage';
@@ -16,7 +14,6 @@ import ConfirmPage from '../ConfirmPage';
 import SelectAmountPage from './SelectAmountPage';
 
 type Props = {
-  children?: ReactElement,
   token: Token & {
     symbol?: string,
     decimals?: number,
@@ -24,12 +21,12 @@ type Props = {
   },
 };
 
-const SendModal = ({ children, token }: Props) => {
+const ShieldModal = ({ token }: Props) => {
   const { address } = useWallet();
-  const [page, setPage] = useState(0);
   const [amount, setAmount] = useState(0n);
   const chainConfig = useChain();
   const { shield, isShielding, reset } = useShield();
+  const [page, setPage] = useState(0);
 
   const fees = useShielderFees({ walletAddress: address, token });
 
@@ -55,7 +52,7 @@ const SendModal = ({ children, token }: Props) => {
     setPage(1);
   };
 
-  const handleShield = (close: () => Promise<unknown>) => {
+  const handleShield = () => {
     void shield({ token, amount }).then(() => void close());
   };
 
@@ -63,49 +60,48 @@ const SendModal = ({ children, token }: Props) => {
     setPage(0);
     reset();
   };
-
   return (
-    <StyledModal
-      currentPageIndex={page}
-      title={['Shield', 'Shield']}
-      triggerElement={children}
+    <Modal
+      page={page}
       onClose={handleReset}
-    >
-      {
+      config={
         [
-          <SelectAmountPage
-            key="select-amount"
-            token={token}
-            feeConfig={feeConfig}
-            onContinue={handleSelectAmount}
-            hasInsufficientFees={hasInsufficientFees}
-          />,
-          close => (
-            <ConfirmPage
-              key="confirmation"
-              amount={amount}
-              token={token}
-              onConfirm={() => void handleShield(close)}
-              isLoading={isShielding}
-              buttonLabel={
-                hasInsufficientFees ?
-                  `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance` :
-                  isShielding ? 'Shielding' : 'Confirm'
-              }
-              feeConfig={feeConfig}
-              addressFrom={address}
-              hasInsufficientFees={hasInsufficientFees}
-            />
-          ),
+          {
+            title: 'Shield',
+            content: (
+              <SelectAmountPage
+                key="select-amount"
+                token={token}
+                feeConfig={feeConfig}
+                onContinue={handleSelectAmount}
+                hasInsufficientFees={hasInsufficientFees}
+              />
+            ),
+          },
+          {
+            title: 'Shield',
+            content: (
+              <ConfirmPage
+                key="confirmation"
+                amount={amount}
+                token={token}
+                onConfirm={() => void handleShield()}
+                isLoading={isShielding}
+                buttonLabel={
+                  hasInsufficientFees ?
+                    `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance` :
+                    isShielding ? 'Shielding' : 'Confirm'
+                }
+                feeConfig={feeConfig}
+                addressFrom={address}
+                hasInsufficientFees={hasInsufficientFees}
+              />
+            ),
+          },
         ]
       }
-    </StyledModal>
+    />
   );
 };
 
-export default SendModal;
-
-const StyledModal = styled(Modal)`
-  padding: ${vars('--spacing-l')};
-  width: min(434px, 100vw);
-`;
+export default ShieldModal;
