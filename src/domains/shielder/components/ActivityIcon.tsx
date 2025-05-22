@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components';
 
 import CIcon, { IconName } from 'src/domains/misc/components/CIcon';
-import { Transactions } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import vars from 'src/domains/styling/utils/vars';
+import { Transactions } from 'src/domains/shielder/stores/getShielderIndexedDB.ts';
+import vars from 'src/domains/styling/utils/vars.ts';
 
 const ICONS_BY_TYPE: Record<Transactions[number]['type'], IconName> = {
   Deposit: 'ShieldedFilled',
