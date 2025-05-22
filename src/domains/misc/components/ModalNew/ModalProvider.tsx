@@ -89,27 +89,31 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useModal = (modalElement: ReactElement) => {
+export const useModal = () => {
   const ctx = useContext(ModalContext);
   if (!ctx) throw new Error('useModal must be used within ModalProvider');
 
   const { mount, unmount, modals } = ctx;
-  const id = useRef(uuidv4()).current;
+  const defaultId = useRef(uuidv4()).current;
+  const currentIdRef = useRef<string>(defaultId);
 
-  const open = useCallback(() => {
-    mount({ id, modal: modalElement });
-  }, [id, modalElement, mount]);
+  const open = useCallback((modalElement: ReactElement, options?: { idOverride?: string }) => {
+    const modalId = options?.idOverride ?? defaultId;
+    currentIdRef.current = modalId;
+    mount({ id: modalId, modal: modalElement });
+  }, [defaultId, mount]);
 
   const close = useCallback(() => {
-    unmount(id);
-  }, [id, unmount]);
+    unmount(currentIdRef.current);
+  }, [unmount]);
 
-  const modal = modals.find(m => m.id === id);
+  const modal = modals.find(m => m.id === currentIdRef.current);
 
   return {
     open,
     close,
     isOpen: !!modal,
+    modals,
   };
 };
 

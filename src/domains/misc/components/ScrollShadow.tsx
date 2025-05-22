@@ -1,5 +1,6 @@
 import { useMotionValueEvent, useScroll } from 'framer-motion';
 import { ReactNode, useEffect, useRef, useState } from 'react';
+// @ts-expect-error simplebar-react’s types aren’t exposed correctly
 import SimpleBar from 'simplebar-react';
 import styled, { css } from 'styled-components';
 

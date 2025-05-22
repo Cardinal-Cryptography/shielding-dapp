@@ -1,5 +1,4 @@
-import { useLocalStorageValue } from '@react-hookz/web';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { objectEntries, objectKeys } from 'tsafe';
 
@@ -27,87 +26,107 @@ const Shielder = () => {
   const chainConfig = useChain();
   const { isSuccess } = useShielderClient();
   const { selectedAccountType } = useShielderStore();
-  const { value: tab, set: setTab }= useLocalStorageValue<keyof typeof TABS>('tab', { defaultValue: 'tokens' });
+  const [currentTab, setCurrentTab ] =
+useState<keyof typeof TABS>('tokens');
+  const tokens = useMemo(() => {
+    if (!chainConfig) return [];
 
-  const nonNativeTokens = chainConfig ?
-    objectEntries(chainConfig.whitelistedTokens).map(([address, token]) => ({
-      ...token,
-      address,
-      isNative: false as const,
+    const native = {
+      address: undefined,
+      isNative: true as const,
       chain: chainConfig.chain,
-    })) :
-    [];
+      icon: chainConfig.NativeTokenIcon,
+    };
 
-  const nativeToken = chainConfig ? {
-    address: undefined,
-    isNative: true as const,
-    chain: chainConfig.chain,
-    icon: chainConfig.NativeTokenIcon,
-  } : undefined;
+    const nonNative = objectEntries(chainConfig.whitelistedTokens).map(
+      ([address, token]) => ({
+        ...token,
+        address,
+        isNative: false as const,
+        chain: chainConfig.chain,
+      }),
+    );
 
-  const tokens = [...(nativeToken ? [nativeToken] : []), ...nonNativeTokens];
+    return [native, ...nonNative];
+  }, [chainConfig]);
 
-  const tabsConfig = objectKeys(TABS)
-    .filter(tab => tab === 'tokens' || selectedAccountType === 'shielded')
-    .map(key => ({
-      key,
-      label: TABS[key],
-      onClick: () => {
-        setTab(key);
-      },
-    }));
+  const tabsConfig = useMemo(() => {
+    return objectKeys(TABS)
+      .filter(tab => tab === 'tokens' || selectedAccountType === 'shielded')
+      .map(key => ({
+        key,
+        label: TABS[key],
+        onClick: () => void setCurrentTab(key),
+      }));
+  }, [selectedAccountType, setCurrentTab]);
 
   useEffect(() => {
-    const validTabKeys = tabsConfig.map(t => t.key);
-    if (tab && !validTabKeys.includes(tab)) {
-      setTab(validTabKeys[0]);
+    const validKeys = tabsConfig.map(t => t.key);
+    if (!validKeys.includes(currentTab)) {
+      setCurrentTab(validKeys[0]);
     }
-  }, [selectedAccountType, tab, tabsConfig]);
+  }, [currentTab, tabsConfig]);
 
-  const content = isSuccess ? (
-    <>
-      <WithPadding>
-        <Title size="medium">Your accounts</Title>
-        <AccountTypeSelector />
-        <Tabs size="small" selectedTabKey={tab} tabsConfig={tabsConfig} />
-      </WithPadding>
-      {tab === 'activity' ? (
-        <Activity />
-      ) : (
-        <>
-          {selectedAccountType === 'public' && (
-            <InfoBox>
-              <CIcon icon="Info" size={20} />
-              <p>Tokens that can be moved to shielded account:</p>
-            </InfoBox>
-          )}
-          <TokensWrapper>
-            <TokenList tokens={tokens} />
-          </TokensWrapper>
-          {selectedAccountType === 'shielded' && (
-            <WithPadding>
-              <Disclaimer>
-                <InfoContainer>
-                  <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
-                  <p>
-                    Shielded account is created based on your connected account.
-                    It's specific to the platform you use – accounts created in
-                    the Web App can be retrieved from the Web App on another device.
-                  </p>
-                </InfoContainer>
-                <ShieldImage src={shieldImage} alt="Shield icon" />
-              </Disclaimer>
-            </WithPadding>
-          )}
-        </>
-      )}
-    </>
-  ) : <Skeleton style={{ height: '100%', minHeight: '400px', width: '100%', borderRadius: vars('--border-radius-m') }} />;
+  if (!isSuccess) {
+    return (
+      <Wrapper>
+        <WithPadding>
+          <Skeleton
+            style={{
+              height: '100%',
+              minHeight: '400px',
+              width: '100%',
+              borderRadius: vars('--border-radius-m'),
+              marginBlock: vars('--spacing-l'),
+            }}
+          />
+        </WithPadding>
+      </Wrapper>
+    );
+  }
 
   return (
     <Wrapper>
-      <Container $withoutBottomPadding={tab === 'activity' && isSuccess}>
-        {content}
+      <Container $withoutBottomPadding={currentTab === 'activity'}>
+        <WithPadding>
+          <Title size="medium">Your accounts</Title>
+          <AccountTypeSelector />
+          <Tabs size="small" selectedTabKey={currentTab} tabsConfig={tabsConfig} />
+        </WithPadding>
+        {currentTab === 'activity' ? (
+          <Activity />
+        ) : (
+          <>
+            {selectedAccountType === 'public' && (
+              <InfoBox>
+                <CIcon icon="Info" size={20} />
+                <p>Tokens that can be moved to shielded account:</p>
+              </InfoBox>
+            )}
+            <TokensWrapper>
+              <TokenList tokens={tokens} />
+            </TokensWrapper>
+            {selectedAccountType === 'shielded' && (
+              <WithPadding>
+                <Disclaimer>
+                  <InfoContainer>
+                    <CIcon
+                      icon="InfoRegular"
+                      size={20}
+                      color={vars('--color-neutral-foreground-3-rest')}
+                    />
+                    <p>
+                      Shielded account is created based on your connected account.
+                      It’s specific to the platform you use – accounts created in
+                      the Web App can be retrieved from the Web App on another device.
+                    </p>
+                  </InfoContainer>
+                  <ShieldImage src={shieldImage} alt="Shield icon" />
+                </Disclaimer>
+              </WithPadding>
+            )}
+          </>
+        )}
       </Container>
     </Wrapper>
   );
@@ -115,11 +134,9 @@ const Shielder = () => {
 
 export default Shielder;
 
-const WithPadding = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${vars('--spacing-l')};
-  padding-inline: ${vars('--spacing-l')};
+const Wrapper = styled(DoubleBorderBox.Wrapper)`
+  width: 100%;
+  overflow: hidden;
 `;
 
 const Container = styled(DoubleBorderBox.Content)<{ $withoutBottomPadding?: boolean }>`
@@ -129,8 +146,16 @@ const Container = styled(DoubleBorderBox.Content)<{ $withoutBottomPadding?: bool
   padding-inline: ${vars('--spacing-none')};
   padding-block: ${vars('--spacing-l')};
   ${({ $withoutBottomPadding }) => $withoutBottomPadding && css`
-    padding-bottom: 0;
-  `}
+      padding-bottom: 0;
+    `
+  }
+`;
+
+const WithPadding = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${vars('--spacing-l')};
+  padding-inline: ${vars('--spacing-l')};
 `;
 
 const TokensWrapper = styled.div`
@@ -147,11 +172,6 @@ const InfoBox = styled.div`
   ${typography.web.body1Strong};
 `;
 
-const Wrapper = styled(DoubleBorderBox.Wrapper)`
-  width: 100%;
-  overflow: hidden;
-`;
-
 const Disclaimer = styled(DoubleBorderBox.Content)`
   display: flex;
 
@@ -160,7 +180,6 @@ const Disclaimer = styled(DoubleBorderBox.Content)`
   gap: ${vars('--spacing-m')};
 
   margin: ${vars('--spacing-none')};
-  padding: ${vars('--spacing-m')};
   padding: ${vars('--spacing-xs')} 0 0 0;
 
   background: ${vars('--color-neutral-background-4a-rest')};

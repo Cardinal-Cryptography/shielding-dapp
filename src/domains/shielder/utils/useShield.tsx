@@ -1,5 +1,7 @@
 import { erc20Token, nativeToken } from '@cardinal-cryptography/shielder-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import styled from 'styled-components';
+import { v4 } from 'uuid';
 import { erc20Abi } from 'viem';
 import { useAccount, usePublicClient, useSendTransaction, useWalletClient } from 'wagmi';
 
@@ -7,7 +9,11 @@ import { Token } from 'src/domains/chains/types/misc';
 import useChain from 'src/domains/chains/utils/useChain';
 import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import { Fee } from 'src/domains/shielder/stores/getShielderIndexedDB';
+import useTransactionDetailsModal from 'src/domains/shielder/utils/useTransactionDetailsModal';
+import { useTransactionsHistory } from 'src/domains/shielder/utils/useTransactionsHistory';
 import { getWalletErrorName, handleWalletError } from 'src/domains/shielder/utils/walletErrors';
+import vars from 'src/domains/styling/utils/vars';
 
 import useShielderClient from './useShielderClient';
 
@@ -20,12 +26,42 @@ export const useShield = () => {
   const queryClient = useQueryClient();
   const chainConfig = useChain();
   const { showToast } = useToast();
+  const { openTransactionModal } = useTransactionDetailsModal();
+  const { upsertTransaction } = useTransactionsHistory();
 
-  const sendTransactionWithToast = async (params: Parameters<typeof sendTransactionAsync>[0]) => {
+  const sendTransactionWithToast = async (
+    params: Parameters<typeof sendTransactionAsync>[0],
+    token: Token,
+    amount: bigint,
+    fee: Fee | undefined
+  ) => {
+    if(!chainId) throw new Error('chainId is not available');
+    if(!walletAddress) throw new Error('walletAddress is not available');
+
+    const localId = v4();
+
+    await upsertTransaction(chainId, {
+      token: token.isNative ?
+        { type: 'native' } :
+        { type: 'erc20', address: token.address },
+      type: 'Deposit',
+      amount,
+      localId,
+      status: 'pending',
+      fee,
+    });
+
     const toast = showToast({
       status: 'inProgress',
       title: 'Transaction pending',
       subtitle: 'Waiting to be signed by user.',
+      body: (
+        <DetailsButton
+          onClick={() => void openTransactionModal({ localId })}
+        >
+          See details
+        </DetailsButton>
+      ),
       ttlMs: Infinity,
     });
 
@@ -36,8 +72,18 @@ export const useShield = () => {
     }, 10_000);
 
     try {
-      return await sendTransactionAsync(params);
+      const txHash = await sendTransactionAsync(params);
+      await upsertTransaction(chainId, {
+        localId,
+        txHash,
+      });
+      return txHash;
     } catch (error) {
+      await upsertTransaction(chainId, {
+        localId,
+        status: 'failed',
+        completedTimestamp: Date.now(),
+      });
       return handleWalletError(error);
     } finally {
       clearTimeout(timeoutId);
@@ -46,7 +92,15 @@ export const useShield = () => {
   };
 
   const { mutateAsync: shield, isPending: isShielding, ...meta } = useMutation({
-    mutationFn: async ({ token, amount }: { token: Token, amount: bigint, onSuccess?: () => void }) => {
+    mutationFn: async ({
+      token,
+      amount,
+      fee,
+    }: {
+      token: Token,
+      amount: bigint,
+      fee: Fee | undefined,
+    }) => {
       if (!shielderClient) throw new Error('Shielder is not ready');
       if (!walletAddress) throw new Error('Address is not available');
 
@@ -77,7 +131,7 @@ export const useShield = () => {
       await shielderClient.shield(
         sdkToken,
         amount,
-        sendTransactionWithToast,
+        params => sendTransactionWithToast(params, token, amount, fee),
         walletAddress
       );
     },
@@ -139,3 +193,15 @@ export const useShield = () => {
 };
 
 export default useShield;
+
+const DetailsButton = styled.button`
+  color: ${vars('--color-brand-foreground-link-rest')};
+
+  &:hover {
+    color: ${vars('--color-brand-foreground-link-hover')};
+  }
+
+  &:active {
+    color: ${vars('--color-brand-foreground-link-pressed')};
+  }
+`;

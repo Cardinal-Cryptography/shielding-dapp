@@ -65,14 +65,14 @@ export const Controllable: Story = {
 type ModalProps = { pageCount: number } & Partial<ComponentProps<typeof Modal>>;
 
 const Preview = (props: ModalProps) => {
-  const { open, close } = useModal(<Component {...props} />);
+  const { open, close } = useModal();
 
   useEffect(() => {
     return () => void close();
   }, [close]);
 
   return (
-    <Button onClick={open} variant="primary">
+    <Button onClick={() => void open(<Component {...props} />)} variant="primary">
       Open modal
     </Button>
   );

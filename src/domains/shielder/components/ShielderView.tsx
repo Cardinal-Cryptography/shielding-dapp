@@ -14,10 +14,10 @@ const ShielderView = () => {
   const { isConnected, privateKey } = useWallet();
   const isReady = isConnected && !!privateKey;
   const isNetworkSupported = !!useChain();
-  const { open, close } = useModal(<SignatureModal />);
+  const { open, close } = useModal();
   useEffect(() => {
     if(isConnected && !privateKey && isNetworkSupported) {
-      open();
+      open(<SignatureModal />);
     } else {
       close();
     }

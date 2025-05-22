@@ -1,81 +1,128 @@
-import styled, { css } from 'styled-components';
-import { Address } from 'viem';
+import styled, { css, RuleSet } from 'styled-components';
 
-import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon.tsx';
-import { useModal } from 'src/domains/misc/components/ModalNew';
-import formatAddress from 'src/domains/misc/utils/formatAddress.ts';
-import isPresent from 'src/domains/misc/utils/isPresent.ts';
-import formatBalance from 'src/domains/numbers/utils/formatBalance.ts';
-import TransactionDetails from 'src/domains/shielder/components/TransactionDetailsModal/TransactionDetails.tsx';
-import { Transactions } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import useTokenData from 'src/domains/shielder/utils/useTokenData.ts';
-import { transitionTime, typography } from 'src/domains/styling/utils/tokens.ts';
-import vars from 'src/domains/styling/utils/vars.ts';
+import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
+import formatAddress from 'src/domains/misc/utils/formatAddress';
+import isPresent from 'src/domains/misc/utils/isPresent';
+import formatBalance from 'src/domains/numbers/utils/formatBalance';
+import { PartialLocalShielderActivityHistory } from 'src/domains/shielder/stores/getShielderIndexedDB.ts';
+import useTokenData from 'src/domains/shielder/utils/useTokenData';
+import useTransactionDetailsModal from 'src/domains/shielder/utils/useTransactionDetailsModal';
+import { transitionTime, typography } from 'src/domains/styling/utils/tokens';
+import vars from 'src/domains/styling/utils/vars';
 
-import ActivityIcon from './ActivityIcon';
+import ActivityIcon from '../ActivityIcon';
 
-const CONFIG_BY_TYPE = {
-  Deposit: {
-    label: () => (
-      <AccountLabel>
-        <p>Shielded from</p>
-        <AccountTypeIcon type="public" size={16} />
-        <p>Public</p>
-      </AccountLabel>
-    ),
-    name: (symbol?: string) => symbol,
-  },
-  Withdraw: {
-    label: (to?: string) =>
-      to ? <p>Sent privately to {formatAddress(to)}</p> : null,
-    name: (symbol?: string) => symbol,
-  },
-  NewAccount: {
-    label: () => <p>Account created</p>,
-    name: () => 'Shielded account',
-  },
-} as const;
+type Status = NonNullable<PartialLocalShielderActivityHistory['status'] | 'stale'>;
+type TransactionType = PartialLocalShielderActivityHistory['type'];
+
+const getTransactionLabel = (
+  type: TransactionType,
+  status: Status,
+  to?: string
+) => {
+  switch (type) {
+    case 'Deposit': {
+      const depositText = status === 'failed' ? 'Shielding failed' :
+        status === 'pending' ? 'Shielding' : 'Shielded';
+      return (
+        <AccountLabel>
+          <p><ActivityType $status={status}>{depositText}</ActivityType> from</p>
+          <AccountTypeIcon type="public" size={16} />
+          <p>Public</p>
+        </AccountLabel>
+      );
+    }
+    case 'Withdraw':
+      if (status === 'failed' || status === 'pending') {
+        return (
+          <ActivityType $status={status}>
+            {status === 'failed' ? 'Sending privately failed' : 'Sending privately'}
+          </ActivityType>
+        );
+      }
+      return to ? <>Sent privately to {formatAddress(to)}</> : null;
+    case 'NewAccount':
+      return <p>Account created</p>;
+    default:
+      return null;
+  }
+};
+
+const getTransactionTitle = (type: TransactionType, tokenName?: string) => {
+  if (type === 'NewAccount') {
+    return 'Shielded account';
+  }
+  return tokenName;
+};
+
+const getBalanceDisplay = (
+  type: TransactionType,
+  amount?: bigint,
+  tokenDecimals?: number,
+  tokenSymbol?: string
+) => {
+  if (type === 'NewAccount' || !isPresent(tokenDecimals) || !isPresent(amount)) {
+    return <NoBalance>N/A</NoBalance>;
+  }
+
+  const isPositive = type === 'Deposit';
+  const sign = isPositive ? '+' : '';
+  const formattedAmount = formatBalance({ balance: amount, decimals: tokenDecimals });
+
+  return `${sign}${formattedAmount} ${tokenSymbol}`;
+};
 
 type Props = {
-  transaction: Transactions[number],
+  transaction: PartialLocalShielderActivityHistory,
 };
 
 const ActivityItem = ({ transaction }: Props) => {
-  const { open } = useModal(<TransactionDetails transaction={transaction} />);
+  const { openTransactionModal } = useTransactionDetailsModal();
   const {
     symbolQuery: { data: tokenSymbol },
     decimalsQuery: { data: tokenDecimals },
     nameQuery: { data: tokenName },
   } = useTokenData(
-    transaction.token.address ?
-      { address: transaction.token.address as Address, isNative: false } :
+    transaction.token?.type === 'erc20' ?
+      { address: transaction.token.address, isNative: false } :
       { isNative: true },
     ['symbol', 'decimals', 'name']
   );
 
-  const { type, amount, to } = transaction;
-  const { label, name } = CONFIG_BY_TYPE[type];
+  const { type = 'Deposit', amount, to, status = 'stale' } = transaction;
 
+  const label = getTransactionLabel(type, status, to);
+  const title = getTransactionTitle(type, tokenName);
+  const balanceDisplay = getBalanceDisplay(type, amount, tokenDecimals, tokenSymbol);
   const isPositive = type === 'Deposit';
 
-  const formattedBalance =
-    isPresent(tokenDecimals) && isPresent(amount) && type !== 'NewAccount' ?
-      `${isPositive? '+' : ''}${formatBalance({ balance: amount, decimals: tokenDecimals })} ${tokenSymbol}` :
-      <NoBalance>N/A</NoBalance>;
+  const handleClick = () => {
+    const identifier = transaction.txHash ?
+      { txHash: transaction.txHash } :
+      { localId: transaction.localId };
+
+    openTransactionModal(identifier);
+  };
 
   return (
-    <Container onClick={open} disabled={type === 'NewAccount'}>
-      <ActivityIcon type={type} size={40} />
+    <Container
+      onClick={handleClick}
+      disabled={type === 'NewAccount'}
+    >
+      <ActivityIcon type={type} size={40} status={status} />
       <Info>
-        <Label>{label(to)}</Label>
-        <Title>{name(tokenName)}</Title>
+        <Label>{label}</Label>
+        <Title>{title}</Title>
       </Info>
-      <Balance $isPositive={isPositive}>{formattedBalance}</Balance>
+      <Balance $isPositive={isPositive} $status={status}>{balanceDisplay}</Balance>
     </Container>
   );
 };
 
 export default ActivityItem;
+
+const perStatus = <T extends string | RuleSet>(statuses: Record<Status, T>) =>
+  ({ $status }: { $status: Status }) => statuses[$status];
 
 const Container = styled.button`
   display: flex;
@@ -112,14 +159,53 @@ const Title = styled.p`
   ${typography.decorative.subtitle2}
 `;
 
-const Balance = styled.p<{ $isPositive: boolean }>`
+const Balance = styled.p<{ $isPositive: boolean, $status: Status }>`
   margin-left: auto;
   ${typography.decorative.subtitle2};
-  ${({ $isPositive }) =>
-    $isPositive &&
-    css`
-      color: ${vars('--color-status-success-foreground-1-rest')};
-    `}
+  
+  ${({ $isPositive, $status }) => {
+    if ($isPositive) {
+      if ($status === 'completed') {
+        return css`
+          color: ${vars('--color-status-success-foreground-1-rest')};
+        `;
+      }
+      if ($status === 'failed') {
+        return css`
+          color: ${vars('--color-neutral-foreground-4-rest')};
+
+          text-decoration: line-through;
+        `;
+      }
+      if ($status === 'pending') {
+        return css`
+          color: ${vars('--color-neutral-foreground-4-rest')};
+        `;
+      }
+    } else {
+      if ($status === 'completed') {
+        return css`
+          color: ${vars('--color-neutral-foreground-1-rest')};
+        `;
+      }
+      if ($status === 'failed') {
+        return css`
+          color: ${vars('--color-neutral-foreground-4-rest')};
+
+          text-decoration: line-through;
+        `;
+      }
+      if ($status === 'pending') {
+        return css`
+          color: ${vars('--color-neutral-foreground-4-rest')};
+        `;
+      }
+    }
+
+    return css`
+      color: ${vars('--color-neutral-foreground-1-rest')};
+    `;
+  }}
 `;
 
 const NoBalance = styled.p`
@@ -130,4 +216,13 @@ const AccountLabel = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-xs')};
+`;
+
+const ActivityType = styled.span<{ $status: Status }>`
+  color: ${perStatus({
+    failed: vars('--color-status-danger-foreground-3-rest'),
+    pending: vars('--color-neutral-foreground-3-rest'),
+    completed: vars('--color-neutral-foreground-3-rest'),
+    stale: vars('--color-neutral-foreground-1-rest'),
+  })}
 `;

@@ -40,6 +40,12 @@ const SendModal = ({ token }: Props) => {
     token.balance < fees.fee_details.total_cost_fee_token :
     false;
 
+  const fee = (
+    fees?.fee_details.total_cost_fee_token ?
+      { address: token.isNative ? 'native' as const : token.address, amount: fees.fee_details.total_cost_fee_token } :
+      undefined
+  );
+
   const feeConfig = [
     {
       label: 'Transaction fee',
@@ -77,7 +83,13 @@ const SendModal = ({ token }: Props) => {
       throw new Error('Address to is not available'); // should never happen
     }
 
-    void withdraw({ token, amount, addressTo: validatedAddressTo }).then(() => void close());
+    void close();
+    void withdraw({
+      token,
+      amount,
+      addressTo: validatedAddressTo,
+      fee,
+    });
   };
 
   return (

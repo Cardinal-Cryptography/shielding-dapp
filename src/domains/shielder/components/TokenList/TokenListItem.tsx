@@ -38,11 +38,9 @@ const TokenListItem = ({ token }: Props) => {
   const selectedToken = { ...token, symbol, decimals, balance: activeBalance };
 
   const { open: openShieldModal } = useModal(
-    <ShieldModal token={selectedToken} />
+
   );
-  const { open: openSendModal } = useModal(
-    <SendModal token={selectedToken} />
-  );
+  const { open: openSendModal } = useModal();
 
   return (
     <Container>
@@ -64,7 +62,7 @@ const TokenListItem = ({ token }: Props) => {
           size="small"
           leftIcon="Shielded"
           disabled={isDisabled}
-          onClick={openShieldModal}
+          onClick={() => void openShieldModal(<ShieldModal token={selectedToken} />)}
         >
           Shield
         </Button>
@@ -74,7 +72,7 @@ const TokenListItem = ({ token }: Props) => {
           size="small"
           leftIcon="ArrowUpRight"
           disabled={isDisabled}
-          onClick={openSendModal}
+          onClick={() => void openSendModal(<SendModal token={selectedToken} />)}
         >
           Send
         </Button>

@@ -21,7 +21,7 @@ import UserIcon from './userIcon.svg?react';
 const TopBar = () => {
   const isSmallScreen = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
   const { disconnect, isConnected , address } = useWallet();
-  const { open } = useModal(<ConnectModal />);
+  const { open } = useModal();
 
   return (
     <NavBox.Container>
@@ -49,7 +49,7 @@ const TopBar = () => {
           </AccountManager>
         ) : (
           <Button
-            onClick={open}
+            onClick={() => void open(<ConnectModal />)}
             variant="primary"
           >
             Connect

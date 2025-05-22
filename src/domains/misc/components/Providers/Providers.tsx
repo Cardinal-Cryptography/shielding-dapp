@@ -9,7 +9,6 @@ import { Definition } from 'src/domains/chains/utils/definitions';
 import { ModalProvider } from 'src/domains/misc/components/ModalNew';
 import { ToastsProvider } from 'src/domains/misc/components/Toast';
 import { QueryClientProvider } from 'src/domains/misc/utils/queryClient';
-import TransactionsModal from 'src/domains/shielder/components/TransactionModal';
 import WasmProvider from 'src/domains/shielder/utils/WasmProvider';
 
 import GlobalStylesWithTheme from './GlobalStylesWithTheme';
@@ -63,7 +62,6 @@ const Providers = ({ children }: Props) => (
                   <ModalProvider>
                     {children}
                   </ModalProvider>
-                  <TransactionsModal />
                 </ToastsProvider>
               </WasmProvider>
             </PostHogProvider>
