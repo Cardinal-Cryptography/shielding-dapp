@@ -26,7 +26,7 @@ const transactionSchema = z.object({
   provingTimeMillis: z.number().optional(),
 });
 
-type Transactions = z.infer<ReturnType<typeof z.array<typeof transactionSchema>>>;
+export type Transactions = z.infer<ReturnType<typeof z.array<typeof transactionSchema>>>;
 type StoredTransactions = ReturnType<typeof toStorageFormat>;
 type TransactionsByChain = Partial<Record<string, StoredTransactions>>;
 
