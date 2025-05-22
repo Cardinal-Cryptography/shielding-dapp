@@ -15,11 +15,13 @@ import { usePublicClient } from 'wagmi';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import useChain from 'src/domains/chains/utils/useChain';
+import { useModal } from 'src/domains/misc/components/ModalNew';
 import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import TransactionDetailsModal
+  from 'src/domains/shielder/components/TransactionDetailsModal';
 import { getShielderIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import { getTransactionsIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import useSelectedTransactionModal from 'src/domains/shielder/stores/selectedTransaction';
 import { useWasm } from 'src/domains/shielder/utils/WasmProvider';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -31,7 +33,7 @@ const useShielderClient = () => {
   const chainConfig = useChain();
   const { wasmCryptoClient, wasmLoaded } = useWasm();
   const { showToast } = useToast();
-  const { openTransactionModal } = useSelectedTransactionModal();
+  const { open } =useModal();
 
   const queryClient = useQueryClient();
   const publicClient = usePublicClient({ chainId: chainConfig?.id });
@@ -125,7 +127,7 @@ const useShielderClient = () => {
                   status: 'success',
                   body: (
                     <DetailsButton
-                      onClick={() => void openTransactionModal(tx.txHash)}
+                      onClick={() => void open(<TransactionDetailsModal transaction={tx} />)}
                     >
                       See details
                     </DetailsButton>

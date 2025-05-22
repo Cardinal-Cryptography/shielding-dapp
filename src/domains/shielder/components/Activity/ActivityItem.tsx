@@ -6,13 +6,13 @@ import { useModal } from 'src/domains/misc/components/ModalNew';
 import formatAddress from 'src/domains/misc/utils/formatAddress.ts';
 import isPresent from 'src/domains/misc/utils/isPresent.ts';
 import formatBalance from 'src/domains/numbers/utils/formatBalance.ts';
-import TransactionDetails from 'src/domains/shielder/components/TransactionDetailsModal/TransactionDetails.tsx';
+import TransactionDetailsModal from 'src/domains/shielder/components/TransactionDetailsModal';
 import { Transactions } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import useTokenData from 'src/domains/shielder/utils/useTokenData.ts';
 import { transitionTime, typography } from 'src/domains/styling/utils/tokens.ts';
 import vars from 'src/domains/styling/utils/vars.ts';
 
-import ActivityIcon from './ActivityIcon';
+import ActivityIcon from '../ActivityIcon.tsx';
 
 const CONFIG_BY_TYPE = {
   Deposit: {
@@ -41,7 +41,7 @@ type Props = {
 };
 
 const ActivityItem = ({ transaction }: Props) => {
-  const { open } = useModal(<TransactionDetails transaction={transaction} />);
+  const { open } = useModal();
   const {
     symbolQuery: { data: tokenSymbol },
     decimalsQuery: { data: tokenDecimals },
@@ -64,7 +64,7 @@ const ActivityItem = ({ transaction }: Props) => {
       <NoBalance>N/A</NoBalance>;
 
   return (
-    <Container onClick={open} disabled={type === 'NewAccount'}>
+    <Container onClick={() => void open(<TransactionDetailsModal transaction={transaction} />)} disabled={type === 'NewAccount'}>
       <ActivityIcon type={type} size={40} />
       <Info>
         <Label>{label(to)}</Label>

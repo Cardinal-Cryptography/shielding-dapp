@@ -89,16 +89,16 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useModal = (modalElement: ReactElement) => {
+export const useModal = () => {
   const ctx = useContext(ModalContext);
   if (!ctx) throw new Error('useModal must be used within ModalProvider');
 
   const { mount, unmount, modals } = ctx;
   const id = useRef(uuidv4()).current;
 
-  const open = useCallback(() => {
+  const open = useCallback((modalElement: ReactElement) => {
     mount({ id, modal: modalElement });
-  }, [id, modalElement, mount]);
+  }, [id, mount]);
 
   const close = useCallback(() => {
     unmount(id);
