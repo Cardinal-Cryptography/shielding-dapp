@@ -15,8 +15,8 @@ import vars from 'src/domains/styling/utils/vars';
 
 const CHAIN_SELECTOR_WIDTH = 246;
 
-const mainnetChains = objectEntries(chainsDefinitions).map(([, net]) => net.mainnet);
-const testnetChains = objectEntries(chainsDefinitions).map(([, net]) => net.testnet);
+const mainnetChains = objectEntries(chainsDefinitions).map(([, net]) => net.mainnet).filter(c => !c.disabled);
+const testnetChains = objectEntries(chainsDefinitions).map(([, net]) => net.testnet).filter(c => !c.disabled);
 
 const ChainSelector = () => {
   const chainConfig = useChain();
