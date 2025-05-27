@@ -5,7 +5,9 @@ import { useAccount, usePublicClient, useSendTransaction, useWalletClient } from
 
 import { Token } from 'src/domains/chains/types/misc';
 import useChain from 'src/domains/chains/utils/useChain';
+import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import { getWalletErrorName, handleWalletError } from 'src/domains/shielder/utils/walletErrors';
 
 import useShielderClient from './useShielderClient';
 
@@ -17,6 +19,31 @@ export const useShield = () => {
   const { sendTransactionAsync } = useSendTransaction();
   const queryClient = useQueryClient();
   const chainConfig = useChain();
+  const { showToast } = useToast();
+
+  const sendTransactionWithToast = async (params: Parameters<typeof sendTransactionAsync>[0]) => {
+    const toast = showToast({
+      status: 'inProgress',
+      title: 'Transaction pending',
+      subtitle: 'Waiting to be signed by user.',
+      ttlMs: Infinity,
+    });
+
+    const timeoutId = setTimeout(() => {
+      toast.updateToast({
+        subtitle: 'Still waiting? Make sure you signed the transaction from your wallet.',
+      });
+    }, 10_000);
+
+    try {
+      return await sendTransactionAsync(params);
+    } catch (error) {
+      return handleWalletError(error);
+    } finally {
+      clearTimeout(timeoutId);
+      toast.dismissToast();
+    }
+  };
 
   const { mutateAsync: shield, isPending: isShielding, ...meta } = useMutation({
     mutationFn: async ({ token, amount }: { token: Token, amount: bigint, onSuccess?: () => void }) => {
@@ -50,7 +77,7 @@ export const useShield = () => {
       await shielderClient.shield(
         sdkToken,
         amount,
-        async params => await sendTransactionAsync(params),
+        sendTransactionWithToast,
         walletAddress
       );
     },
@@ -75,6 +102,32 @@ export const useShield = () => {
       void queryClient.invalidateQueries({
         queryKey: getQueryKey.tokenPublicBalance('native', chainId.toString(), walletAddress),
       });
+
+      const knowErrorName = getWalletErrorName(error);
+
+      switch (knowErrorName) {
+        case 'USER_REJECTED_REQUEST':
+          showToast({
+            status: 'error',
+            title: 'Transaction rejected',
+            subtitle: 'Transaction has been rejected in the wallet',
+          });
+          break;
+
+        case 'LOCKED_OR_UNAUTHORIZED':
+          showToast({
+            status: 'error',
+            title: 'Transaction not initiated',
+            subtitle: 'Make sure your wallet is unlocked and your account is authorized.',
+          });
+          break;
+
+        default:
+          showToast({
+            status: 'error',
+            title: 'Shielding failed',
+          });
+      }
     },
   });
 
