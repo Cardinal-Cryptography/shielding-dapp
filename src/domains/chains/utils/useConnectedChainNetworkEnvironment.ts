@@ -15,5 +15,5 @@ export default () => {
     }))
   );
 
-  return configs.find(({ config }) => config.id === connectedChain.id)?.networkEnvironment;
+  return configs.find(({ config }) => config && config.id === connectedChain.id)?.networkEnvironment;
 };

@@ -1,15 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
-import { objectEntries } from 'tsafe';
 import { useSwitchChain } from 'wagmi';
 
-import chainsDefinitions from 'src/domains/chains/utils/definitions';
+import supportedChains from 'src/domains/chains/utils/supportedChains';
 import useChain from 'src/domains/chains/utils/useChain';
 import router from 'src/domains/routing/utils/router';
 
-const mainnetChains = objectEntries(chainsDefinitions).map(([_, network]) => network.mainnet);
-const testnetChains = objectEntries(chainsDefinitions).map(([_, network]) => network.testnet);
-const allChainsDefinitions = [...mainnetChains, ...testnetChains];
+const { all: allChainsDefinitions } = supportedChains;
 
 const useSyncChainWithUrl = () => {
   const initialChainPath = useRef<string | null>(null);

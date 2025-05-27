@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
 import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
-import Modal from 'src/domains/misc/components/ModalNew';
+import Modal, { useModalControls } from 'src/domains/misc/components/ModalNew';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import useShield from 'src/domains/shielder/utils/useShield';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
@@ -23,6 +23,7 @@ type Props = {
 
 const ShieldModal = ({ token }: Props) => {
   const { address } = useWallet();
+  const { close } = useModalControls();
   const [amount, setAmount] = useState(0n);
   const chainConfig = useChain();
   const { shield, isShielding, reset } = useShield();

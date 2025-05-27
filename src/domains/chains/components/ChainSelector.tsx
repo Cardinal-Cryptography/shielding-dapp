@@ -1,10 +1,10 @@
 import { useMediaQuery } from '@react-hookz/web';
 import { useAppKitNetwork } from '@reown/appkit/react';
 import styled from 'styled-components';
-import { objectEntries } from 'tsafe';
 
 import ChainIcon from 'src/domains/chains/components/ChainIcon';
-import chainsDefinitions, { Definition } from 'src/domains/chains/utils/definitions';
+import { Definition } from 'src/domains/chains/utils/definitions';
+import supportedChains from 'src/domains/chains/utils/supportedChains';
 import useChain from 'src/domains/chains/utils/useChain';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
@@ -15,17 +15,16 @@ import vars from 'src/domains/styling/utils/vars';
 
 const CHAIN_SELECTOR_WIDTH = 246;
 
-const mainnetChains = objectEntries(chainsDefinitions).map(([, net]) => net.mainnet);
-const testnetChains = objectEntries(chainsDefinitions).map(([, net]) => net.testnet);
+const { testnet, mainnet } = supportedChains;
 
 const ChainSelector = () => {
   const chainConfig = useChain();
   const isLargeScreen = useMediaQuery(`(min-width: ${BREAKPOINTS.sm})`);
   const { switchNetwork } = useAppKitNetwork();
-  const isSelectedChainTestnet = testnetChains.some(c => c.id === chainConfig?.id);
+  const isSelectedChainTestnet = testnet.some(c => c.id === chainConfig?.id);
 
   const renderOption = (chain: Definition) => {
-    const isTestnet = testnetChains.some(c => c.id === chain.id);
+    const isTestnet = testnet.some(c => c.id === chain.id);
 
     return {
       onClick: () => void switchNetwork(chain),
@@ -44,8 +43,8 @@ const ChainSelector = () => {
     <StyledSelectBox
       align="start"
       sections={[
-        { title: 'Mainnet', options: mainnetChains.map(renderOption) },
-        { title: 'Testnet', options: testnetChains.map(renderOption) },
+        { title: 'Mainnet', options: mainnet.map(renderOption) },
+        { title: 'Testnet', options: testnet.map(renderOption) },
       ]}
     >
       <StyledButton variant="secondary">
