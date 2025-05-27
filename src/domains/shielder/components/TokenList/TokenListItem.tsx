@@ -35,7 +35,7 @@ const TokenListItem = ({ token }: Props) => {
   const activeBalance = isPublic ? publicBalance : shieldedBalance;
   const isDisabled = !activeBalance || activeBalance <= 0n;
 
-  const selectedToken = { ...token, symbol, decimals, balance: publicBalance };
+  const selectedToken = { ...token, symbol, decimals, balance: activeBalance };
 
   const { open: openShieldModal } = useModal(
     <ShieldModal token={selectedToken} />
