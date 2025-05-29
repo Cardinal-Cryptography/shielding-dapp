@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import styled, { css, RuleSet } from 'styled-components';
 
 import CIcon from 'src/domains/misc/components/CIcon';
@@ -8,13 +9,15 @@ export const ICON_MAP = {
   success: 'CheckmarkRegular',
   pending: 'Spinner',
   failed: 'Dismiss',
+  stale: null,
 } as const;
 
-export type Status = keyof typeof ICON_MAP;
+export type Status = keyof typeof ICON_MAP ;
 
 export type StepData = {
   title: string,
-  timestamp: string | null,
+  timestamp?: number,
+  duration?: number,
   status: Status,
 };
 
@@ -26,7 +29,7 @@ const Steps = ({ steps }: { steps: StepData[] }) => {
         return (
           <Step key={i}>
             <StatusCircle $status={step.status} $showLine={i !== steps.length - 1}>
-              {icon === 'Spinner' ? <LoadingIcon icon={icon} size={16} /> : (
+              {icon === 'Spinner' ? <LoadingIcon icon={icon} size={16} /> : icon && (
                 <CIcon
                   icon={icon}
                   size={16}
@@ -35,7 +38,8 @@ const Steps = ({ steps }: { steps: StepData[] }) => {
               )}
             </StatusCircle>
             <Name>{step.title}</Name>
-            {!!step.timestamp && <Timestamp>{step.timestamp}</Timestamp>}
+            {!!step.timestamp && <Timestamp>{dayjs(step.timestamp).format('h:mm A')}</Timestamp>}
+            {!!step.duration && <Timestamp>{(step.duration / 1000).toFixed(2)}s</Timestamp>}
           </Step>
         );
       })}
@@ -88,6 +92,7 @@ const StatusCircle = styled.div<{ $status: Status, $showLine: boolean }>`
       failed: vars('--color-status-danger-background-3-rest'),
       pending: vars('--color-neutral-background-5a-rest'),
       success: vars('--color-status-success-background-3-rest'),
+      stale: vars('--color-neutral-background-5a-rest'),
     })
   };
   border-radius: ${vars('--border-radius-circular')};
@@ -107,6 +112,7 @@ const StatusCircle = styled.div<{ $status: Status, $showLine: boolean }>`
           failed: vars('--color-status-danger-background-3-rest'),
           pending: vars('--color-neutral-background-5a-rest'),
           success: vars('--color-status-success-background-3-rest'),
+          stale: vars('--color-neutral-background-5a-rest'),
         })({ $status })
       };
       transform: translateY(100%);

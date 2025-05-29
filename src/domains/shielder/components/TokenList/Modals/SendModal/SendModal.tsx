@@ -5,7 +5,7 @@ import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import Modal, { useModalControls } from 'src/domains/misc/components/ModalNew';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
-import useWithdraw from 'src/domains/shielder/utils/useWithdraw';
+import useWithdraw from 'src/domains/shielder/utils/useWithdraw.tsx';
 
 import { Token } from '../../';
 import ConfirmPage from '../ConfirmPage';

@@ -1,23 +1,69 @@
-import { useQuery } from '@tanstack/react-query';
+import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMemo, useCallback } from 'react';
 import { useAccount } from 'wagmi';
 
-import getQueryKey from 'src/domains/misc/utils/getQueryKey.ts';
-import { getTransactionsIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
+import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import {
+  getLocalShielderActivityHistoryIndexedDB,
+  PartialLocalShielderActivityHistory,
+} from 'src/domains/shielder/stores/getShielderIndexedDB';
 
-const useTransactionsHistory = () => {
+export const useTransactionsHistory = () => {
   const { address, chainId } = useAccount();
+  const queryClient = useQueryClient();
 
-  const query = useQuery({
-    queryKey: address && chainId ? getQueryKey.shielderTransactions(address, chainId) : [],
-    queryFn: async () => {
-      if (!address || !chainId) return null;
-      const db = getTransactionsIndexedDB(address);
-      return db.getItem(chainId);
+  const isReady = !!address && !!chainId;
+
+  const db = useMemo(
+    () => (address ? getLocalShielderActivityHistoryIndexedDB(address) : undefined),
+    [address]
+  );
+
+  const upsertTransaction = useCallback(
+    async (...params: Parameters<NonNullable<typeof db>['upsertItem']>) => {
+      if (!db || !address || !chainId) return;
+
+      await db.upsertItem(...params);
+
+      await queryClient.invalidateQueries({
+        queryKey: getQueryKey.shielderTransactions(address, chainId),
+      });
     },
-    enabled: !!address && !!chainId,
-  });
+    [db, address, chainId, queryClient]
+  );
 
-  return query;
+  return {
+    ...useQuery({
+      queryKey: isReady ? getQueryKey.shielderTransactions(address, chainId) : [],
+      queryFn: isReady ?
+        async () =>
+          (await getLocalShielderActivityHistoryIndexedDB(address).getItems(chainId)) ?? [] :
+        skipToken,
+      enabled: isReady,
+    }),
+    upsertTransaction,
+  };
 };
 
-export default useTransactionsHistory;
+type TransactionSelector = {
+  txHash?: string,
+  localId?: string,
+};
+
+export const useTransaction = (selector: TransactionSelector) => {
+  const { data: transactions, ...queryResult } = useTransactionsHistory();
+
+  const selectedTransaction = useMemo(() => {
+    if (!transactions || (!selector.txHash && !selector.localId)) return undefined;
+
+    return transactions.find(transaction => {
+      if (selector.txHash && transaction.txHash === selector.txHash) return true;
+      return !!(selector.localId && transaction.localId === selector.localId);
+    });
+  }, [transactions, selector.txHash, selector.localId]);
+
+  return {
+    ...queryResult,
+    data: (selectedTransaction ?? {}) as PartialLocalShielderActivityHistory,
+  };
+};

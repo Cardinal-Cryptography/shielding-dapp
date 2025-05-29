@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import styled, { css } from 'styled-components';
 import { Address } from 'viem';
 
@@ -12,8 +11,8 @@ import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import formatBalance from 'src/domains/numbers/utils/formatBalance';
-import { Transactions } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import useTokenData from 'src/domains/shielder/utils/useTokenData';
+import { useTransaction } from 'src/domains/shielder/utils/useTransactionsHistory.tsx';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -21,16 +20,20 @@ import Steps, { StepData } from './Steps';
 import Title from './Title';
 
 type Props = {
-  transaction: Transactions[number],
+  txHash: Address,
+} | {
+  localId: string,
 };
 
-const TransactionDetailsModal = ({ transaction }: Props) => {
+const TransactionDetailsModal = (props: Props) => {
+  const { data: transaction } = useTransaction(props);
+
   const {
     symbolQuery: { data: tokenSymbol },
     decimalsQuery: { data: tokenDecimals },
   } = useTokenData(
-    transaction.token.address ?
-      { address: transaction.token.address as Address, isNative: false } :
+    transaction.token?.type === 'erc20' ?
+      { address: transaction.token.address, isNative: false } :
       { isNative: true },
     ['symbol', 'decimals']
   );
@@ -44,10 +47,40 @@ const TransactionDetailsModal = ({ transaction }: Props) => {
       `${isPositive ? '+' : ''}${formatBalance({ balance: transaction.amount, decimals: tokenDecimals })} ${tokenSymbol}` :
       <NoBalance>N/A</NoBalance>;
 
+  const transactionDuration = (transaction.completedTimestamp && transaction.submitTimestamp) ?
+    transaction.completedTimestamp - transaction.submitTimestamp :
+    undefined;
+
+  const getCompletedStep = () => {
+    if (transaction.status === 'completed') return {
+      title: 'Completed',
+      timestamp: transaction.completedTimestamp,
+      status: 'success' as const,
+    };
+    if (transaction.status === 'failed') return {
+      title: 'Failed',
+      timestamp: transaction.completedTimestamp,
+      status: 'failed' as const,
+    };
+    return {
+      title: 'Completed',
+      timestamp: transaction.completedTimestamp,
+      status: 'stale' as const,
+    };
+  };
+
   const steps: StepData[] = [
-    { title: 'Submitted', timestamp: null, status: 'success' },
-    { title: 'Pending', timestamp: null, status: 'success' },
-    { title: 'Completed', timestamp: transaction.timestamp ? dayjs(transaction.timestamp).format('h:mm A') : null, status: 'success' },
+    {
+      title: 'Submitted',
+      timestamp: transaction.submitTimestamp,
+      status: 'success',
+    },
+    {
+      title: 'Pending',
+      duration: transactionDuration,
+      status: transaction.status === 'pending' ? 'pending' : 'success',
+    },
+    getCompletedStep(),
   ];
 
   return (
@@ -61,9 +94,7 @@ const TransactionDetailsModal = ({ transaction }: Props) => {
               <TokenName>{tokenSymbol}</TokenName>
               <Balance $isPositive={isPositive}>{formattedBalance}</Balance>
             </Header>
-
             <Steps steps={steps} />
-
           </Container>
           <InfoPairs>
             <InfoPair

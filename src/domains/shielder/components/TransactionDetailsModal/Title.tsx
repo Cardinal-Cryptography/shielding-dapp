@@ -1,24 +1,52 @@
 import dayjs from 'dayjs';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import ActivityIcon from 'src/domains/shielder/components/ActivityIcon';
-import { Transactions } from 'src/domains/shielder/stores/getShielderIndexedDB';
+import { PartialLocalShielderActivityHistory } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
 type Props = {
-  transaction: Transactions[number],
+  transaction: PartialLocalShielderActivityHistory,
 };
 
-const Title = ({ transaction }: Props) => (
-  <Wrapper>
-    <ActivityIcon type={transaction.type} size={40} />
-    <Container>
-      <h6>{transaction.type === 'Deposit' ? 'Shielded' : 'Sent privately'}</h6>
-      <p>{dayjs(transaction.timestamp).format('DD MMM YYYY')}</p>
-    </Container>
-  </Wrapper>
-);
+const Title = ({ transaction }: Props) => {
+  const title = useMemo(() => {
+    if (transaction.type === 'Deposit') {
+      if(!transaction.status) return 'Shielding';
+
+      return {
+        failed: 'Shielding failed',
+        completed: 'Shielded',
+        pending: 'Shielding',
+      }[transaction.status];
+    }
+    if (transaction.type === 'Withdraw') {
+      if(!transaction.status) return 'Sending privately';
+
+      return {
+        failed: 'Sending privately failed',
+        completed: 'Sent privately',
+        pending: 'Sending privately',
+      }[transaction.status]; }
+  }, [transaction]);
+
+  return (
+    <Wrapper>
+      <ActivityIcon type={transaction.type} size={40} status={transaction.status} />
+      <Container>
+        <h6>{title}</h6>
+        <p>
+          {
+            (!!transaction.submitTimestamp || !!transaction.completedTimestamp) &&
+            dayjs(transaction.submitTimestamp ?? transaction.completedTimestamp).format('DD MMM YYYY')
+          }
+        </p>
+      </Container>
+    </Wrapper>
+  );
+};
 
 export default Title;
 

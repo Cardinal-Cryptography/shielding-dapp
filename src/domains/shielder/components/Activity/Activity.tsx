@@ -5,8 +5,7 @@ import { objectEntries } from 'tsafe';
 
 import Badge from 'src/domains/misc/components/Badge';
 import ScrollShadow from 'src/domains/misc/components/ScrollShadow';
-import { Transactions } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import useTransactionsHistory from 'src/domains/shielder/utils/useTransactionsHistory';
+import { useTransactionsHistory } from 'src/domains/shielder/utils/useTransactionsHistory';
 import vars from 'src/domains/styling/utils/vars';
 
 import ActivityItem from './ActivityItem';
@@ -16,12 +15,17 @@ import Empty from './Empty';
 const Activity = () => {
   const { data, isLoading } = useTransactionsHistory();
 
-  const grouped = data?.reduce<Record<string, Transactions>>((acc, tx) => {
-    const date = dayjs(tx.timestamp).format('YYYY-MM-DD');
+  const grouped = data?.reduce<Record<string, typeof data>>((acc, tx) => {
     const newTx = tx.type === 'NewAccount' ? [ { ...tx, type: 'Deposit' as const }, { ...tx }] : [tx];
+    const date = tx.submitTimestamp ?? tx.completedTimestamp;
+
+    if(!date) return acc;
+
+    const dateString = dayjs(Number(date)).format('MMM D');
+
     return {
       ...acc,
-      [date]: [...newTx, ...(acc[date] ?? [])],
+      [dateString]: [...newTx, ...(acc[dateString] ?? [])],
     };
   }, {});
 
@@ -43,7 +47,7 @@ const Activity = () => {
                   design="tint"
                   variant="subtle"
                   size="medium"
-                  text={dayjs(date).format('MMM D')}
+                  text={date}
                 />
               </PaddingBox>
               {transactions.map(transaction => (
