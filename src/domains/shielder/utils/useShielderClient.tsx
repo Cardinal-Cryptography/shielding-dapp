@@ -7,7 +7,7 @@ import {
 import { DepositCalldata } from '@cardinal-cryptography/shielder-sdk/dist/actions/deposit';
 import { NewAccountCalldata } from '@cardinal-cryptography/shielder-sdk/dist/actions/newAccount';
 import { WithdrawCalldata } from '@cardinal-cryptography/shielder-sdk/dist/actions/withdraw';
-import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query';
+import { skipToken, useQuery } from '@tanstack/react-query';
 import { getPublicClient } from '@wagmi/core';
 import styled from 'styled-components';
 import { usePublicClient } from 'wagmi';
@@ -15,12 +15,16 @@ import { usePublicClient } from 'wagmi';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import useChain from 'src/domains/chains/utils/useChain';
+import { useModal } from 'src/domains/misc/components/ModalNew';
 import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
-import { getShielderIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import { getTransactionsIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import useSelectedTransactionModal from 'src/domains/shielder/stores/selectedTransaction';
+import TransactionDetailsModal
+  from 'src/domains/shielder/components/TransactionDetailsModal';
+import {
+  getShielderIndexedDB,
+} from 'src/domains/shielder/stores/getShielderIndexedDB';
 import { useWasm } from 'src/domains/shielder/utils/WasmProvider';
+import { useTransactionsHistory } from 'src/domains/shielder/utils/useTransactionsHistory.tsx';
 import vars from 'src/domains/styling/utils/vars';
 
 const TWO_MINUTES = 2 * 60 * 1000;
@@ -31,11 +35,11 @@ const useShielderClient = () => {
   const chainConfig = useChain();
   const { wasmCryptoClient, wasmLoaded } = useWasm();
   const { showToast } = useToast();
-  const { openTransactionModal } = useSelectedTransactionModal();
+  const { open } = useModal();
 
-  const queryClient = useQueryClient();
   const publicClient = usePublicClient({ chainId: chainConfig?.id });
   const { address: accountAddress, privateKey } = useWallet();
+  const { upsertTransaction } = useTransactionsHistory();
 
   const isQueryDisabled =
     !publicClient ||
@@ -60,9 +64,7 @@ const useShielderClient = () => {
           throw new Error('Shielder config is not available');
         }
 
-        const transactionsStorage = getTransactionsIndexedDB(accountAddress);
         const shielderStorage = getShielderIndexedDB(chainId, privateKey);
-
         const client = createShielderClient({
           shielderSeedPrivateKey: privateKey,
           chainId: BigInt(chainId),
@@ -89,9 +91,6 @@ const useShielderClient = () => {
               });
             },
             onNewTransaction: async (tx: ShielderTransaction) => {
-              const key = Buffer.from(tx.newNote.bytes).toString('hex');
-              const provingTimeMillis = provingTimeMap.get(key);
-
               const getTimestamp = async () => {
                 const client = getPublicClient(wagmiAdapter.wagmiConfig);
 
@@ -111,21 +110,19 @@ const useShielderClient = () => {
               };
               const timestamp = await getTimestamp();
 
-              await transactionsStorage.addItem(chainConfig.id, tx, provingTimeMillis, timestamp);
-
-              await queryClient.invalidateQueries({
-                queryKey: getQueryKey.shielderTransactions(
-                  accountAddress,
-                  chainId
-                ),
+              await upsertTransaction(chainConfig.id, {
+                ...tx,
+                status: 'completed',
+                completedTimestamp: timestamp,
               });
+
               if (timestamp && Date.now() - timestamp <= TWO_MINUTES) {
                 showToast({
                   title: tx.type === 'Withdraw' ? 'Sent privately' : 'Shielded',
                   status: 'success',
                   body: (
                     <DetailsButton
-                      onClick={() => void openTransactionModal(tx.txHash)}
+                      onClick={() => void open(<TransactionDetailsModal txHash={tx.txHash} />)}
                     >
                       See details
                     </DetailsButton>

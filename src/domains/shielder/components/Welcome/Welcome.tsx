@@ -12,7 +12,7 @@ import breakTheTrace from './breakTheTrace.png';
 const STEPS = ['Connect your EVM wallet', 'Shield your tokens', 'You\'re protected from tracking. Stay for a while!', 'Send them to a fresh address once you need them again'];
 
 const Welcome = () => {
-  const { open } = useModal(<ConnectModal />);
+  const { open } = useModal();
 
   return (
     <DoubleBorderBox.Wrapper>
@@ -32,7 +32,7 @@ const Welcome = () => {
         <ConnectButton
           size="large"
           variant="primary"
-          onClick={() => void open()}
+          onClick={() => void open(<ConnectModal />)}
         >
           Connect Wallet
         </ConnectButton>
