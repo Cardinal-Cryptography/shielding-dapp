@@ -60,7 +60,17 @@ type DBSchema = {
   },
 };
 
-const initDB = async (): Promise<IDBPDatabase<DBSchema>> => {
+const deleteDatabase = (): Promise<void> => {
+  const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
+
+  return new Promise<void>((resolve, reject) => {
+    deleteRequest.onsuccess = () => void resolve();
+    deleteRequest.onerror = () => void reject(new Error(deleteRequest.error?.message ?? 'Database deletion failed'));
+    deleteRequest.onblocked = () => void reject(new Error('Database deletion blocked. Please close other tabs using this application.'));
+  });
+};
+
+const createDB = (): Promise<IDBPDatabase<DBSchema>> => {
   return openDB(DB_NAME, DB_VERSION, {
     upgrade: db => {
       if (!db.objectStoreNames.contains(STORE_CLIENTS)) {
@@ -73,6 +83,19 @@ const initDB = async (): Promise<IDBPDatabase<DBSchema>> => {
   });
 };
 
+const initDB = async (): Promise<IDBPDatabase<DBSchema>> => {
+  try {
+    return await createDB();
+  } catch (error) {
+    if ((error as Error).name === 'VersionError') {
+      console.warn('IndexedDB version mismatch. Clearing database and retrying...');
+      await deleteDatabase();
+      return await createDB();
+    }
+    throw error;
+  }
+};
+
 export const getShielderIndexedDB = (chainId: number, privateKey: Address) => {
   const chainKey = chainId.toString();
   const hashedPrivateKey = sha256(privateKey);
@@ -80,10 +103,15 @@ export const getShielderIndexedDB = (chainId: number, privateKey: Address) => {
 
   return {
     getItem: async (itemKey: string): Promise<string | null> => {
-      const db = await initDbPromise;
-      const allDataForAddress = await db.get(STORE_CLIENTS, hashedPrivateKey);
-      const chainData = allDataForAddress?.[chainKey];
-      return chainData?.[itemKey] ?? null;
+      try {
+        const db = await initDbPromise;
+        const allDataForAddress = await db.get(STORE_CLIENTS, hashedPrivateKey);
+        const chainData = allDataForAddress?.[chainKey];
+        return chainData?.[itemKey] ?? null;
+      } catch (error) {
+        console.error('Failed to get item from IndexedDB:', error);
+        return null;
+      }
     },
     setItem: async (itemKey: string, value: string): Promise<void> => {
       const db = await initDbPromise;
@@ -110,10 +138,15 @@ export const getTransactionsIndexedDB = (accountAddress: string) => {
 
   return {
     getItem: async (chainId: number): Promise<Transactions | null> => {
-      const db = await initDbPromise;
-      const allChains = await db.get(STORE_TRANSACTIONS, accountAddress);
-      const rawTransactions = allChains?.[chainId.toString()];
-      return rawTransactions ? fromStorageFormat(rawTransactions) : null;
+      try {
+        const db = await initDbPromise;
+        const allChains = await db.get(STORE_TRANSACTIONS, accountAddress);
+        const rawTransactions = allChains?.[chainId.toString()];
+        return rawTransactions ? fromStorageFormat(rawTransactions) : null;
+      } catch (error) {
+        console.error('Failed to get transactions from IndexedDB:', error);
+        return null;
+      }
     },
     addItem: async (
       chainId: number,
@@ -154,7 +187,7 @@ export const getTransactionsIndexedDB = (accountAddress: string) => {
   };
 };
 
-export const clearShielderIndexedDB = async () => {
+export const clearShielderIndexedDB = async (): Promise<void> => {
   const db = await openDB(DB_NAME, DB_VERSION);
 
   await Promise.all(
