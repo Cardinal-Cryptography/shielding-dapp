@@ -5,7 +5,7 @@ import { NetworkEnvironment } from 'src/domains/chains/types/misc';
 
 import alephZero from './chains/alephZero';
 import arbitrum from './chains/arbitrum';
-import base from './chains/base';
+// import base from './chains/base';
 
 export type Definition = {
   id: number,
@@ -27,5 +27,5 @@ export type ChainConfig = Partial<Record<NetworkEnvironment, Definition>>;
 export default {
   alephZero,
   arbitrum,
-  base,
+  // base, - Base testnet deployment to production has been halted
 } satisfies Record<string, ChainConfig>;
