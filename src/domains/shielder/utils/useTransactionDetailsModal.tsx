@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 import { Address } from 'viem';
 
-import { useModal } from 'src/domains/misc/components/ModalNew';
 import TransactionDetailsModal from 'src/domains/shielder/components/TransactionDetailsModal';
+
+import { useModal } from '../../misc/components/Modal';
 
 import { useTransactionsHistory } from './useTransactionsHistory';
 

@@ -6,10 +6,11 @@ import { WagmiProvider } from 'wagmi';
 import WalletProvider from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import { Definition } from 'src/domains/chains/utils/definitions';
-import { ModalProvider } from 'src/domains/misc/components/ModalNew';
 import { ToastsProvider } from 'src/domains/misc/components/Toast';
 import { QueryClientProvider } from 'src/domains/misc/utils/queryClient';
 import WasmProvider from 'src/domains/shielder/utils/WasmProvider';
+
+import { ModalProvider } from '../Modal';
 
 import GlobalStylesWithTheme from './GlobalStylesWithTheme';
 import PostHogProvider from './PostHogProvider';

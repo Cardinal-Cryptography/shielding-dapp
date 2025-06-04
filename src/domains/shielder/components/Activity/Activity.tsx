@@ -36,7 +36,7 @@ const Activity = () => {
   return (
     <Container>
       <AnimatePresence>
-        {!data && !isLoading && <Empty />}
+        {!data?.length && !isLoading && <Empty />}
       </AnimatePresence>
       <ScrollShadow maxHeight="300px">
         {sorted.map(([date, transactions]) => (

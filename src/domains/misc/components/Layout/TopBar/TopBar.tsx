@@ -5,12 +5,12 @@ import ChainSelector from 'src/domains/chains/components/ChainSelector';
 import ConnectModal from 'src/domains/chains/components/ConnectModal.tsx';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import Button from 'src/domains/misc/components/Button';
-import { useModal } from 'src/domains/misc/components/ModalNew';
 import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
+import { useModal } from '../../Modal';
 import Navigation from '../Navigation';
 
 import Brand from './Brand';

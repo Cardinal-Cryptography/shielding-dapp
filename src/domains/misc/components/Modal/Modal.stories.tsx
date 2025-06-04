@@ -5,8 +5,9 @@ import { ComponentProps, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Button from 'src/domains/misc/components/Button';
-import Modal, { ModalProvider, useModal, useModalControls } from 'src/domains/misc/components/ModalNew';
-import { typography } from 'src/domains/styling/utils/tokens.ts';
+import { typography } from 'src/domains/styling/utils/tokens';
+
+import Modal, { ModalProvider, useModal, useModalControls } from './';
 
 faker.seed(0);
 

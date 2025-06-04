@@ -2,12 +2,12 @@ import { ReactElement,useState } from 'react';
 import { isAddress } from 'viem';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
-import Modal, { useModalControls } from 'src/domains/misc/components/ModalNew';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import useWithdraw from 'src/domains/shielder/utils/useWithdraw';
 
 import { Token } from '../../';
+import Modal, { useModalControls } from '../../../../../misc/components/Modal';
 import ConfirmPage from '../ConfirmPage';
 
 import SelectAccountPage from './SelectAccountPage';

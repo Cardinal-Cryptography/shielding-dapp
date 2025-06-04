@@ -7,7 +7,6 @@ import useChain from 'src/domains/chains/utils/useChain';
 import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
 import CIcon from 'src/domains/misc/components/CIcon';
 import InfoPair from 'src/domains/misc/components/InfoPair';
-import Modal from 'src/domains/misc/components/ModalNew';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
 import isPresent from 'src/domains/misc/utils/isPresent';
@@ -17,6 +16,8 @@ import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { useTransaction } from 'src/domains/shielder/utils/useTransactionsHistory';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
+
+import Modal from '../../../misc/components/Modal';
 
 import Steps, { StepData } from './Steps';
 import Title from './Title';
