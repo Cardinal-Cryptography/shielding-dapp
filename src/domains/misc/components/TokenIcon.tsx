@@ -4,7 +4,7 @@ import { objectEntries, objectFromEntries } from 'tsafe';
 import { Address } from 'viem';
 
 import definitions from 'src/domains/chains/utils/definitions';
-import useChain from 'src/domains/chains/utils/useChain.ts';
+import useChain from 'src/domains/chains/utils/useChain';
 import vars from 'src/domains/styling/utils/vars';
 
 type Size = number | `${string}%` | `${string}px`;

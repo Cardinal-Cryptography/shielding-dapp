@@ -3,7 +3,7 @@ import vars from 'src/domains/styling/utils/vars';
 
 export const STATUS_ICONS_DATA: Record<string, { icon: IconName, color: string | undefined }> = {
   success: {
-    icon: 'CheckmarkRegular',
+    icon: 'CheckmarkCircle',
     color: vars('--color-status-success-foreground-1-rest'),
   },
   warning: {

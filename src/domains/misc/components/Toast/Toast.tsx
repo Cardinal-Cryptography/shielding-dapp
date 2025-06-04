@@ -53,7 +53,7 @@ const Toast = ({
   return (
     <Container title="Toast">
       <IconContainer>
-        {status === 'inProgress' ? <Spinner icon="Spinner" size={16} /> : <CIcon size={16} icon={icon} color={color} />}
+        {status === 'inProgress' ? <Spinner icon="Spinner" size={20} /> : <CIcon size={20} icon={icon} color={color} />}
       </IconContainer>
       <RightSection>
         <Header>

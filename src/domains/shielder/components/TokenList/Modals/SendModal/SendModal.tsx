@@ -2,12 +2,12 @@ import { ReactElement,useState } from 'react';
 import { isAddress } from 'viem';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
+import Modal, { useModalControls } from 'src/domains/misc/components/Modal';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import useWithdraw from 'src/domains/shielder/utils/useWithdraw';
 
 import { Token } from '../../';
-import Modal, { useModalControls } from '../../../../../misc/components/Modal';
 import ConfirmPage from '../ConfirmPage';
 
 import SelectAccountPage from './SelectAccountPage';
@@ -83,13 +83,13 @@ const SendModal = ({ token }: Props) => {
       throw new Error('Address to is not available'); // should never happen
     }
 
-    void close();
     void withdraw({
       token,
       amount,
       addressTo: validatedAddressTo,
       fee,
     });
+    void close();
   };
 
   return (
@@ -134,7 +134,7 @@ const SendModal = ({ token }: Props) => {
                 buttonLabel={
                   hasInsufficientFees ?
                     `Insufficient ${token.symbol} Balance` :
-                    isWithdrawing ? 'Sending' : 'Confirm'
+                    isWithdrawing ? 'Sending privately' : 'Confirm'
                 }
               />
             ),

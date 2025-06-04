@@ -15,8 +15,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 import vars from 'src/domains/styling/utils/vars';
 
-import Modal from './Modal';
-
 type Modal = {
   id: string,
   modal: ReactElement,
@@ -26,8 +24,6 @@ type Modal = {
 type ModalContextType = {
   mount: (modal: Modal, options?: { checkDuplicateBy?: string[] }) => void,
   unmount: (id: string) => void,
-  updateId: (oldId: string, newId: string) => Promise<Modal | null>,
-  getModals: () => Modal[],
   modals: Modal[],
 };
 
@@ -59,31 +55,8 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     setModals(prev => prev.filter(m => m.id !== id));
   }, []);
 
-  const updateId = useCallback(async (oldId: string, newId: string): Promise<Modal | null> => {
-    return new Promise(resolve => {
-      setModals(prev => {
-        const modalIndex = prev.findIndex(modal => modal.id === oldId);
-
-        if (modalIndex === -1) {
-          resolve(null);
-          return prev;
-        }
-
-        const updatedModal = { ...prev[modalIndex], id: newId };
-        const updatedModals = prev.map((modal, index) =>
-          index === modalIndex ? updatedModal : modal
-        );
-
-        resolve(updatedModal);
-        return updatedModals;
-      });
-    });
-  }, []);
-
-  const getModals = () => modals;
-
   return (
-    <ModalContext.Provider value={{ mount, unmount, updateId, modals, getModals }}>
+    <ModalContext.Provider value={{ mount, unmount, modals }}>
       {children}
       {createPortal(
         <AnimatePresence>
@@ -115,17 +88,14 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useModals = () => {
-  const ctx = useContext(ModalContext);
-  if (!ctx) throw new Error('useModals must be used within ModalProvider');
-
-  return ctx;
-};
-
 export const useModal = () => {
-  const { mount, unmount, modals, updateId: _updateId } = useModals();
+  const ctx = useContext(ModalContext);
+  if (!ctx) throw new Error('useModal must be used within ModalProvider');
+
+  const { mount, unmount, modals } = ctx;
+
   const defaultId = useRef(uuidv4()).current;
-  const currentIdRef = useRef<string>(defaultId);
+  const currentIdRef = useRef(defaultId);
 
   const open = useCallback((modalElement: ReactElement, options?: { idOverride?: string }) => {
     const modalId = options?.idOverride ?? defaultId;
@@ -137,23 +107,18 @@ export const useModal = () => {
     unmount(currentIdRef.current);
   }, [unmount]);
 
-  const updateId = async (newId: string) => {
-    return _updateId(currentIdRef.current, newId);
-  };
-
   const modal = modals.find(m => m.id === currentIdRef.current);
 
   return {
     open,
     close,
     isOpen: !!modal,
-    updateId,
   };
 };
 
 export const useModalControls = () => {
   const ctx = useContext(ModalControlsContext);
-  if (!ctx) throw new Error('useModal must be used within ModalControlsProvider');
+  if (!ctx) throw new Error('useModalControls must be used within ModalControlsProvider');
 
   return ctx;
 };

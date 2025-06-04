@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import Button from 'src/domains/misc/components/Button';
+import { useModal } from 'src/domains/misc/components/Modal';
 import Skeleton from 'src/domains/misc/components/Skeleton';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import isPresent from 'src/domains/misc/utils/isPresent';
@@ -9,8 +10,6 @@ import useShielderStore from 'src/domains/shielder/stores/shielder';
 import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
-
-import { useModal } from '../../../misc/components/Modal';
 
 import SendModal from './Modals/SendModal';
 import ShieldModal from './Modals/ShieldModal';

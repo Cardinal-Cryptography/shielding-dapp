@@ -15,7 +15,7 @@ export default (ttlMs?: number, paused?: boolean, onComplete?: () => void) => {
         duration: ttlMs / 1000,
         ease: 'linear',
         onComplete,
-        autoplay: false,
+        autoplay: true,
       }
     );
   // eslint-disable-next-line react-hooks/exhaustive-deps

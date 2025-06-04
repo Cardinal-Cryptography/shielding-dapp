@@ -10,8 +10,8 @@ import useChain from 'src/domains/chains/utils/useChain';
 import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import { Fee } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import useTransactionDetailsModal from 'src/domains/shielder/utils/useTransactionDetailsModal';
-import { useTransactionsHistory } from 'src/domains/shielder/utils/useTransactionsHistory';
+import { useActivityHistory } from 'src/domains/shielder/utils/useActivityHistory';
+import useActivityModal from 'src/domains/shielder/utils/useActivityModal';
 import { getWalletErrorName, handleWalletError } from 'src/domains/shielder/utils/walletErrors';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -26,8 +26,8 @@ const useShield = () => {
   const queryClient = useQueryClient();
   const chainConfig = useChain();
   const { showToast } = useToast();
-  const { openTransactionModal } = useTransactionDetailsModal();
-  const { upsertTransaction } = useTransactionsHistory();
+  const { openTransactionModal } = useActivityModal();
+  const { upsertTransaction } = useActivityHistory();
 
   const sendTransactionWithToast = async (
     params: Parameters<typeof sendTransactionAsync>[0],

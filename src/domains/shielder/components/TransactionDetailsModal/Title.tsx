@@ -36,7 +36,7 @@ const Title = ({ transaction }: Props) => {
     <Wrapper>
       <ActivityIcon type={transaction.type} size={40} status={transaction.status} />
       <Container>
-        <h6>{title}</h6>
+        <p>{title}</p>
         <p>
           {
             (!!transaction.submitTimestamp || !!transaction.completedTimestamp) &&

@@ -7,7 +7,7 @@ import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import Skeleton from 'src/domains/misc/components/Skeleton';
 import Tabs from 'src/domains/misc/components/Tabs';
-import Title from 'src/domains/misc/components/Title.tsx';
+import Title from 'src/domains/misc/components/Title';
 import shieldImage from 'src/domains/shielder/assets/shield.png';
 import AccountTypeSelector from 'src/domains/shielder/components/AccountTypeSelector';
 import Activity from 'src/domains/shielder/components/Activity';

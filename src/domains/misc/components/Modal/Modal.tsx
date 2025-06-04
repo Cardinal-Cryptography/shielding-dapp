@@ -10,7 +10,7 @@ import { useToast } from 'src/domains/misc/components/Toast';
 import { boxShadows } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
-import { useModalControls } from './';
+import { useModalControls } from './ModalProvider';
 
 type Config = {
   title?: string | ReactElement,

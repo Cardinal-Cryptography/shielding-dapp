@@ -4,9 +4,9 @@ import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import formatBalance from 'src/domains/numbers/utils/formatBalance';
-import { PartialLocalShielderActivityHistory } from 'src/domains/shielder/stores/getShielderIndexedDB.ts';
+import { PartialLocalShielderActivityHistory } from 'src/domains/shielder/stores/getShielderIndexedDB';
+import useActivityModal from 'src/domains/shielder/utils/useActivityModal';
 import useTokenData from 'src/domains/shielder/utils/useTokenData';
-import useTransactionDetailsModal from 'src/domains/shielder/utils/useTransactionDetailsModal';
 import { transitionTime, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -26,9 +26,9 @@ const getTransactionLabel = (
         status === 'pending' ? 'Shielding' : 'Shielded';
       return (
         <AccountLabel>
-          <p><ActivityType $status={status}>{depositText}</ActivityType> from</p>
+          <div><ActivityType $status={status}>{depositText}</ActivityType> from</div>
           <AccountTypeIcon type="public" size={16} />
-          <p>Public</p>
+          <span>Public</span>
         </AccountLabel>
       );
     }
@@ -42,7 +42,7 @@ const getTransactionLabel = (
       }
       return to ? <>Sent privately to {formatAddress(to)}</> : null;
     case 'NewAccount':
-      return <p>Account created</p>;
+      return <span>Account created</span>;
     default:
       return null;
   }
@@ -66,7 +66,7 @@ const getBalanceDisplay = (
   }
 
   const isPositive = type === 'Deposit';
-  const sign = isPositive ? '+' : '';
+  const sign = isPositive ? '+' : '-';
   const formattedAmount = formatBalance({ balance: amount, decimals: tokenDecimals });
 
   return `${sign}${formattedAmount} ${tokenSymbol}`;
@@ -77,7 +77,7 @@ type Props = {
 };
 
 const ActivityItem = ({ transaction }: Props) => {
-  const { openTransactionModal } = useTransactionDetailsModal();
+  const { openTransactionModal } = useActivityModal();
   const {
     symbolQuery: { data: tokenSymbol },
     decimalsQuery: { data: tokenDecimals },
@@ -101,7 +101,7 @@ const ActivityItem = ({ transaction }: Props) => {
       { txHash: transaction.txHash } :
       { localId: transaction.localId };
 
-    openTransactionModal(identifier);
+    void openTransactionModal(identifier);
   };
 
   return (
@@ -135,6 +135,10 @@ const Container = styled.button`
 
   border-radius: ${vars('--border-radius-s')};
   transition: background ${transitionTime};
+  
+  &:disabled {
+    cursor: default;
+  }
 
   &:not(:disabled):hover {
     background: ${vars('--color-neutral-background-1a-hover')};
@@ -150,16 +154,16 @@ const Info = styled.div`
   flex-direction: column;
 `;
 
-const Label = styled.p`
+const Label = styled.div`
   color: ${vars('--color-neutral-foreground-3-rest')};
   ${typography.web.caption2}
 `;
 
-const Title = styled.p`
+const Title = styled.div`
   ${typography.decorative.subtitle2}
 `;
 
-const Balance = styled.p<{ $isPositive: boolean, $status: Status }>`
+const Balance = styled.div<{ $isPositive: boolean, $status: Status }>`
   margin-left: auto;
   ${typography.decorative.subtitle2};
   
@@ -208,7 +212,7 @@ const Balance = styled.p<{ $isPositive: boolean, $status: Status }>`
   }}
 `;
 
-const NoBalance = styled.p`
+const NoBalance = styled.div`
   color: ${vars('--color-neutral-foreground-4-rest')}
 `;
 
@@ -220,7 +224,7 @@ const AccountLabel = styled.div`
 
 const ActivityType = styled.span<{ $status: Status }>`
   color: ${perStatus({
-    failed: vars('--color-status-danger-foreground-3-rest'),
+    failed: vars('--color-status-danger-foreground-1-rest'),
     pending: vars('--color-neutral-foreground-3-rest'),
     completed: vars('--color-neutral-foreground-3-rest'),
     stale: vars('--color-neutral-foreground-1-rest'),

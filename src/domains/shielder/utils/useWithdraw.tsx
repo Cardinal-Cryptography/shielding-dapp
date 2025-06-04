@@ -8,9 +8,9 @@ import { Token } from 'src/domains/chains/types/misc';
 import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 import { Fee } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import useTransactionDetailsModal from 'src/domains/shielder/utils/useTransactionDetailsModal';
-import { useTransactionsHistory } from 'src/domains/shielder/utils/useTransactionsHistory';
-import vars from 'src/domains/styling/utils/vars.ts';
+import { useActivityHistory } from 'src/domains/shielder/utils/useActivityHistory';
+import useActivityModal from 'src/domains/shielder/utils/useActivityModal';
+import vars from 'src/domains/styling/utils/vars';
 
 import useShielderClient from './useShielderClient';
 
@@ -18,8 +18,8 @@ const useWithdraw = () => {
   const { data: shielderClient } = useShielderClient();
   const { address: walletAddress, chainId } = useAccount();
   const queryClient = useQueryClient();
-  const { upsertTransaction } = useTransactionsHistory();
-  const { openTransactionModal } = useTransactionDetailsModal();
+  const { upsertTransaction } = useActivityHistory();
+  const { openTransactionModal } = useActivityModal();
   const { showToast } = useToast();
 
   const {
@@ -56,12 +56,12 @@ const useWithdraw = () => {
         status: 'pending',
         submitTimestamp: Date.now(),
         fee,
+        to: addressTo,
       });
 
       const toast = showToast({
         status: 'inProgress',
-        title: 'Transaction pending',
-        subtitle: 'Waiting to be signed by user.',
+        title: 'Sending privately',
         body: (
           <DetailsButton
             onClick={() => void openTransactionModal({ localId })}
@@ -71,13 +71,6 @@ const useWithdraw = () => {
         ),
         ttlMs: Infinity,
       });
-
-      const timeoutId = setTimeout(() => {
-        toast.updateToast({
-          subtitle: 'Still waiting? Make sure you signed the transaction from your wallet.',
-        });
-      }, 10_000);
-
       try {
         const txHash = await shielderClient.withdraw(
           sdkToken,
@@ -96,7 +89,6 @@ const useWithdraw = () => {
         });
         throw error;
       } finally {
-        clearTimeout(timeoutId);
         toast.dismissToast();
       }
     },

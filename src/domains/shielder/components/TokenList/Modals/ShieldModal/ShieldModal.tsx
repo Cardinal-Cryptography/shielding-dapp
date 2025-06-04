@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
 import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
+import Modal, { useModalControls } from 'src/domains/misc/components/Modal';
 import isPresent from 'src/domains/misc/utils/isPresent';
-import useShield from 'src/domains/shielder/utils/useShield.tsx';
+import useShield from 'src/domains/shielder/utils/useShield';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 
 import { Token } from '../../';
-import Modal, { useModalControls } from '../../../../../misc/components/Modal';
 import ConfirmPage from '../ConfirmPage';
 
 import SelectAmountPage from './SelectAmountPage';

@@ -1,6 +1,5 @@
 import { useMotionValueEvent, useScroll } from 'framer-motion';
 import { ReactNode, useEffect, useRef, useState } from 'react';
-// @ts-expect-error simplebar-react’s types aren’t exposed correctly
 import SimpleBar from 'simplebar-react';
 import styled, { css } from 'styled-components';
 
@@ -28,11 +27,11 @@ const ScrollShadow = ({ children, className, fadePosition = 'both', maxHeight }:
     if (!el) return;
 
     const { clientHeight, scrollHeight, scrollTop } = el;
-    const isTop = scrollTop > 0;
-    const isBottom = scrollHeight > clientHeight && scrollTop < scrollHeight - clientHeight;
+    const isNotTop = scrollTop > 0;
+    const isNotBottom = scrollHeight > clientHeight && scrollTop < scrollHeight - clientHeight;
 
-    setIsScrolledTop(isTop);
-    setIsScrolledBottom(isBottom);
+    setIsScrolledTop(isNotTop);
+    setIsScrolledBottom(isNotBottom);
   };
 
   useEffect(() => {
@@ -56,7 +55,6 @@ const ScrollShadow = ({ children, className, fadePosition = 'both', maxHeight }:
 
 export default ScrollShadow;
 
-/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
 const Container = styled(SimpleBar)<{ $isScrolledTop: boolean, $isScrolledBottom: boolean }>`
   overflow-y: auto;
 

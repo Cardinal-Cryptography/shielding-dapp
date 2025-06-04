@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
 import { type ReactNode } from 'react';
 
-import { useWallet } from 'src/domains/chains/components/WalletProvider.tsx';
+import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
 
 import { wasmCryptoClientRead } from './wasmCryptoClientRead';
