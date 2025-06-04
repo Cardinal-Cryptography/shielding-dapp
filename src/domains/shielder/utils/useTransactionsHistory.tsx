@@ -21,13 +21,13 @@ export const useTransactionsHistory = () => {
 
   const upsertTransaction = useCallback(
     async (...params: Parameters<NonNullable<typeof db>['upsertItem']>) => {
-      if (!db || !address || !chainId) return;
+      if (!db || !address || !chainId) return params[1];
 
-      await db.upsertItem(...params);
-
-      await queryClient.invalidateQueries({
+      const tx = await db.upsertItem(...params);
+      void queryClient.invalidateQueries({
         queryKey: getQueryKey.shielderTransactions(address, chainId),
       });
+      return tx;
     },
     [db, address, chainId, queryClient]
   );

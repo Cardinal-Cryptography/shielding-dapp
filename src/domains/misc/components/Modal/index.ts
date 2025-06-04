@@ -1,2 +1,2 @@
-export { ModalProvider, useModal, useModalControls } from './ModalProvider';
+export { ModalProvider, useModal, useModalControls, useModals } from './ModalProvider';
 export { default } from './Modal';

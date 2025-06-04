@@ -17,7 +17,7 @@ import vars from 'src/domains/styling/utils/vars';
 
 import useShielderClient from './useShielderClient';
 
-export const useShield = () => {
+const useShield = () => {
   const { data: shielderClient } = useShielderClient();
   const { address: walletAddress, chainId } = useAccount();
   const publicClient = usePublicClient();

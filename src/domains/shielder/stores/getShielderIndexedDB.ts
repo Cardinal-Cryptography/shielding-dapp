@@ -23,8 +23,9 @@ export type LocalShielderActivityHistory = ShielderTransaction & {
 };
 
 export type PartialLocalShielderActivityHistory =
-  | (Partial<LocalShielderActivityHistory> & { localId: string })
-  | (Partial<LocalShielderActivityHistory> & { txHash: `0x${string}` });
+  | (Partial<LocalShielderActivityHistory> & { localId: string, txHash?: `0x${string}` })
+  | (Partial<LocalShielderActivityHistory> & { txHash: `0x${string}`, localId?: string })
+  | (Partial<LocalShielderActivityHistory> & { localId: string, txHash: `0x${string}` });
 
 export type LocalShielderActivityHistoryArray = PartialLocalShielderActivityHistory[];
 
@@ -170,39 +171,37 @@ export const getLocalShielderActivityHistoryIndexedDB = (accountAddress: string)
       }
     },
     upsertItem: async (chainId: number, activity: PartialLocalShielderActivityHistory) => {
-      try {
-        const db = await dbp;
-        const chainKey = chainId.toString();
-        const allChains = (await db.get(STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY, accountAddress)) ?? {};
-        const existingRaw = allChains[chainKey];
-        const existing = existingRaw ? fromActivityHistoryStorageFormat(existingRaw) : [];
+      const db = await dbp;
+      const chainKey = chainId.toString();
+      const allChains = (await db.get(STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY, accountAddress)) ?? {};
+      const existingRaw = allChains[chainKey];
+      const existing = existingRaw ? fromActivityHistoryStorageFormat(existingRaw) : [];
 
-        const isSame = (a: PartialLocalShielderActivityHistory, b: PartialLocalShielderActivityHistory) =>
-          (isPresent(a.localId) && a.localId === b.localId) ||
-          (isPresent(a.txHash) && a.txHash === b.txHash);
+      const isSame = (a: PartialLocalShielderActivityHistory, b: PartialLocalShielderActivityHistory) =>
+        (isPresent(a.localId) && a.localId === b.localId) ||
+        (isPresent(a.txHash) && a.txHash === b.txHash);
 
-        const matches = existing.filter(item => isSame(item, activity));
-        const rest = existing.filter(item => !isSame(item, activity));
+      const matches = existing.filter(item => isSame(item, activity));
+      const rest = existing.filter(item => !isSame(item, activity));
 
-        const localOnly = matches.find(i => isPresent(i.localId) && !isPresent(i.txHash)) ?? {};
-        const withTxHash = matches.find(i => isPresent(i.txHash)) ?? {};
+      const localOnly = matches.find(i => isPresent(i.localId) && !isPresent(i.txHash)) ?? {};
+      const withTxHash = matches.find(i => isPresent(i.txHash)) ?? {};
 
-        const merged = {
-          ...localOnly,
-          ...withTxHash,
-          ...activity,
-        };
+      const merged = {
+        ...localOnly,
+        ...withTxHash,
+        ...activity,
+      };
 
-        const updated: LocalShielderActivityHistoryArray = [...rest, merged];
+      const updated: LocalShielderActivityHistoryArray = [...rest, merged];
 
-        await db.put(
-          STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY,
-          { ...allChains, [chainKey]: toActivityHistoryStorageFormat(updated) },
-          accountAddress,
-        );
-      } catch (error) {
-        console.error('Failed to update activity history in IndexedDB:', error);
-      }
+      await db.put(
+        STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY,
+        { ...allChains, [chainKey]: toActivityHistoryStorageFormat(updated) },
+        accountAddress,
+      );
+
+      return merged;
     },
   };
 };

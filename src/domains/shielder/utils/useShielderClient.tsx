@@ -85,7 +85,7 @@ const useShielderClient = () => {
               };
               const timestamp = await getTimestamp();
 
-              await upsertTransaction(chainConfig.id, {
+              const localTx = await upsertTransaction(chainConfig.id, {
                 ...tx,
                 status: 'completed',
                 completedTimestamp: timestamp,
@@ -97,7 +97,7 @@ const useShielderClient = () => {
                   status: 'success',
                   body: (
                     <DetailsButton
-                      onClick={() => void openTransactionModal({ txHash: tx.txHash })}
+                      onClick={() => void openTransactionModal(localTx)}
                     >
                       See details
                     </DetailsButton>

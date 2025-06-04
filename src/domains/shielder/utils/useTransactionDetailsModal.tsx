@@ -1,50 +1,45 @@
 import { useCallback } from 'react';
-import { Address } from 'viem';
 
+import { useModals } from 'src/domains/misc/components/Modal';
 import TransactionDetailsModal from 'src/domains/shielder/components/TransactionDetailsModal';
-
-import { useModal } from '../../misc/components/Modal';
-
-import { useTransactionsHistory } from './useTransactionsHistory';
-
-type TransactionIdentifier = {
-  txHash: Address,
-} | {
-  localId: string,
-};
+import { PartialLocalShielderActivityHistory } from 'src/domains/shielder/stores/getShielderIndexedDB';
+import { useTransactionsHistory } from 'src/domains/shielder/utils/useTransactionsHistory.tsx';
 
 /**
  * Custom hook to handle transaction details modal logic.
- * Prevents duplicate modals by using consistent modal IDs and handles
- * the transition from localId to txHash when transactions are confirmed.
+ * Fetches the latest transaction data and opens a modal with up-to-date information.
+ * Handles modal ID transitions when transactions move from pending (localId only)
+ * to confirmed state (both localId and txHash), preventing duplicate modals.
  */
-export const useTransactionDetailsModal = () => {
-  const { open } = useModal();
-  const { data: transactions } = useTransactionsHistory();
+const useTransactionDetailsModal = () => {
+  const { mount, updateId } = useModals();
+  const { refetch } = useTransactionsHistory();
 
-  const openTransactionModal = useCallback((identifier: TransactionIdentifier) => {
-    // Find the transaction to determine the best modal ID
-    const transaction = transactions?.find(tx => {
-      if ('txHash' in identifier && tx.txHash === identifier.txHash) return true;
-      if ('localId' in identifier && tx.localId === identifier.localId) return true;
-      return false;
+  const openTransactionModal = useCallback(async (tx: PartialLocalShielderActivityHistory) => {
+    const { data } = await refetch();
+    const thisTransaction =
+      data?.find(transaction => transaction.txHash === tx.txHash || transaction.localId === tx.localId);
+
+    const modalId = tx.txHash ?? tx.localId;
+
+    const modalProps = tx.txHash ?
+      { txHash: tx.txHash } :
+      { localId: tx.localId };
+
+    const updatedModal = thisTransaction?.localId && thisTransaction.txHash ?
+      await updateId(thisTransaction.localId, thisTransaction.txHash) :
+      null;
+
+    if(updatedModal) {
+      console.warn('Transaction modal is already open, updating to new ID:', updatedModal.id);
+      return;
+    }
+
+    mount({
+      id: modalId,
+      modal: <TransactionDetailsModal {...modalProps} />,
     });
-
-    // Determine the modal ID priority: txHash > localId
-    // This ensures we don't create duplicate modals when a transaction
-    // transitions from pending (localId only) to confirmed (has txHash)
-    const modalId = transaction?.txHash ?? ('localId' in identifier ? identifier.localId : identifier.txHash);
-
-    // Determine the props to pass to the modal
-    const modalProps: TransactionIdentifier = transaction?.txHash ?
-      { txHash: transaction.txHash } :
-      identifier;
-
-    open(
-      <TransactionDetailsModal {...modalProps} />,
-      { idOverride: modalId }
-    );
-  }, [open, transactions]);
+  }, [mount, refetch, updateId]);
 
   return {
     openTransactionModal,

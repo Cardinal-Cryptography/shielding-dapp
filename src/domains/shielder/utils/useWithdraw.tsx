@@ -14,7 +14,7 @@ import vars from 'src/domains/styling/utils/vars.ts';
 
 import useShielderClient from './useShielderClient';
 
-export const useWithdraw = () => {
+const useWithdraw = () => {
   const { data: shielderClient } = useShielderClient();
   const { address: walletAddress, chainId } = useAccount();
   const queryClient = useQueryClient();
