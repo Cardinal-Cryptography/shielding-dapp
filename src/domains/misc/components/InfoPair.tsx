@@ -4,6 +4,7 @@ import {
 import { styled } from 'styled-components';
 
 import CIcon from 'src/domains/misc/components/CIcon';
+import Tooltip from 'src/domains/misc/components/Tooltip';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -20,7 +21,11 @@ const InfoPair = ({ label, className, tooltipText, ...props }: Props) => (
   <ContainerHorizontal className={className}>
     <Label>
       {label}
-      {tooltipText && <CIcon icon="Info" color={vars('--color-neutral-foreground-4-rest')} />}
+      {tooltipText && (
+        <Tooltip text={tooltipText}>
+          <CIcon icon="Info" color={vars('--color-neutral-foreground-4-rest')} size={16} />
+        </Tooltip>
+      )}
     </Label>
     <Separator />
     <Value>

@@ -1,3 +1,4 @@
+import { ComponentProps, forwardRef } from 'react';
 import styled from 'styled-components';
 
 import { icons, IconName } from './icons';
@@ -10,27 +11,32 @@ type Props = {
   color?: string,
   strokeWidth?: number,
   className?: string,
-};
+} & ComponentProps<'svg'>;
 
-const CIcon = ({
+const CIcon = forwardRef<SVGSVGElement, Props>(({
   icon,
   size = 24,
   color,
   strokeWidth = 0,
   className,
-}: Props) => {
+  ...props
+}, ref) => {
   const IconComponent = icons[icon];
 
   return (
     <Icon
+      ref={ref}
       as={IconComponent}
       $size={size}
       $color={color}
       $strokeWidth={strokeWidth}
       className={className}
+      {...props}
     />
   );
-};
+});
+
+CIcon.displayName = 'CIcon';
 
 export default styled(CIcon)``;
 

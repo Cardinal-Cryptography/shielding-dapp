@@ -2,7 +2,7 @@ import { useMediaQuery } from '@react-hookz/web';
 import styled from 'styled-components';
 
 import ChainSelector from 'src/domains/chains/components/ChainSelector';
-import ConnectModal from 'src/domains/chains/components/ConnectModal.tsx';
+import ConnectModal from 'src/domains/chains/components/ConnectModal';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import Button from 'src/domains/misc/components/Button';
 import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';

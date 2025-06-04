@@ -5,7 +5,7 @@ import { LocalShielderActivityHistory } from 'src/domains/shielder/stores/getShi
 import vars from 'src/domains/styling/utils/vars.ts';
 
 const ICONS_BY_TYPE: Record<LocalShielderActivityHistory['type'], IconName> = {
-  Deposit: 'ShieldedFilled',
+  Deposit: 'Shielded',
   Withdraw: 'ArrowUpRight',
   NewAccount: 'AddCircle',
 } as const;

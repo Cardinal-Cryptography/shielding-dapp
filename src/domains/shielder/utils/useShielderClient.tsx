@@ -16,8 +16,8 @@ import {
   getShielderIndexedDB,
 } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import { useWasm } from 'src/domains/shielder/utils/WasmProvider';
-import useTransactionDetailsModal from 'src/domains/shielder/utils/useTransactionDetailsModal';
-import { useTransactionsHistory } from 'src/domains/shielder/utils/useTransactionsHistory';
+import { useActivityHistory } from 'src/domains/shielder/utils/useActivityHistory';
+import useActivityModal from 'src/domains/shielder/utils/useActivityModal';
 import vars from 'src/domains/styling/utils/vars';
 
 const TWO_MINUTES = 2 * 60 * 1000;
@@ -26,11 +26,11 @@ const useShielderClient = () => {
   const chainConfig = useChain();
   const { wasmCryptoClient, wasmLoaded } = useWasm();
   const { showToast } = useToast();
-  const { openTransactionModal } = useTransactionDetailsModal();
+  const { openTransactionModal } = useActivityModal();
 
   const publicClient = usePublicClient({ chainId: chainConfig?.id });
   const { address: accountAddress, privateKey } = useWallet();
-  const { upsertTransaction } = useTransactionsHistory();
+  const { upsertTransaction } = useActivityHistory();
 
   const isQueryDisabled =
     !publicClient ||

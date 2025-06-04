@@ -1,1 +1,1 @@
-export { default } from './TransactionDetailsModal';
+export { default } from './ActivityDetailsModal';

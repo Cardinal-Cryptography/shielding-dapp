@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 
 import { useModals } from 'src/domains/misc/components/Modal';
-import TransactionDetailsModal from 'src/domains/shielder/components/TransactionDetailsModal';
+import ActivityDetailsModal from 'src/domains/shielder/components/TransactionDetailsModal';
 import { PartialLocalShielderActivityHistory } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import { useTransactionsHistory } from 'src/domains/shielder/utils/useTransactionsHistory.tsx';
+import { useActivityHistory } from 'src/domains/shielder/utils/useActivityHistory';
 
 /**
  * Custom hook to handle transaction details modal logic.
@@ -11,9 +11,9 @@ import { useTransactionsHistory } from 'src/domains/shielder/utils/useTransactio
  * Handles modal ID transitions when transactions move from pending (localId only)
  * to confirmed state (both localId and txHash), preventing duplicate modals.
  */
-const useTransactionDetailsModal = () => {
+const useActivityModal = () => {
   const { mount, updateId } = useModals();
-  const { refetch } = useTransactionsHistory();
+  const { refetch } = useActivityHistory();
 
   const openTransactionModal = useCallback(async (tx: PartialLocalShielderActivityHistory) => {
     const { data } = await refetch();
@@ -37,7 +37,7 @@ const useTransactionDetailsModal = () => {
 
     mount({
       id: modalId,
-      modal: <TransactionDetailsModal {...modalProps} />,
+      modal: <ActivityDetailsModal {...modalProps} />,
     });
   }, [mount, refetch, updateId]);
 
@@ -46,4 +46,4 @@ const useTransactionDetailsModal = () => {
   };
 };
 
-export default useTransactionDetailsModal;
+export default useActivityModal;

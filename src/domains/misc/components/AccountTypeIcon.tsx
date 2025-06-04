@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-import ChainIcon from 'src/domains/chains/components/ChainIcon.tsx';
+import ChainIcon from 'src/domains/chains/components/ChainIcon';
 import CIcon from 'src/domains/misc/components/CIcon';
 import vars from 'src/domains/styling/utils/vars';
 
