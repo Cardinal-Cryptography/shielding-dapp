@@ -5,8 +5,9 @@ import { ComponentProps, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Button from 'src/domains/misc/components/Button';
-import Modal, { ModalProvider, useModal, useModalControls } from 'src/domains/misc/components/ModalNew';
-import { typography } from 'src/domains/styling/utils/tokens.ts';
+import { typography } from 'src/domains/styling/utils/tokens';
+
+import Modal, { ModalProvider, useModal, useModalControls } from './';
 
 faker.seed(0);
 
@@ -65,14 +66,14 @@ export const Controllable: Story = {
 type ModalProps = { pageCount: number } & Partial<ComponentProps<typeof Modal>>;
 
 const Preview = (props: ModalProps) => {
-  const { open, close } = useModal(<Component {...props} />);
+  const { open, close } = useModal();
 
   useEffect(() => {
     return () => void close();
   }, [close]);
 
   return (
-    <Button onClick={open} variant="primary">
+    <Button onClick={() => void open(<Component {...props} />)} variant="primary">
       Open modal
     </Button>
   );

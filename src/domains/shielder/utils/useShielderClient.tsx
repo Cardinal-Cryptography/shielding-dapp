@@ -1,13 +1,8 @@
-import { Buffer } from 'buffer';
-
 import {
   createShielderClient,
   ShielderTransaction,
 } from '@cardinal-cryptography/shielder-sdk';
-import { DepositCalldata } from '@cardinal-cryptography/shielder-sdk/dist/actions/deposit';
-import { NewAccountCalldata } from '@cardinal-cryptography/shielder-sdk/dist/actions/newAccount';
-import { WithdrawCalldata } from '@cardinal-cryptography/shielder-sdk/dist/actions/withdraw';
-import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query';
+import { skipToken, useQuery } from '@tanstack/react-query';
 import { getPublicClient } from '@wagmi/core';
 import styled from 'styled-components';
 import { usePublicClient } from 'wagmi';
@@ -17,25 +12,25 @@ import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import useChain from 'src/domains/chains/utils/useChain';
 import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
-import { getShielderIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import { getTransactionsIndexedDB } from 'src/domains/shielder/stores/getShielderIndexedDB';
-import useSelectedTransactionModal from 'src/domains/shielder/stores/selectedTransaction';
+import {
+  getShielderIndexedDB,
+} from 'src/domains/shielder/stores/getShielderIndexedDB';
 import { useWasm } from 'src/domains/shielder/utils/WasmProvider';
+import { useActivityHistory } from 'src/domains/shielder/utils/useActivityHistory';
+import useActivityModal from 'src/domains/shielder/utils/useActivityModal';
 import vars from 'src/domains/styling/utils/vars';
 
 const TWO_MINUTES = 2 * 60 * 1000;
-
-const provingTimeMap = new Map<string, number>();
 
 const useShielderClient = () => {
   const chainConfig = useChain();
   const { wasmCryptoClient, wasmLoaded } = useWasm();
   const { showToast } = useToast();
-  const { openTransactionModal } = useSelectedTransactionModal();
+  const { openTransactionModal } = useActivityModal();
 
-  const queryClient = useQueryClient();
   const publicClient = usePublicClient({ chainId: chainConfig?.id });
   const { address: accountAddress, privateKey } = useWallet();
+  const { upsertTransaction } = useActivityHistory();
 
   const isQueryDisabled =
     !publicClient ||
@@ -60,9 +55,7 @@ const useShielderClient = () => {
           throw new Error('Shielder config is not available');
         }
 
-        const transactionsStorage = getTransactionsIndexedDB(accountAddress);
         const shielderStorage = getShielderIndexedDB(chainId, privateKey);
-
         const client = createShielderClient({
           shielderSeedPrivateKey: privateKey,
           chainId: BigInt(chainId),
@@ -72,26 +65,7 @@ const useShielderClient = () => {
           storage: shielderStorage,
           cryptoClient: wasmCryptoClient,
           callbacks: {
-            onCalldataGenerated: calldata => {
-              const { calldata: cdataInner, provingTimeMillis } = calldata as
-                DepositCalldata | NewAccountCalldata | WithdrawCalldata;
-
-              const pubInputs = cdataInner.pubInputs;
-              const hNoteBytes = 'hNoteNew' in pubInputs ? pubInputs.hNoteNew.bytes : pubInputs.hNote.bytes;
-
-              const key = Buffer.from(hNoteBytes).toString('hex');
-              provingTimeMap.set(key, provingTimeMillis);
-
-              showToast({
-                title: 'Proof generated',
-                status: 'information',
-                body: `Proof generated in ${provingTimeMillis}ms`,
-              });
-            },
             onNewTransaction: async (tx: ShielderTransaction) => {
-              const key = Buffer.from(tx.newNote.bytes).toString('hex');
-              const provingTimeMillis = provingTimeMap.get(key);
-
               const getTimestamp = async () => {
                 const client = getPublicClient(wagmiAdapter.wagmiConfig);
 
@@ -111,21 +85,19 @@ const useShielderClient = () => {
               };
               const timestamp = await getTimestamp();
 
-              await transactionsStorage.addItem(chainConfig.id, tx, provingTimeMillis, timestamp);
-
-              await queryClient.invalidateQueries({
-                queryKey: getQueryKey.shielderTransactions(
-                  accountAddress,
-                  chainId
-                ),
+              const localTx = await upsertTransaction(chainConfig.id, {
+                ...tx,
+                status: 'completed',
+                completedTimestamp: timestamp,
               });
+
               if (timestamp && Date.now() - timestamp <= TWO_MINUTES) {
                 showToast({
                   title: tx.type === 'Withdraw' ? 'Sent privately' : 'Shielded',
                   status: 'success',
                   body: (
                     <DetailsButton
-                      onClick={() => void openTransactionModal(tx.txHash)}
+                      onClick={() => void openTransactionModal(localTx)}
                     >
                       See details
                     </DetailsButton>

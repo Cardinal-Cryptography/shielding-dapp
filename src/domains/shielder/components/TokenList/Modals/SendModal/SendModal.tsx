@@ -2,12 +2,12 @@ import { ReactElement,useState } from 'react';
 import { isAddress } from 'viem';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
-import Modal, { useModalControls } from 'src/domains/misc/components/ModalNew';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import useWithdraw from 'src/domains/shielder/utils/useWithdraw';
 
 import { Token } from '../../';
+import Modal, { useModalControls } from '../../../../../misc/components/Modal';
 import ConfirmPage from '../ConfirmPage';
 
 import SelectAccountPage from './SelectAccountPage';
@@ -39,6 +39,12 @@ const SendModal = ({ token }: Props) => {
   const hasInsufficientFees = isPresent(token.balance) && fees?.fee_details.total_cost_fee_token ?
     token.balance < fees.fee_details.total_cost_fee_token :
     false;
+
+  const fee = (
+    fees?.fee_details.total_cost_fee_token ?
+      { address: token.isNative ? 'native' as const : token.address, amount: fees.fee_details.total_cost_fee_token } :
+      undefined
+  );
 
   const feeConfig = [
     {
@@ -77,7 +83,13 @@ const SendModal = ({ token }: Props) => {
       throw new Error('Address to is not available'); // should never happen
     }
 
-    void withdraw({ token, amount, addressTo: validatedAddressTo }).then(() => void close());
+    void close();
+    void withdraw({
+      token,
+      amount,
+      addressTo: validatedAddressTo,
+      fee,
+    });
   };
 
   return (

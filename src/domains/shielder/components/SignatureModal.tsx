@@ -10,7 +10,6 @@ import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import useConnectedChainNetworkEnvironment from 'src/domains/chains/utils/useConnectedChainNetworkEnvironment';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
-import Modal from 'src/domains/misc/components/ModalNew';
 import CheckedContainer from 'src/domains/misc/components/PatternContainer';
 import { KEY_GENERATION_PROCESS_LINK } from 'src/domains/misc/consts/consts';
 import { NEVER_CHANGING_DATA_OPTIONS } from 'src/domains/misc/consts/dataOptions';
@@ -22,6 +21,8 @@ import {
 import useShielderPrivateKey from 'src/domains/shielder/utils/useShielderPrivateKey';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
+
+import Modal from '../../misc/components/Modal';
 
 const SignatureModal = () => {
   const [isTryingAgain, setIsTryingAgain] = useState(false);

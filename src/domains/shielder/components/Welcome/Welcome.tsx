@@ -3,16 +3,17 @@ import styled from 'styled-components';
 import ConnectModal from 'src/domains/chains/components/ConnectModal';
 import Button from 'src/domains/misc/components/Button';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
-import { useModal } from 'src/domains/misc/components/ModalNew';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars.ts';
+
+import { useModal } from '../../../misc/components/Modal';
 
 import breakTheTrace from './breakTheTrace.png';
 
 const STEPS = ['Connect your EVM wallet', 'Shield your tokens', 'You\'re protected from tracking. Stay for a while!', 'Send them to a fresh address once you need them again'];
 
 const Welcome = () => {
-  const { open } = useModal(<ConnectModal />);
+  const { open } = useModal();
 
   return (
     <DoubleBorderBox.Wrapper>
@@ -32,7 +33,7 @@ const Welcome = () => {
         <ConnectButton
           size="large"
           variant="primary"
-          onClick={() => void open()}
+          onClick={() => void open(<ConnectModal />)}
         >
           Connect Wallet
         </ConnectButton>

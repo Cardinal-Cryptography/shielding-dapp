@@ -2,15 +2,15 @@ import { useMediaQuery } from '@react-hookz/web';
 import styled from 'styled-components';
 
 import ChainSelector from 'src/domains/chains/components/ChainSelector';
-import ConnectModal from 'src/domains/chains/components/ConnectModal.tsx';
+import ConnectModal from 'src/domains/chains/components/ConnectModal';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import Button from 'src/domains/misc/components/Button';
-import { useModal } from 'src/domains/misc/components/ModalNew';
 import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
+import { useModal } from '../../Modal';
 import Navigation from '../Navigation';
 
 import Brand from './Brand';
@@ -21,7 +21,7 @@ import UserIcon from './userIcon.svg?react';
 const TopBar = () => {
   const isSmallScreen = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
   const { disconnect, isConnected , address } = useWallet();
-  const { open } = useModal(<ConnectModal />);
+  const { open } = useModal();
 
   return (
     <NavBox.Container>
@@ -49,7 +49,7 @@ const TopBar = () => {
           </AccountManager>
         ) : (
           <Button
-            onClick={open}
+            onClick={() => void open(<ConnectModal />)}
             variant="primary"
           >
             Connect
