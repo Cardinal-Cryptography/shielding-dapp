@@ -7,7 +7,7 @@ const tabsConfig = [
   {
     key: 'shield',
     label: 'Shielded Account',
-    routeNames: ['Shielded-Account'],
+    routeNames: ['Shielded-Account', 'Shielded-Account-With-Chain'],
     onClick: () => void router.push('Shielded-Account'),
   },
   {
@@ -25,7 +25,7 @@ type Props = {
 };
 
 const Navigation = (props: Props) => {
-  const route = router.useRoute(['Shielded-Account']);
+  const route = router.useRoute(['Shielded-Account', 'Shielded-Account-With-Chain']);
 
   const selectedTab = tabsConfig.find(tabConfig => tabConfig.routeNames.includes(route?.name as never));
 

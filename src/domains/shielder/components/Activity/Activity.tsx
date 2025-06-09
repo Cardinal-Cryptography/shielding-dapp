@@ -34,7 +34,7 @@ const Activity = () => {
       const timestamp = tx.submitTimestamp ?? tx.completedTimestamp;
       if (!timestamp) return acc;
 
-      const dateString = dayjs(Number(timestamp)).format('MMM D');
+      const dateString = dayjs(Number(timestamp)).format('MMM, DD');
 
       const existingTransactions = acc[dateString] ?? [];
 

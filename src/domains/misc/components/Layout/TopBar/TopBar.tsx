@@ -35,16 +35,17 @@ const TopBar = () => {
         {isConnected ? (
           <AccountManager>
             <ChainSelector />
+            <Divider />
             <AccountDetails>
               <AccountIcon />
               {address && formatAddress(address)}
-              <Button
+              <PowerButton
                 variant="transparent"
                 leftIcon="Power"
                 size="small"
                 onClick={() => void disconnect()}
               >
-              </Button>
+              </PowerButton>
             </AccountDetails>
           </AccountManager>
         ) : (
@@ -92,4 +93,14 @@ const AccountManager = styled.div`
 
 const AccountIcon = styled(UserIcon)`
   margin-right: ${vars('--spacing-s')};
+`;
+
+const Divider = styled.div`
+  width: 1px;
+  background: ${vars('--color-neutral-stroke-2-rest')};
+  height: 54px;
+`;
+
+const PowerButton = styled(Button)`
+  color: ${vars('--color-neutral-foreground-2-rest')};
 `;

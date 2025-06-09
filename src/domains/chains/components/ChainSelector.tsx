@@ -21,23 +21,18 @@ const ChainSelector = () => {
   const chainConfig = useChain();
   const isLargeScreen = useMediaQuery(`(min-width: ${BREAKPOINTS.sm})`);
   const { switchNetwork } = useAppKitNetwork();
-  const isSelectedChainTestnet = testnet.some(c => c.id === chainConfig?.id);
 
-  const renderOption = (chain: Definition) => {
-    const isTestnet = testnet.some(c => c.id === chain.id);
-
-    return {
-      onClick: () => void switchNetwork(chain),
-      text:
+  const renderOption = (chain: Definition) => ({
+    onClick: () => void switchNetwork(chain),
+    text:
       (
         <Option>
-          <ChainIcon size={20} chainId={chain.id} isTestnet={isTestnet} />
+          <ChainIcon size={20} chainId={chain.id} />
           <p>{chain.name}</p>
           {chainConfig?.id === chain.id && <CIcon size={20} icon="CheckmarkRegular" />}
         </Option>
       ),
-    };
-  };
+  });
 
   return (
     <StyledSelectBox
@@ -50,23 +45,20 @@ const ChainSelector = () => {
       <StyledButton variant="secondary">
         {chainConfig ? (
           <ButtonLeftContent>
-            <ChainIcon chainId={chainConfig.id} size={24} isTestnet={isSelectedChainTestnet} />
+            <ChainIcon chainId={chainConfig.id} size={24} />
             {isLargeScreen && chainConfig.name}
           </ButtonLeftContent>
         ) : (
           'Select Network'
         )}
-        <ChevronIcon icon="ChevronLeft" />
+        <CIcon icon="Chevron" color={vars('--color-neutral-foreground-3-rest')} />
+        <UnderLine />
       </StyledButton>
     </StyledSelectBox>
   );
 };
 
 export default ChainSelector;
-
-const ChevronIcon = styled(CIcon)`
-  transform: rotate(180deg);
-`;
 
 const ButtonLeftContent = styled.div`
   display: flex;
@@ -81,6 +73,8 @@ const StyledSelectBox = styled(SelectBox)`
 const StyledButton = styled(Button)`
   display: flex;
 
+  position: relative;
+
   align-items: center;
   justify-content: space-between;
   gap: ${vars('--spacing-s')};
@@ -90,6 +84,7 @@ const StyledButton = styled(Button)`
 
   background: ${vars('--color-neutral-background-1-rest')};
   border-color: ${vars('--color-neutral-stroke-2-rest')};
+  overflow: hidden;
 
   ${typography.web.body1};
 
@@ -109,4 +104,15 @@ const Option = styled.div`
   & > ${CIcon} {
     margin-left: auto;
   }
+`;
+
+const UnderLine = styled.div`
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  height: 1px;
+  width: 100%;
+
+  background: ${vars('--color-neutral-stroke-2-rest')};
 `;

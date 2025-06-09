@@ -23,6 +23,7 @@ import ChatHelp from './icons/chatHelp.svg?react';
 import CheckmarkCircle from './icons/checkmarkCircle.svg?react';
 import CheckmarkRegular from './icons/checkmarkRegular.svg?react';
 import CheckmarkStarburst from './icons/checkmarkStarburst.svg?react';
+import Chevron from './icons/chevron.svg?react';
 import ChevronDoubleDownRegular from './icons/chevronDoubleDownRegular.svg?react';
 import ChevronLeft from './icons/chevronLeft.svg?react';
 import ClipboardPaste from './icons/clipboardPaste.svg?react';
@@ -94,6 +95,7 @@ export const icons = {
   CheckmarkCircle,
   CheckmarkRegular,
   CheckmarkStarburst,
+  Chevron,
   ChevronDoubleDownRegular,
   ChevronLeft,
   ClipboardPaste,

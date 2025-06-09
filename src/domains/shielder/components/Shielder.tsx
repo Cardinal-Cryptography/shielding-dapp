@@ -98,10 +98,12 @@ useState<keyof typeof TABS>('tokens');
         ) : (
           <>
             {selectedAccountType === 'public' && (
-              <InfoBox>
-                <CIcon icon="Info" size={20} />
-                <p>Tokens that can be moved to shielded account:</p>
-              </InfoBox>
+              <WithPadding>
+                <InfoBox>
+                  <CIcon icon="Info" size={20} />
+                  <p>Tokens that can be moved to shielded account:</p>
+                </InfoBox>
+              </WithPadding>
             )}
             <TokensWrapper>
               <TokenList tokens={tokens} />
@@ -167,7 +169,7 @@ const InfoBox = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-s')};
-  padding-left: ${vars('--spacing-s')};
+  padding-left: ${vars('--spacing-xs')};
   color: ${vars('--color-neutral-foreground-3-rest')};
   ${typography.web.body1Strong};
 `;

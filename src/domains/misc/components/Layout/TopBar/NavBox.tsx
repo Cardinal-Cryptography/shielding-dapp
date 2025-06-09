@@ -108,6 +108,7 @@ export const UserCanvas = styled(Canvas)`
   padding-inline: ${vars('--spacing-s')};
   border: 1px solid transparent;
   transition: all ${transitionTime};
+  height: 100%;
 
   @media (width <= ${BREAKPOINTS.lg}) { /* stylelint-disable-line media-query-no-invalid */
     border-bottom-left-radius: ${vars('--spacing-l')};
