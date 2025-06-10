@@ -141,11 +141,11 @@ const Container = styled.button`
   }
 
   &:not(:disabled):hover {
-    background: ${vars('--color-neutral-background-1a-hover')};
+    background: ${vars('--color-neutral-background-2a-hover')};
   }
 
   &:not(:disabled):active {
-    background: ${vars('--color-neutral-background-1a-pressed')};
+    background: ${vars('--color-neutral-background-2a-pressed')};
   }
 `;
 

@@ -3,12 +3,11 @@ import styled from 'styled-components';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
+import Modal, { useModalControls } from 'src/domains/misc/components/Modal';
 import CheckedContainer from 'src/domains/misc/components/PatternContainer';
 import { PRIVACY_POLICY_LINK, TERMS_OF_CONDITIONS_LINK, TERMS_OF_SERVICE_LINK } from 'src/domains/misc/consts/consts';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
-
-import Modal, { useModalControls } from '../../misc/components/Modal';
 
 const ConnectModal = () => {
   const { close } = useModalControls();

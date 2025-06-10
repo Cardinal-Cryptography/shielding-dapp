@@ -1,6 +1,6 @@
 import { ShielderTransaction } from '@cardinal-cryptography/shielder-sdk';
 import { openDB, IDBPDatabase } from 'idb';
-import { Address, sha256 } from 'viem';
+import { Address, sha256, isAddress } from 'viem';
 import { z } from 'zod';
 
 import isPresent from 'src/domains/misc/utils/isPresent';
@@ -9,7 +9,17 @@ const DB_NAME = 'SHIELDER_STORAGE';
 const DB_VERSION = 4;
 
 const STORE_CLIENTS = 'clients';
-const STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY = 'localShielderActivityHistory';
+const STORE_TRANSACTIONS = 'transactions';
+
+const ethAddress = z.custom<`0x${string}`>(
+  val => typeof val === 'string' ? isAddress(val, { strict: true }) : false,
+  val => ({ message: `Invalid Ethereum address: "${val}".` }),
+);
+
+const txHash = z.custom<`0x${string}`>(
+  val => typeof val === 'string' && val.startsWith('0x'),
+  val => ({ message: `Invalid transaction hash: "${val}".` }),
+);
 
 type ShielderClientData = Record<string, Record<string, string>>;
 export type Fee = { amount: bigint, address: Address | 'native' };
@@ -24,8 +34,7 @@ export type LocalShielderActivityHistory = ShielderTransaction & {
 
 export type PartialLocalShielderActivityHistory =
   | (Partial<LocalShielderActivityHistory> & { localId: string, txHash?: `0x${string}` })
-  | (Partial<LocalShielderActivityHistory> & { txHash: `0x${string}`, localId?: string })
-  | (Partial<LocalShielderActivityHistory> & { localId: string, txHash: `0x${string}` });
+  | (Partial<LocalShielderActivityHistory> & { txHash: `0x${string}`, localId?: string });
 
 export type LocalShielderActivityHistoryArray = PartialLocalShielderActivityHistory[];
 
@@ -35,11 +44,14 @@ type LocalShielderActivityHistoryByChain = Partial<Record<string, StoredLocalShi
 const shielderTransactionSchema = z.object({
   type: z.enum(['NewAccount', 'Deposit', 'Withdraw']),
   amount: z.bigint(),
-  to: z.string().transform(v => v as `0x${string}`).optional(),
+  to: ethAddress.optional(),
   relayerFee: z.bigint().optional(),
-  txHash: z.string().transform(v => v as `0x${string}`),
+  txHash,
   block: z.bigint(),
-  token: z.object({ type: z.string(), address: z.string().optional() }).passthrough(),
+  token: z.union([
+    z.object({ type: z.literal('native'), address: z.undefined().optional() }).passthrough(),
+    z.object({ type: z.literal('erc20'), address: ethAddress }).passthrough(),
+  ]).optional(),
   pocketMoney: z.bigint().optional(),
 });
 
@@ -48,7 +60,10 @@ const localShielderActivityHistorySchema = shielderTransactionSchema.extend({
   status: z.enum(['pending', 'completed', 'failed']),
   submitTimestamp: z.number().optional(),
   completedTimestamp: z.number().optional(),
-  fee: z.object({ amount: z.bigint(), address: z.string() }).optional(),
+  fee: z.object({
+    amount: z.bigint(),
+    address: z.union([ethAddress, z.literal('native')]),
+  }).optional(),
 });
 
 const partialLocalShielderActivityHistorySchema = localShielderActivityHistorySchema.partial();
@@ -63,34 +78,34 @@ const toActivityHistoryStorageFormat = (activities: LocalShielderActivityHistory
     fee: a.fee ? { ...a.fee, amount: a.fee.amount.toString() } : undefined,
   }));
 
-const fromActivityHistoryStorageFormat = (data: unknown): LocalShielderActivityHistoryArray =>
-  z
+const fromActivityHistoryStorageFormat = (data: unknown): LocalShielderActivityHistoryArray => {
+  const parsed = z
     .array(
       partialLocalShielderActivityHistorySchema.extend({
+        localId: z.string().optional(),
         amount: z.string().transform(BigInt).optional(),
         block: z.string().transform(BigInt).optional(),
         relayerFee: z.string().transform(BigInt).optional(),
         pocketMoney: z.string().transform(BigInt).optional(),
-        fee: z.object({ amount: z.string().transform(BigInt), address: z.string() }).optional(),
-        to: z.string().transform(v => v as `0x${string}`).optional(),
-        txHash: z.string().transform(v => v as `0x${string}`).optional(),
+        fee: z.object({
+          amount: z.string().transform(BigInt),
+          address: z.union([
+            ethAddress,
+            z.literal('native'),
+          ]),
+        }).optional(),
+        to: ethAddress.optional(),
+        txHash: txHash.optional(),
       }),
     )
-    .parse(data) as LocalShielderActivityHistoryArray;
+    .parse(data);
+
+  return parsed.filter(item => item.localId ?? item.txHash) as LocalShielderActivityHistoryArray;
+};
 
 type DBSchema = {
   [STORE_CLIENTS]: { key: string, value: ShielderClientData },
-  [STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY]: { key: string, value: LocalShielderActivityHistoryByChain },
-};
-
-const deleteDatabase = (): Promise<void> => {
-  const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
-
-  return new Promise<void>((resolve, reject) => {
-    deleteRequest.onsuccess = () => void resolve();
-    deleteRequest.onerror = () => void reject(new Error(deleteRequest.error?.message ?? 'Database deletion failed'));
-    deleteRequest.onblocked = () => void reject(new Error('Database deletion blocked. Please close other tabs using this application.'));
-  });
+  [STORE_TRANSACTIONS]: { key: string, value: LocalShielderActivityHistoryByChain },
 };
 
 const createDB = (): Promise<IDBPDatabase<DBSchema>> => {
@@ -99,241 +114,93 @@ const createDB = (): Promise<IDBPDatabase<DBSchema>> => {
       if (db.objectStoreNames.contains(STORE_CLIENTS)) {
         db.deleteObjectStore(STORE_CLIENTS);
       }
-      if (db.objectStoreNames.contains(STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY)) {
-        db.deleteObjectStore(STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY);
+      if (db.objectStoreNames.contains(STORE_TRANSACTIONS)) {
+        db.deleteObjectStore(STORE_TRANSACTIONS);
       }
 
       db.createObjectStore(STORE_CLIENTS);
-      db.createObjectStore(STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY);
+      db.createObjectStore(STORE_TRANSACTIONS);
     },
   });
 };
 
-// Database instance management using a closure to avoid mutations
-const createDBManager = () => {
-  const cache = new Map<string, Promise<IDBPDatabase<DBSchema>>>();
-
-  const handleDatabaseError = async (error: unknown): Promise<IDBPDatabase<DBSchema>> => {
-    const errorMessage = (error as Error).message || '';
-
-    // Check if it's an object store not found error
-    if (errorMessage.includes('object stores was not found') ||
-      errorMessage.includes('object store') ||
-      (error as Error).name === 'NotFoundError') {
-      console.warn('IndexedDB object stores not found. Recreating database...');
-      await deleteDatabase();
-      cache.clear();
-      return await initDB();
-    }
-
-    throw error;
-  };
-
-  const initDB = async (): Promise<IDBPDatabase<DBSchema>> => {
-    const cacheKey = 'db';
-    const cached = cache.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
-    const dbPromise = (async () => {
-      try {
-        return await createDB();
-      } catch (error) {
-        // Remove from cache on error so next call will retry
-        cache.delete(cacheKey);
-
-        if ((error as Error).name === 'VersionError') {
-          console.warn('IndexedDB version mismatch. Clearing database and retrying...');
-          await deleteDatabase();
-          return await createDB();
-        }
-        throw error;
-      }
-    })();
-
-    cache.set(cacheKey, dbPromise);
-
-    try {
-      return await dbPromise;
-    } catch (error) {
-      // Remove from cache if promise rejects
-      cache.delete(cacheKey);
-      throw error;
-    }
-  };
-
-  const resetCache = () => {
-    cache.clear();
-  };
-
-  return { initDB, handleDatabaseError, resetCache };
-};
-
-const dbManager = createDBManager();
-const initDB = dbManager.initDB;
-const handleDatabaseError = dbManager.handleDatabaseError;
-const resetDBInstance = dbManager.resetCache;
+const dbp = createDB();
 
 export const getShielderIndexedDB = (chainId: number, privateKey: Address) => {
   const chainKey = chainId.toString();
   const hashedKey = sha256(privateKey);
-  const dbp = initDB();
 
   return {
     getItem: async (itemKey: string): Promise<string | null> => {
-      try {
-        const db = await dbp;
-        const addrData = await db.get(STORE_CLIENTS, hashedKey);
-        return addrData?.[chainKey]?.[itemKey] ?? null;
-      } catch (error) {
-        console.error('Failed to get item from IndexedDB:', error);
-        try {
-          const db = await handleDatabaseError(error);
-          const addrData = await db.get(STORE_CLIENTS, hashedKey);
-          return addrData?.[chainKey]?.[itemKey] ?? null;
-        } catch (retryError) {
-          console.error('Failed to get item from IndexedDB after retry:', retryError);
-          return null;
-        }
-      }
+      const db = await dbp;
+      const addrData = await db.get(STORE_CLIENTS, hashedKey);
+      return addrData?.[chainKey]?.[itemKey] ?? null;
     },
     setItem: async (itemKey: string, value: string): Promise<void> => {
-      try {
-        const db = await dbp;
-        const addrData = (await db.get(STORE_CLIENTS, hashedKey)) ?? {};
-        const chainData = addrData[chainKey] ?? {};
-        await db.put(
-          STORE_CLIENTS,
-          { ...addrData, [chainKey]: { ...chainData, [itemKey]: value }},
-          hashedKey,
-        );
-      } catch (error) {
-        console.error('Failed to set item in IndexedDB:', error);
-        try {
-          const db = await handleDatabaseError(error);
-          const addrData = (await db.get(STORE_CLIENTS, hashedKey)) ?? {};
-          const chainData = addrData[chainKey] ?? {};
-          await db.put(
-            STORE_CLIENTS,
-            { ...addrData, [chainKey]: { ...chainData, [itemKey]: value }},
-            hashedKey,
-          );
-        } catch (retryError) {
-          console.error('Failed to set item in IndexedDB after retry:', retryError);
-        }
-      }
+      const db = await dbp;
+      const addrData = (await db.get(STORE_CLIENTS, hashedKey)) ?? {};
+      const chainData = addrData[chainKey] ?? {};
+      await db.put(
+        STORE_CLIENTS,
+        { ...addrData, [chainKey]: { ...chainData, [itemKey]: value }},
+        hashedKey,
+      );
     },
   };
 };
 
 export const getLocalShielderActivityHistoryIndexedDB = (accountAddress: string) => {
-  const dbp = initDB();
-
   return {
     getItems: async (chainId: number) => {
-      try {
-        const db = await dbp;
-        const allChains = await db.get(STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY, accountAddress);
-        const raw = allChains?.[chainId.toString()];
-        return raw ? fromActivityHistoryStorageFormat(raw) : null;
-      } catch (error) {
-        console.error('Failed to get activity history from IndexedDB:', error);
-        try {
-          const db = await handleDatabaseError(error);
-          const allChains = await db.get(STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY, accountAddress);
-          const raw = allChains?.[chainId.toString()];
-          return raw ? fromActivityHistoryStorageFormat(raw) : null;
-        } catch (retryError) {
-          console.error('Failed to get activity history from IndexedDB after retry:', retryError);
-          return null;
-        }
-      }
+      const db = await dbp;
+      const allChains = await db.get(STORE_TRANSACTIONS, accountAddress);
+      const raw = allChains?.[chainId.toString()];
+      return raw ? fromActivityHistoryStorageFormat(raw) : null;
     },
     upsertItem: async (chainId: number, activity: PartialLocalShielderActivityHistory) => {
-      try {
-        const db = await dbp;
-        const chainKey = chainId.toString();
-        const allChains = (await db.get(STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY, accountAddress)) ?? {};
-        const existingRaw = allChains[chainKey];
-        const existing = existingRaw ? fromActivityHistoryStorageFormat(existingRaw) : [];
+      const db = await dbp;
+      const chainKey = chainId.toString();
+      const allChains = (await db.get(STORE_TRANSACTIONS, accountAddress)) ?? {};
+      const existingRaw = allChains[chainKey];
+      const existing = existingRaw ? fromActivityHistoryStorageFormat(existingRaw) : [];
 
-        const isSame = (a: PartialLocalShielderActivityHistory, b: PartialLocalShielderActivityHistory) =>
-          (isPresent(a.localId) && a.localId === b.localId) ||
-          (isPresent(a.txHash) && a.txHash === b.txHash);
+      // Same transaction can exist in different states: initially with localId only (pending),
+      // later with txHash when confirmed on blockchain
+      const isSame = (a: PartialLocalShielderActivityHistory, b: PartialLocalShielderActivityHistory) =>
+        (isPresent(a.localId) && a.localId === b.localId) ||
+        (isPresent(a.txHash) && a.txHash === b.txHash);
 
-        const matches = existing.filter(item => isSame(item, activity));
-        const rest = existing.filter(item => !isSame(item, activity));
+      // We might have multiple matches for the same transaction:
+      // 1. Entry with localId but no txHash (created when transaction submitted)
+      // 2. Entry with txHash (created when transaction detected on-chain)
+      const matches = existing.filter(item => isSame(item, activity));
+      const rest = existing.filter(item => !isSame(item, activity));
 
-        const localOnly = matches.find(i => isPresent(i.localId) && !isPresent(i.txHash)) ?? {};
-        const withTxHash = matches.find(i => isPresent(i.txHash)) ?? {};
+      // Separate: localOnly (user context) vs withTxHash (blockchain data)
+      const localOnly = matches.find(i => isPresent(i.localId) && !isPresent(i.txHash)) ?? {};
+      const withTxHash = matches.find(i => isPresent(i.txHash)) ?? {};
 
-        const merged = {
-          ...localOnly,
-          ...withTxHash,
-          ...activity,
-        };
+      // Merge in order: local data → blockchain data → new activity data
+      const merged = {
+        ...localOnly,
+        ...withTxHash,
+        ...activity,
+      };
 
-        const updated: LocalShielderActivityHistoryArray = [...rest, merged];
+      const updated: LocalShielderActivityHistoryArray = [...rest, merged];
 
-        await db.put(
-          STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY,
-          { ...allChains, [chainKey]: toActivityHistoryStorageFormat(updated) },
-          accountAddress,
-        );
+      await db.put(
+        STORE_TRANSACTIONS,
+        { ...allChains, [chainKey]: toActivityHistoryStorageFormat(updated) },
+        accountAddress,
+      );
 
-        return merged;
-      } catch (error) {
-        console.error('Failed to upsert activity history in IndexedDB:', error);
-        try {
-          const db = await handleDatabaseError(error);
-          const chainKey = chainId.toString();
-          const allChains = (await db.get(STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY, accountAddress)) ?? {};
-          const existingRaw = allChains[chainKey];
-          const existing = existingRaw ? fromActivityHistoryStorageFormat(existingRaw) : [];
-
-          const isSame = (a: PartialLocalShielderActivityHistory, b: PartialLocalShielderActivityHistory) =>
-            (isPresent(a.localId) && a.localId === b.localId) ||
-            (isPresent(a.txHash) && a.txHash === b.txHash);
-
-          const matches = existing.filter(item => isSame(item, activity));
-          const rest = existing.filter(item => !isSame(item, activity));
-
-          const localOnly = matches.find(i => isPresent(i.localId) && !isPresent(i.txHash)) ?? {};
-          const withTxHash = matches.find(i => isPresent(i.txHash)) ?? {};
-
-          const merged = {
-            ...localOnly,
-            ...withTxHash,
-            ...activity,
-          };
-
-          const updated: LocalShielderActivityHistoryArray = [...rest, merged];
-
-          await db.put(
-            STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY,
-            { ...allChains, [chainKey]: toActivityHistoryStorageFormat(updated) },
-            accountAddress,
-          );
-
-          return merged;
-        } catch (retryError) {
-          console.error('Failed to upsert activity history in IndexedDB after retry:', retryError);
-          throw retryError;
-        }
-      }
+      return merged;
     },
   };
 };
 
 export const clearShielderIndexedDB = async (): Promise<void> => {
-  try {
-    const db = await initDB();
-    await Promise.all([db.clear(STORE_CLIENTS), db.clear(STORE_LOCAL_SHIELDER_ACTIVITY_HISTORY)]);
-    resetDBInstance(); // Reset instance after clearing to ensure fresh state
-  } catch (error) {
-    console.error('Failed to clear IndexedDB:', error);
-    resetDBInstance(); // Reset instance on error as well
-    throw error;
-  }
+  const db = await dbp;
+  await Promise.all([db.clear(STORE_CLIENTS), db.clear(STORE_TRANSACTIONS)]);
 };
