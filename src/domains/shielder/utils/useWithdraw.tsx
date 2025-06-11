@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi';
 
 import { Token } from 'src/domains/chains/types/misc';
 import { useToast } from 'src/domains/misc/components/Toast';
-import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import getQueryKey, { MUTATION_KEYS } from 'src/domains/misc/utils/getQueryKey';
 import { Fee } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import { useActivityHistory } from 'src/domains/shielder/utils/useActivityHistory';
 import useActivityModal from 'src/domains/shielder/utils/useActivityModal';
@@ -27,6 +27,7 @@ const useWithdraw = () => {
     isPending: isWithdrawing,
     ...meta
   } = useMutation({
+    mutationKey: [MUTATION_KEYS.withdraw],
     mutationFn: async ({
       token,
       amount,

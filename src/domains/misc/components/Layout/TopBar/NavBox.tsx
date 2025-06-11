@@ -105,8 +105,8 @@ export const BrandCanvas = styled(Canvas)`
 export const UserCanvas = styled(Canvas)`
   justify-content: end;
   padding: 0;
-  padding-inline: ${vars('--spacing-s')};
   border: 1px solid transparent;
+  padding-inline: ${vars('--spacing-s')};
   transition: all ${transitionTime};
 
   @media (width <= ${BREAKPOINTS.lg}) { /* stylelint-disable-line media-query-no-invalid */

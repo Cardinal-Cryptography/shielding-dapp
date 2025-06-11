@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 
+import supportedChains from 'src/domains/chains/utils/supportedChains';
 import useChain from 'src/domains/chains/utils/useChain';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -7,14 +8,16 @@ type Props = {
   chainId: number | string,
   size?: number,
   className?: string,
-  isTestnet?: boolean,
 };
-const ChainIcon = ({ chainId, size = 16, className, isTestnet }: Props) => {
+const { testnet } = supportedChains;
+
+const ChainIcon = ({ chainId, size = 16, className }: Props) => {
   const { ChainIcon } = useChain(chainId) ?? {};
+  const isTestnet = testnet.some(c => c.id === chainId);
 
   return (
     <Container
-      $isTestnet={!!isTestnet}
+      $isTestnet={isTestnet}
       style={{ height: size, width: size, borderRadius: size * 0.25 }}
       className={className}
     >

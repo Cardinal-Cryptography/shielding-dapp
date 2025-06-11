@@ -3,10 +3,9 @@ import styled from 'styled-components';
 import ConnectModal from 'src/domains/chains/components/ConnectModal';
 import Button from 'src/domains/misc/components/Button';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import { useModal } from 'src/domains/misc/components/Modal';
 import { typography } from 'src/domains/styling/utils/tokens';
-import vars from 'src/domains/styling/utils/vars.ts';
-
-import { useModal } from '../../../misc/components/Modal';
+import vars from 'src/domains/styling/utils/vars';
 
 import breakTheTrace from './breakTheTrace.png';
 

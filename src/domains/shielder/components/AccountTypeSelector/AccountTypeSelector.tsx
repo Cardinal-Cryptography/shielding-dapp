@@ -100,10 +100,10 @@ const BalanceName = styled.div`
   background: inherit;
 `;
 
-const AdditionalInfo = styled.p`
+const AdditionalInfo = styled.div`
   display: flex;
   align-items: center;
-  padding-right: ${vars('--spacing-l')};
+  padding-right: ${vars('--spacing-xs')};
 `;
 
 const Checked = styled(CheckmarkChecked)`

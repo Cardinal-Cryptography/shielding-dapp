@@ -88,8 +88,8 @@ const SignatureModal = () => {
               To create a Shielded account, a one-time signature is required.
               Approve message in your wallet to automatically continue or disconnect.
             </Text>
-            <LearnMore>
-              <a href={KEY_GENERATION_PROCESS_LINK} target="_blank" rel="noopener noreferrer">Learn more</a>
+            <LearnMore href={KEY_GENERATION_PROCESS_LINK} target="_blank" rel="noopener noreferrer">
+              <p>Learn more</p>
               <CIcon icon="Open" size={20} />
             </LearnMore>
             <Buttons>
@@ -138,7 +138,7 @@ const Buttons = styled.div`
   width: 100%;
 `;
 
-const LearnMore = styled.div`
+const LearnMore = styled.a`
   display: flex;
   gap: ${vars('--spacing-xs')};
   ${typography.web.body1};
