@@ -1,5 +1,6 @@
 import { useMotionValueEvent, useScroll } from 'framer-motion';
 import { ReactNode, useEffect, useRef, useState } from 'react';
+// @ts-expect-error proper type definition for simplebar-react will be added later
 import SimpleBar from 'simplebar-react';
 import styled, { css } from 'styled-components';
 
@@ -55,6 +56,7 @@ const ScrollShadow = ({ children, className, fadePosition = 'both', maxHeight }:
 
 export default ScrollShadow;
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const Container = styled(SimpleBar)<{ $isScrolledTop: boolean, $isScrolledBottom: boolean }>`
   overflow-y: auto;
 
