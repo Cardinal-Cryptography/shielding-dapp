@@ -4,6 +4,7 @@ import { objectEntries, objectFromEntries } from 'tsafe';
 import { Address } from 'viem';
 
 import definitions from 'src/domains/chains/utils/definitions';
+import useChain from 'src/domains/chains/utils/useChain';
 import vars from 'src/domains/styling/utils/vars';
 
 type Size = number | `${string}%` | `${string}px`;
@@ -17,7 +18,7 @@ type Props = {
   }
   | {
     Icon?: never,
-    address: Address | undefined,
+    address: Address | undefined | null,
   }
   );
 
@@ -31,10 +32,12 @@ const addressToIconMap = objectFromEntries(
 
 const TokenIcon = ({ size = 16, ...props }: Props) => {
   const computedSize = typeof size === 'number' ? `${size}px` : size;
+
+  const chainConfig = useChain();
   const IconComponent =
     'Icon' in props ?
-      props.Icon : props.address ?
-        addressToIconMap[props.address] : undefined;
+      props.Icon : props.address === null ? chainConfig?.NativeTokenIcon :
+      props.address ? addressToIconMap[props.address] : undefined;
 
   return (
     <Container style={{ width: computedSize, height: computedSize }}>

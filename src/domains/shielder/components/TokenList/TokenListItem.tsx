@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import Button from 'src/domains/misc/components/Button';
-import { useModal } from 'src/domains/misc/components/ModalNew';
+import { useModal } from 'src/domains/misc/components/Modal';
 import Skeleton from 'src/domains/misc/components/Skeleton';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import isPresent from 'src/domains/misc/utils/isPresent';
@@ -38,11 +38,9 @@ const TokenListItem = ({ token }: Props) => {
   const selectedToken = { ...token, symbol, decimals, balance: activeBalance };
 
   const { open: openShieldModal } = useModal(
-    <ShieldModal token={selectedToken} />
+
   );
-  const { open: openSendModal } = useModal(
-    <SendModal token={selectedToken} />
-  );
+  const { open: openSendModal } = useModal();
 
   return (
     <Container>
@@ -64,7 +62,7 @@ const TokenListItem = ({ token }: Props) => {
           size="small"
           leftIcon="Shielded"
           disabled={isDisabled}
-          onClick={openShieldModal}
+          onClick={() => void openShieldModal(<ShieldModal token={selectedToken} />)}
         >
           Shield
         </Button>
@@ -74,7 +72,7 @@ const TokenListItem = ({ token }: Props) => {
           size="small"
           leftIcon="ArrowUpRight"
           disabled={isDisabled}
-          onClick={openSendModal}
+          onClick={() => void openSendModal(<SendModal token={selectedToken} />)}
         >
           Send
         </Button>
@@ -90,14 +88,24 @@ const Container = styled.div`
   
   position: relative;
 
+  align-items: center;
   grid-template-columns: auto 1fr auto;
 
   width: 100%;
   padding: ${vars('--spacing-s')};
 
+  border-radius: ${vars('--border-radius-s')};
   transition: background 0.1s;
 
   column-gap: ${vars('--spacing-m')};
+
+  &:hover {
+    background: ${vars('--color-neutral-background-1a-hover')};
+  }
+
+  &:active {
+    background: ${vars('--color-neutral-background-1a-pressed')};
+  }
 `;
 
 const Column = styled.div`

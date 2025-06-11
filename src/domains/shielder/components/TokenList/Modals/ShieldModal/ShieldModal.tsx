@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
 import usePublicBalance from 'src/domains/chains/utils/usePublicBalance';
-import Modal, { useModalControls } from 'src/domains/misc/components/ModalNew';
+import Modal, { useModalControls } from 'src/domains/misc/components/Modal';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import useShield from 'src/domains/shielder/utils/useShield';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
@@ -53,8 +53,15 @@ const ShieldModal = ({ token }: Props) => {
     setPage(1);
   };
 
+  const fee = (
+    fees?.fee_details.total_cost_native ?
+      { address: 'native' as const, amount: fees.fee_details.total_cost_native } :
+      undefined
+  );
+
   const handleShield = () => {
-    void shield({ token, amount }).then(() => void close());
+    void shield({ token, amount, fee });
+    void close();
   };
 
   const handleReset = () => {

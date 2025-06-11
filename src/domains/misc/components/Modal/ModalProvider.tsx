@@ -15,15 +15,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 import vars from 'src/domains/styling/utils/vars';
 
-import Modal from './Modal';
-
 type Modal = {
   id: string,
   modal: ReactElement,
+  page?: number,
 };
 
 type ModalContextType = {
-  mount: (modal: Modal) => void,
+  mount: (modal: Modal, options?: { checkDuplicateBy?: string[] }) => void,
   unmount: (id: string) => void,
   modals: Modal[],
 };
@@ -89,22 +88,26 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useModal = (modalElement: ReactElement) => {
+export const useModal = () => {
   const ctx = useContext(ModalContext);
   if (!ctx) throw new Error('useModal must be used within ModalProvider');
 
   const { mount, unmount, modals } = ctx;
-  const id = useRef(uuidv4()).current;
 
-  const open = useCallback(() => {
-    mount({ id, modal: modalElement });
-  }, [id, modalElement, mount]);
+  const defaultId = useRef(uuidv4()).current;
+  const currentIdRef = useRef(defaultId);
+
+  const open = useCallback((modalElement: ReactElement, options?: { idOverride?: string }) => {
+    const modalId = options?.idOverride ?? defaultId;
+    currentIdRef.current = modalId;
+    mount({ id: modalId, modal: modalElement });
+  }, [defaultId, mount]);
 
   const close = useCallback(() => {
-    unmount(id);
-  }, [id, unmount]);
+    unmount(currentIdRef.current);
+  }, [unmount]);
 
-  const modal = modals.find(m => m.id === id);
+  const modal = modals.find(m => m.id === currentIdRef.current);
 
   return {
     open,
@@ -115,7 +118,7 @@ export const useModal = (modalElement: ReactElement) => {
 
 export const useModalControls = () => {
   const ctx = useContext(ModalControlsContext);
-  if (!ctx) throw new Error('useModal must be used within ModalControlsProvider');
+  if (!ctx) throw new Error('useModalControls must be used within ModalControlsProvider');
 
   return ctx;
 };
