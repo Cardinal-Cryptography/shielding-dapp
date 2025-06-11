@@ -8,7 +8,7 @@ import { useAccount, usePublicClient, useSendTransaction, useWalletClient } from
 import { Token } from 'src/domains/chains/types/misc';
 import useChain from 'src/domains/chains/utils/useChain';
 import { useToast } from 'src/domains/misc/components/Toast';
-import getQueryKey from 'src/domains/misc/utils/getQueryKey';
+import getQueryKey, { MUTATION_KEYS } from 'src/domains/misc/utils/getQueryKey';
 import { Fee } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import { useActivityHistory } from 'src/domains/shielder/utils/useActivityHistory';
 import useActivityModal from 'src/domains/shielder/utils/useActivityModal';
@@ -92,6 +92,7 @@ const useShield = () => {
   };
 
   const { mutateAsync: shield, isPending: isShielding, ...meta } = useMutation({
+    mutationKey: [MUTATION_KEYS.shield],
     mutationFn: async ({
       token,
       amount,

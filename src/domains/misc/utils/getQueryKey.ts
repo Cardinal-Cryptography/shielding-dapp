@@ -1,3 +1,7 @@
+import type { Address } from 'viem';
+
+import { NetworkEnvironment } from 'src/domains/chains/types/misc';
+
 export const QUERY_KEYS = {
   shielderFees: 'shielderFees',
   shielderClient: 'shielder-client',
@@ -11,9 +15,10 @@ export const QUERY_KEYS = {
   wasmCryptoClient: 'wasm-crypto-client',
 } as const;
 
-import type { Address } from 'viem';
-
-import { NetworkEnvironment } from 'src/domains/chains/types/misc';
+export const MUTATION_KEYS = {
+  shield: 'shield',
+  withdraw: 'withdraw',
+} as const;
 
 const getQueryKey = {
   shielderFees: (walletAddress: Address, chainId: string) => [

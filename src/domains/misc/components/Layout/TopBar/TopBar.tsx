@@ -96,9 +96,9 @@ const AccountIcon = styled(UserIcon)`
 `;
 
 const Divider = styled.div`
+  height: 54px;
   width: 1px;
   background: ${vars('--color-neutral-stroke-2-rest')};
-  height: 54px;
 `;
 
 const PowerButton = styled(Button)`

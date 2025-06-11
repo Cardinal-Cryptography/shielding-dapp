@@ -13,10 +13,7 @@ export const useActivityHistory = () => {
 
   const isReady = !!address && !!chainId;
 
-  const db = useMemo(
-    () => (address ? getLocalShielderActivityHistoryIndexedDB(address) : undefined),
-    [address]
-  );
+  const db = address ? getLocalShielderActivityHistoryIndexedDB(address) : undefined;
 
   const upsertTransaction = useCallback(
     async (...params: Parameters<NonNullable<typeof db>['upsertItem']>) => {

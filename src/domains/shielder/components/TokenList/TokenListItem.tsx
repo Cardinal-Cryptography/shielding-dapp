@@ -1,9 +1,11 @@
+import { useIsMutating } from '@tanstack/react-query';
 import styled from 'styled-components';
 
 import Button from 'src/domains/misc/components/Button';
 import { useModal } from 'src/domains/misc/components/Modal';
 import Skeleton from 'src/domains/misc/components/Skeleton';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
+import { MUTATION_KEYS } from 'src/domains/misc/utils/getQueryKey.ts';
 import isPresent from 'src/domains/misc/utils/isPresent';
 import formatBalance from 'src/domains/numbers/utils/formatBalance';
 import useShielderStore from 'src/domains/shielder/stores/shielder';
@@ -37,10 +39,31 @@ const TokenListItem = ({ token }: Props) => {
 
   const selectedToken = { ...token, symbol, decimals, balance: activeBalance };
 
-  const { open: openShieldModal } = useModal(
-
-  );
+  const { open: openShieldModal } = useModal();
   const { open: openSendModal } = useModal();
+
+  const isShielding = !!useIsMutating({
+    predicate: mutation => {
+      const variables = mutation.state.variables as { token: Token } | undefined;
+      if (!variables?.token) return false;
+      return mutation.options.mutationKey?.[0] === MUTATION_KEYS.shield &&
+        variables.token.address === token.address &&
+        variables.token.isNative === token.isNative;
+    },
+  });
+
+  const isWithdrawing = !!useIsMutating({
+    predicate: mutation => {
+      const variables = mutation.state.variables as { token: Token } | undefined;
+      if (!variables?.token) return false;
+      return mutation.options.mutationKey?.[0] === MUTATION_KEYS.withdraw &&
+        variables.token.address === token.address &&
+        variables.token.isNative === token.isNative;
+    },
+  });
+
+  const isProcessing = isShielding || isWithdrawing;
+  const processingText = isShielding ? 'Shielding' : isWithdrawing ? 'Sending privately' : undefined;
 
   return (
     <Container>
@@ -60,21 +83,23 @@ const TokenListItem = ({ token }: Props) => {
         <Button
           variant="primary"
           size="small"
+          isLoading={isProcessing}
           leftIcon="Shielded"
-          disabled={isDisabled}
+          disabled={isDisabled || isProcessing}
           onClick={() => void openShieldModal(<ShieldModal token={selectedToken} />)}
         >
-          Shield
+          {processingText ?? 'Shield'}
         </Button>
       ) : (
         <Button
           variant="primary"
           size="small"
           leftIcon="ArrowUpRight"
-          disabled={isDisabled}
+          isLoading={isProcessing}
+          disabled={isDisabled || isProcessing}
           onClick={() => void openSendModal(<SendModal token={selectedToken} />)}
         >
-          Send
+          {processingText ?? 'Send'}
         </Button>
       )}
     </Container>
