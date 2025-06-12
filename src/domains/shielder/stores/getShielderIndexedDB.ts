@@ -1,12 +1,13 @@
 import { ShielderTransaction } from '@cardinal-cryptography/shielder-sdk';
-import { openDB, IDBPDatabase } from 'idb';
+import { openDB, deleteDB, IDBPDatabase } from 'idb';
 import { Address, sha256, isAddress } from 'viem';
 import { z } from 'zod';
 
 import isPresent from 'src/domains/misc/utils/isPresent';
 
-const DB_NAME = 'SHIELDER_STORAGE';
-const DB_VERSION = 4;
+const DB_INDEX = 1;
+const DB_BASE_NAME = 'SHIELDER_STORAGE';
+const DB_NAME = `${DB_BASE_NAME}_V${DB_INDEX}`;
 
 const STORE_CLIENTS = 'clients';
 const STORE_TRANSACTIONS = 'transactions';
@@ -108,16 +109,23 @@ type DBSchema = {
   [STORE_TRANSACTIONS]: { key: string, value: LocalShielderActivityHistoryByChain },
 };
 
-const createDB = (): Promise<IDBPDatabase<DBSchema>> => {
-  return openDB(DB_NAME, DB_VERSION, {
-    upgrade: db => {
-      if (db.objectStoreNames.contains(STORE_CLIENTS)) {
-        db.deleteObjectStore(STORE_CLIENTS);
-      }
-      if (db.objectStoreNames.contains(STORE_TRANSACTIONS)) {
-        db.deleteObjectStore(STORE_TRANSACTIONS);
-      }
+// Clean up old database versions
+const cleanupOldVersions = async (): Promise<void> => {
+  const databases = await indexedDB.databases();
+  const toDelete = databases
+    .filter(db => db.name?.includes(DB_BASE_NAME) && db.name !== DB_NAME)
+    .map(db => db.name)
+    .filter((name): name is string => Boolean(name));
 
+  await Promise.allSettled(toDelete.map(dbName => deleteDB(dbName)));
+};
+
+const createDB = async (): Promise<IDBPDatabase<DBSchema>> => {
+  await cleanupOldVersions();
+
+  // Always create version 1 since each DB_VERSION gets its own database
+  return openDB<DBSchema>(DB_NAME, 1, {
+    upgrade: db => {
       db.createObjectStore(STORE_CLIENTS);
       db.createObjectStore(STORE_TRANSACTIONS);
     },
@@ -181,12 +189,7 @@ export const getLocalShielderActivityHistoryIndexedDB = (accountAddress: string)
       const withTxHash = matches.find(i => isPresent(i.txHash)) ?? {};
 
       // Merge in order: local data → blockchain data → new activity data
-      const merged = {
-        ...localOnly,
-        ...withTxHash,
-        ...activity,
-      };
-
+      const merged = { ...localOnly, ...withTxHash, ...activity };
       const updated: LocalShielderActivityHistoryArray = [...rest, merged];
 
       await db.put(
