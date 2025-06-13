@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { RuleSet } from 'styled-components';
 import { isAddress } from 'viem';
 
+import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
@@ -13,6 +14,8 @@ import shieldImage from 'src/domains/shielder/assets/shield.png';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
+type MessageStatus = 'error' | 'warning';
+
 type Props = {
   addressTo: string,
   setAddressTo: (address: string) => void,
@@ -20,12 +23,20 @@ type Props = {
 };
 
 const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) => {
+  const { address } = useWallet();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const errorMsg = useMemo(() => {
     if (addressTo && !isAddress(addressTo)) return 'Please provide a valid address';
     return null;
   }, [addressTo]);
+
+  const isSameAsPublicAddress = useMemo(() => {
+    return address && addressTo.toLowerCase().trim() === address.toLowerCase();
+  }, [address, addressTo]);
+
+  const messageStatus: MessageStatus | null = errorMsg ? 'error' : isSameAsPublicAddress ? 'warning' : null;
+  const messageText = isSameAsPublicAddress ? 'Unshielding to the same address can highly compromise your privacy' : errorMsg;
 
   return (
     <Container>
@@ -42,13 +53,32 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
           size="small"
           variant="outline"
         />
-        {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
+        <AnimatePresence>
+          {messageStatus && (
+            <MessageContainer
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+            >
+              <MessageContent $status={messageStatus}>
+                <CIcon
+                  icon={messageStatus === 'error' ? 'ErrorCircleRegular' : 'WarningRegular'}
+                  size={12}
+                />
+                <MessageText>
+                  {messageText}
+                </MessageText>
+              </MessageContent>
+            </MessageContainer>
+          )}
+        </AnimatePresence>
       </Content>
       <Disclaimer>
         <InfoContainer>
           <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
           <p>
-            You’re about to send tokens from your shielded account to a public account.
+            You're about to send tokens from your shielded account to a public account.
             It will originate from the shielded pool, leaving your old transfer history behind.
           </p>
         </InfoContainer>
@@ -90,6 +120,9 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
 };
 
 export default SelectAccountPage;
+
+const perStatus = <T extends string | RuleSet>(statuses: Record<MessageStatus, T>) =>
+  ({ $status }: { $status: MessageStatus }) => statuses[$status];
 
 const Container = styled.div`
   display: flex;
@@ -176,8 +209,24 @@ const Label = styled.div`
   ${typography.web.body1};
 `;
 
-const ErrorMessage = styled.div`
-  color: ${vars('--color-status-danger-foreground-1-rest')};
+const MessageContainer = styled(motion.div)`
+  overflow: hidden;
+`;
+
+const MessageContent = styled.div<{ $status: MessageStatus }>`
+  display: flex;
+  gap: ${vars('--spacing-xs')};
+  color: ${props => perStatus({
+    error: vars('--color-status-danger-foreground-1-rest'),
+    warning: vars('--color-status-warning-foreground-1-rest'),
+  })({ $status: props.$status })};
+
+  & > ${CIcon} {
+    margin-top: ${vars('--spacing-xs-nudge')};
+  }
+`;
+
+const MessageText = styled.p`
   ${typography.web.caption1};
 `;
 
