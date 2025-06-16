@@ -36,7 +36,7 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
   }, [address, addressTo]);
 
   const messageStatus: MessageStatus | null = errorMsg ? 'error' : isSameAsPublicAddress ? 'warning' : null;
-  const messageText = isSameAsPublicAddress ? 'Unshielding to the same address can highly compromise your privacy' : errorMsg;
+  const messageText = isSameAsPublicAddress ? 'Sending to this address can compromise your privacy. We highly recommend using a new account.' : errorMsg;
 
   return (
     <Container>
