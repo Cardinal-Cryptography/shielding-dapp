@@ -120,12 +120,14 @@ const useShield = () => {
         });
 
         if (allowance < amount) {
-          await walletClient.writeContract({
+          const approveTxHash = await walletClient.writeContract({
             address: token.address,
             abi: erc20Abi,
             functionName: 'approve',
             args: [chainConfig.shielderConfig.shielderContractAddress, amount],
           });
+
+          await publicClient.waitForTransactionReceipt({ hash: approveTxHash });
         }
       }
 
