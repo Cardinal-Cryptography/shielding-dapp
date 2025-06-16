@@ -18,6 +18,7 @@ export type Definition = {
   shielderConfig?: {
     shielderContractAddress: Address,
     relayerUrl: string,
+    shieldingFeeEstimatorUrl?: string,
   },
   urlPathSegment: string,
 } & Pick<Chain, 'id' | 'nativeCurrency' | 'rpcUrls' | 'blockExplorers'>;

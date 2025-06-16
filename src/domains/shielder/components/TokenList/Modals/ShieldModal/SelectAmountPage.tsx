@@ -1,4 +1,4 @@
-import { ComponentProps, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { isNullish } from 'utility-types';
 
@@ -9,7 +9,6 @@ import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import fromDecimals from 'src/domains/misc/utils/fromDecimals';
 import shieldImage from 'src/domains/shielder/assets/shield.png';
-import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -23,28 +22,32 @@ type Props = {
     decimals?: number,
     balance?: bigint,
   },
-  feeConfig: ComponentProps<typeof FeeBreakdown>['config'],
   onContinue: (amount: bigint) => void,
   hasInsufficientFees: boolean,
 };
 
-const SelectAmountPage = ({ onContinue, token, feeConfig, hasInsufficientFees }: Props) => {
+const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => {
   const { address } = useWallet();
   const chainConfig = useChain();
 
   const [value, setValue] = useState('');
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
 
-  const fees = useShielderFees({ walletAddress: address, token });
+  const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
+
+  const { totalFee } = useShielderFees({
+    token,
+    operation: 'shield',
+    amount,
+  });
 
   const maxAmountToShield = useMemo(() => {
     if (isNullish(token.balance)) return token.balance;
-    if (isNullish(fees)) return token.balance;
-    const result = token.isNative ? token.balance - fees.fee_details.total_cost_native : token.balance;
+    if (isNullish(totalFee)) return token.balance;
+    const result = token.isNative ? token.balance - totalFee : token.balance;
     return result > 0n ? result : 0n;
-  }, [token, fees]);
+  }, [token, totalFee]);
 
-  const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
   const hasNotSelectedAmount = amount <= 0n;
   const isButtonDisabled = hasNotSelectedAmount || isExceedingBalance || hasInsufficientFees;
 
@@ -82,12 +85,7 @@ const SelectAmountPage = ({ onContinue, token, feeConfig, hasInsufficientFees }:
         </InfoContainer>
         <ShieldImage src={shieldImage} alt="Shield icon" />
       </Disclaimer>
-      <FeeBreakdown config={feeConfig} />
-      <Button
-        disabled={isButtonDisabled}
-        variant="primary"
-        onClick={() => void onContinue(amount)}
-      >
+      <Button disabled={isButtonDisabled} variant="primary" onClick={() => void onContinue(amount)}>
         {buttonLabel}
       </Button>
     </Container>

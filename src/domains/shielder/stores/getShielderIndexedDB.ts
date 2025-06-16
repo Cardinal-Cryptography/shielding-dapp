@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import isPresent from 'src/domains/misc/utils/isPresent';
 
-const DB_INDEX = 1;
+const DB_INDEX = 3;
 const DB_BASE_NAME = 'SHIELDER_STORAGE';
 const DB_NAME = `${DB_BASE_NAME}_V${DB_INDEX}`;
 
@@ -23,19 +23,40 @@ const txHash = z.custom<`0x${string}`>(
 );
 
 type ShielderClientData = Record<string, Record<string, string>>;
-export type Fee = { amount: bigint, address: Address | 'native' };
+
+export type FeeItem = {
+  type: FeeType,
+  amount: bigint,
+  token: string,
+};
+
+export const FeeType = {
+  NETWORK: 'network',
+  RELAYER: 'relayer',
+  ALLOWANCE: 'allowance',
+} as const;
+
+export type FeeType = typeof FeeType[keyof typeof FeeType];
 
 export type LocalShielderActivityHistory = ShielderTransaction & {
   localId: string,
   status: 'pending' | 'completed' | 'failed',
   submitTimestamp?: number,
   completedTimestamp?: number,
-  fee: Fee,
+  fees?: FeeItem[],
 };
 
 export type PartialLocalShielderActivityHistory =
-  | (Partial<LocalShielderActivityHistory> & { localId: string, txHash?: `0x${string}` })
-  | (Partial<LocalShielderActivityHistory> & { txHash: `0x${string}`, localId?: string });
+  | (Partial<Omit<LocalShielderActivityHistory, 'fees'>> & {
+    localId: string,
+    txHash?: `0x${string}`,
+    fees?: FeeItem[],
+  })
+  | (Partial<Omit<LocalShielderActivityHistory, 'fees'>> & {
+    txHash: `0x${string}`,
+    localId?: string,
+    fees?: FeeItem[],
+  });
 
 export type LocalShielderActivityHistoryArray = PartialLocalShielderActivityHistory[];
 
@@ -56,15 +77,18 @@ const shielderTransactionSchema = z.object({
   pocketMoney: z.bigint().optional(),
 });
 
+const feeItemSchema = z.object({
+  type: z.enum(['network', 'relayer', 'allowance']),
+  amount: z.bigint(),
+  token: z.string(),
+});
+
 const localShielderActivityHistorySchema = shielderTransactionSchema.extend({
   localId: z.string(),
   status: z.enum(['pending', 'completed', 'failed']),
   submitTimestamp: z.number().optional(),
   completedTimestamp: z.number().optional(),
-  fee: z.object({
-    amount: z.bigint(),
-    address: z.union([ethAddress, z.literal('native')]),
-  }).optional(),
+  fees: z.array(feeItemSchema).optional(),
 });
 
 const partialLocalShielderActivityHistorySchema = localShielderActivityHistorySchema.partial();
@@ -76,7 +100,11 @@ const toActivityHistoryStorageFormat = (activities: LocalShielderActivityHistory
     block: a.block?.toString(),
     relayerFee: a.relayerFee?.toString(),
     pocketMoney: a.pocketMoney?.toString(),
-    fee: a.fee ? { ...a.fee, amount: a.fee.amount.toString() } : undefined,
+    fees: a.fees?.map(fee => ({
+      type: fee.type,
+      amount: fee.amount.toString(),
+      token: fee.token,
+    })),
   }));
 
 const fromActivityHistoryStorageFormat = (data: unknown): LocalShielderActivityHistoryArray => {
@@ -88,13 +116,11 @@ const fromActivityHistoryStorageFormat = (data: unknown): LocalShielderActivityH
         block: z.string().transform(BigInt).optional(),
         relayerFee: z.string().transform(BigInt).optional(),
         pocketMoney: z.string().transform(BigInt).optional(),
-        fee: z.object({
+        fees: z.array(z.object({
+          type: z.enum(['network', 'relayer', 'allowance']),
           amount: z.string().transform(BigInt),
-          address: z.union([
-            ethAddress,
-            z.literal('native'),
-          ]),
-        }).optional(),
+          token: z.string(),
+        })).optional(),
         to: ethAddress.optional(),
         txHash: txHash.optional(),
       }),
@@ -171,7 +197,6 @@ export const getLocalShielderActivityHistoryIndexedDB = (accountAddress: string)
       const allChains = (await db.get(STORE_TRANSACTIONS, accountAddress)) ?? {};
       const existingRaw = allChains[chainKey];
       const existing = existingRaw ? fromActivityHistoryStorageFormat(existingRaw) : [];
-
       // Same transaction can exist in different states: initially with localId only (pending),
       // later with txHash when confirmed on blockchain
       const isSame = (a: PartialLocalShielderActivityHistory, b: PartialLocalShielderActivityHistory) =>

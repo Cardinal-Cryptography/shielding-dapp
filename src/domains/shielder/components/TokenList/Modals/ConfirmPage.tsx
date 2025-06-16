@@ -1,4 +1,3 @@
-import { ComponentProps } from 'react';
 import styled from 'styled-components';
 import { type Address } from 'viem';
 
@@ -8,7 +7,6 @@ import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
 import formatBalance from 'src/domains/numbers/utils/formatBalance';
-import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
 import { Token } from 'src/domains/shielder/components/TokenList';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -21,7 +19,6 @@ type Props = {
   },
   addressTo?: Address,
   addressFrom?: Address,
-  feeConfig: ComponentProps<typeof FeeBreakdown>['config'],
   amount: bigint,
   onConfirm: () => void,
   isLoading?: boolean,
@@ -31,7 +28,6 @@ type Props = {
 
 const ConfirmPage = ({
   token,
-  feeConfig,
   amount,
   addressTo,
   onConfirm,
@@ -78,7 +74,6 @@ const ConfirmPage = ({
         )}
       </Wrapper>
       <Footer>
-        <FeeBreakdown config={feeConfig} />
         <Button isLoading={!!isLoading} disabled={isButtonDisabled} variant="primary" onClick={onConfirm}>
           {buttonLabel}
         </Button>

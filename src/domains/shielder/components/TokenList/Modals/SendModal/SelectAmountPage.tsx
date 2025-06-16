@@ -1,4 +1,4 @@
-import { ComponentProps, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { isNullish } from 'utility-types';
 
@@ -8,12 +8,11 @@ import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import fromDecimals from 'src/domains/misc/utils/fromDecimals';
 import shieldImage from 'src/domains/shielder/assets/shield.png';
-import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
-import { Token } from 'src/domains/shielder/components/TokenList';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
+import { Token } from '../../';
 import AssetBox from '../../AssetBox';
 
 type Props = {
@@ -22,29 +21,27 @@ type Props = {
     decimals?: number,
     balance?: bigint,
   },
-  feeConfig: ComponentProps<typeof FeeBreakdown>['config'],
   onContinue: (amount: bigint) => void,
   hasInsufficientFees: boolean,
 };
 
-const SelectAmountPage = ({ token, feeConfig, onContinue, hasInsufficientFees }: Props) => {
+const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => {
   const { address } = useWallet();
 
   const [value, setValue] = useState('');
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
 
-  const fees = useShielderFees({ walletAddress: address, token });
+  const { totalFee } = useShielderFees({ token, operation: 'send' });
 
   const maxAmountToSend = useMemo(() => {
     if (isNullish(token.balance)) return token.balance;
-    if (isNullish(fees)) return token.balance;
-    const result = token.balance - fees.fee_details.total_cost_fee_token;
+    if (isNullish(totalFee)) return token.balance;
+    const result = token.balance - totalFee;
     return result > 0n ? result : 0n;
-  }, [token, fees]);
+  }, [token, totalFee]);
 
   const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
   const hasNotSelectedAmount = amount <= 0n;
-
   const isButtonDisabled = hasNotSelectedAmount || isExceedingBalance || hasInsufficientFees;
 
   const buttonLabel =
@@ -59,6 +56,7 @@ const SelectAmountPage = ({ token, feeConfig, onContinue, hasInsufficientFees }:
   return (
     <Container>
       <AssetBox
+        accountType="shielded"
         title="Tokens"
         tokenSymbol={token.symbol}
         currentBalance={token.balance}
@@ -67,8 +65,8 @@ const SelectAmountPage = ({ token, feeConfig, onContinue, hasInsufficientFees }:
         token={token}
         effectiveAssetValue={value}
         onAssetValueChange={setValue}
+        accountAddress={address}
         onAssetBalanceExceeded={setIsExceedingBalance}
-        accountType="shielded"
       />
       <Disclaimer>
         <InfoContainer>
@@ -80,7 +78,6 @@ const SelectAmountPage = ({ token, feeConfig, onContinue, hasInsufficientFees }:
         </InfoContainer>
         <ShieldImage src={shieldImage} alt="Shield icon" />
       </Disclaimer>
-      <FeeBreakdown config={feeConfig} />
       <Button disabled={isButtonDisabled} variant="primary" onClick={() => void onContinue(amount)}>
         {buttonLabel}
       </Button>

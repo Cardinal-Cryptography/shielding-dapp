@@ -35,6 +35,7 @@ const ActivityDetailsModal = (props: Props) => {
   const { data: transaction } = useActivity(props);
   const { selectedAccountType } = useShielderStore();
   const { showToast } = useToast();
+  const chainConfig = useChain();
 
   const {
     symbolQuery: { data: tokenSymbol },
@@ -46,19 +47,8 @@ const ActivityDetailsModal = (props: Props) => {
     ['symbol', 'decimals']
   );
 
-  const {
-    symbolQuery: { data: feeSymbol },
-    decimalsQuery: { data: feeDecimals },
-  } = useTokenData(
-    transaction?.fee && transaction.fee.address !== 'native' ?
-      { address: transaction.fee.address, isNative: false } :
-      { isNative: true },
-    ['symbol', 'decimals']
-  );
   const { address } = useWallet();
-  const chainConfig = useChain();
 
-  // Return null if transaction is not found (after all hooks)
   if (!transaction) {
     return null;
   }
@@ -179,25 +169,6 @@ const ActivityDetailsModal = (props: Props) => {
                     <ChainIcon chainId={chainConfig.id} />
                     {chainConfig.name}
                   </RowValue>
-                }
-              />
-            )}
-            {transaction.fee && isPresent(feeDecimals) && (
-              <InfoPair
-                tooltipText="Cost of processing your transaction on the blockchain."
-                label={transaction.type === 'Withdraw' ? 'Transaction fee' : 'Network fee'}
-                value={
-                  <Fee>
-                    <TokenIcon
-                      {...(transaction.fee.address !== 'native' ?
-                        { address: transaction.fee.address } :
-                        { Icon: chainConfig?.NativeTokenIcon }
-                      )}
-                    />
-                    {formatBalance({ balance: transaction.fee.amount, decimals: feeDecimals })}
-                    {' '}
-                    {feeSymbol}
-                  </Fee>
                 }
               />
             )}
@@ -332,13 +303,6 @@ const TransactionId = styled.div`
   & > a {
     display: flex;
   }
-`;
-
-const Fee = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${vars('--spacing-xs')};
-  ${typography.web.body1};
 `;
 
 const Text = styled.p`
