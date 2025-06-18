@@ -41,7 +41,6 @@ const useEstimateAllowanceFee = ({ token, amount, enabled = true }: Props) => {
         }
       },
     enabled: shouldCheckAllowance && !!publicClient && !!chainConfig?.shielderConfig && !!walletAddress,
-    staleTime: 30 * 1000,
   });
 
   const { data: gasEstimate } = useEstimateGas({
@@ -54,13 +53,13 @@ const useEstimateAllowanceFee = ({ token, amount, enabled = true }: Props) => {
       }) : undefined,
     account: walletAddress,
     query: {
-      enabled: shouldCheckAllowance && needsApproval === true && !!chainConfig?.shielderConfig && !!walletAddress,
+      enabled: shouldCheckAllowance && !!needsApproval && !!chainConfig?.shielderConfig && !!walletAddress,
     },
   });
 
   const { data: gasPrice } = useGasPrice({
     query: {
-      enabled: shouldCheckAllowance && needsApproval === true && !!gasEstimate,
+      enabled: shouldCheckAllowance && !!needsApproval && !!gasEstimate,
     },
   });
 
@@ -75,7 +74,7 @@ const useEstimateAllowanceFee = ({ token, amount, enabled = true }: Props) => {
   }
 
   return {
-    data: needsApproval === false ? null : allowanceFee,
+    data: needsApproval ? allowanceFee : allowanceFee,
     isLoading: needsApproval === undefined || (needsApproval && (!gasEstimate || !gasPrice)),
     error: null,
   };

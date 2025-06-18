@@ -9,6 +9,7 @@ import { Token } from 'src/domains/chains/types/misc';
 import useChain from 'src/domains/chains/utils/useChain';
 import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey, { MUTATION_KEYS } from 'src/domains/misc/utils/getQueryKey';
+import isPresent from 'src/domains/misc/utils/isPresent.ts';
 import { useActivityHistory } from 'src/domains/shielder/utils/useActivityHistory';
 import useActivityModal from 'src/domains/shielder/utils/useActivityModal';
 import { FeeStructure } from 'src/domains/shielder/utils/useShielderFees';
@@ -133,7 +134,7 @@ const useShield = () => {
           token: tokenAddress,
         };
 
-        return [...(fee ?? []), allowanceFee];
+        return [...(fee?.filter(({ type }) => isPresent(allowanceFee) ? type !== 'allowance' : true) ?? []), allowanceFee];
       };
 
       const finalFee = await calculateFinalFee();

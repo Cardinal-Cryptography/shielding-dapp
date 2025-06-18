@@ -3,12 +3,20 @@ import styled from 'styled-components';
 import { isNullish } from 'utility-types';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
+import useChain from 'src/domains/chains/utils/useChain';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import InfoPair from 'src/domains/misc/components/InfoPair';
+import Skeleton from 'src/domains/misc/components/Skeleton';
+import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import fromDecimals from 'src/domains/misc/utils/fromDecimals';
+import isPresent from 'src/domains/misc/utils/isPresent';
+import formatBalance from 'src/domains/numbers/utils/formatBalance';
 import shieldImage from 'src/domains/shielder/assets/shield.png';
+import useFeeBreakdownModal from 'src/domains/shielder/utils/useFeeBreakdownModal';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
+import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -27,11 +35,19 @@ type Props = {
 
 const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => {
   const { address } = useWallet();
+  const chainConfig = useChain();
 
   const [value, setValue] = useState('');
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
 
-  const { totalFee } = useShielderFees({ token, operation: 'send' });
+  const { fees, totalFee, isLoading } = useShielderFees({ token, operation: 'send' });
+
+  const {
+    symbolQuery: { data: nativeTokenSymbol },
+    decimalsQuery: { data: nativeTokenDecimals },
+  } = useTokenData({ isNative: true }, ['symbol', 'decimals']);
+
+  const feeBreakdownModal = useFeeBreakdownModal({ fees, totalFee });
 
   const maxAmountToSend = useMemo(() => {
     if (isNullish(token.balance)) return token.balance;
@@ -51,7 +67,7 @@ const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => 
         `Insufficient ${token.symbol} Balance` :
         hasNotSelectedAmount ?
           'Enter amount' :
-          'Continue';
+          'Send privately';
 
   return (
     <Container>
@@ -72,12 +88,40 @@ const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => 
         <InfoContainer>
           <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
           <p>
-            You’re about to send tokens from your shielded account to a public account.
+            You're about to send tokens from your shielded account to a public account.
             It will originate from the shielded pool, leaving your old transfer history behind.
           </p>
         </InfoContainer>
         <ShieldImage src={shieldImage} alt="Shield icon" />
       </Disclaimer>
+      <FeeWrapper>
+        <InfoPair
+          label={
+            <TotalFeeLabel>
+              <p>Total Fee</p>
+              <button onClick={() => void feeBreakdownModal()}>
+                <CIcon size={16} icon="InfoRegular" />
+              </button>
+            </TotalFeeLabel>
+          }
+          value={
+            !isLoading && isPresent(nativeTokenDecimals) && isPresent(totalFee) ? (
+              <FeeAmount $isError={hasInsufficientFees}>
+                <TokenIcon Icon={chainConfig?.NativeTokenIcon} />
+                {formatBalance({
+                  balance: totalFee,
+                  decimals: nativeTokenDecimals,
+                  options: { formatDecimals: 5 },
+                })}
+                {' '}
+                {nativeTokenSymbol}
+              </FeeAmount>
+            ) : (
+              <Skeleton style={{ height: 10, width: 110 }} />
+            )
+          }
+        />
+      </FeeWrapper>
       <Button disabled={isButtonDisabled} variant="primary" onClick={() => void onContinue(amount)}>
         {buttonLabel}
       </Button>
@@ -126,4 +170,29 @@ const ShieldImage = styled.img`
   margin-bottom: -2px;
   margin-right: -32px;
   pointer-events: none;
+`;
+
+const FeeAmount = styled.div<{ $isError: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+  color: ${({ $isError }) => ($isError ? vars('--color-status-danger-foreground-1-rest') : vars('--color-neutral-foreground-2-rest'))};
+`;
+
+const FeeWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${vars('--spacing-m')};
+`;
+
+const TotalFeeLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+  color: ${vars('--color-neutral-foreground-2-rest')};
+  ${typography.web.body1};
+
+  & > button {
+    display: flex;
+  }
 `;

@@ -8,6 +8,7 @@ import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
 import CIcon from 'src/domains/misc/components/CIcon';
 import InfoPair from 'src/domains/misc/components/InfoPair';
 import Modal from 'src/domains/misc/components/Modal';
+import Skeleton from 'src/domains/misc/components/Skeleton.tsx';
 import { useToast } from 'src/domains/misc/components/Toast';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
@@ -17,6 +18,7 @@ import formatBalance from 'src/domains/numbers/utils/formatBalance';
 import { PartialLocalShielderActivityHistory } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import useShielderStore from 'src/domains/shielder/stores/shielder';
 import { useActivity } from 'src/domains/shielder/utils/useActivityHistory';
+import useFeeBreakdownModal from 'src/domains/shielder/utils/useFeeBreakdownModal.tsx';
 import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -37,11 +39,24 @@ const ActivityDetailsModal = (props: Props) => {
   const { showToast } = useToast();
   const chainConfig = useChain();
 
+  const totalFee = transaction?.fees?.reduce((total, fee) => total + fee.amount, 0n);
+  const openFeeBreakdownModal = useFeeBreakdownModal({ fees: transaction?.fees, totalFee });
+
   const {
     symbolQuery: { data: tokenSymbol },
     decimalsQuery: { data: tokenDecimals },
   } = useTokenData(
     transaction?.token?.type === 'erc20' ?
+      { address: transaction.token.address, isNative: false } :
+      { isNative: true },
+    ['symbol', 'decimals']
+  );
+
+  const {
+    symbolQuery: { data: feeTokenSymbol },
+    decimalsQuery: { data: feeTokenDecimals },
+  } = useTokenData(
+    transaction?.type === 'Deposit' ? { isNative: true } : transaction?.token?.type === 'erc20' ?
       { address: transaction.token.address, isNative: false } :
       { isNative: true },
     ['symbol', 'decimals']
@@ -192,6 +207,34 @@ const ActivityDetailsModal = (props: Props) => {
                 }
               />
             )}
+            {totalFee && (
+              <InfoPair
+                label={
+                  <TotalFee>
+                    <p>Total Fee</p>
+                    <button onClick={() => void openFeeBreakdownModal()}>
+                      <CIcon size={16} icon="InfoRegular" />
+                    </button>
+                  </TotalFee>
+                }
+                value={
+                  isPresent(feeTokenDecimals) ? (
+                    <FeeAmount>
+                      <TokenIcon Icon={chainConfig?.NativeTokenIcon} />
+                      {formatBalance({
+                        balance: totalFee,
+                        decimals: feeTokenDecimals,
+                        options: { formatDecimals: 5 },
+                      })}
+                      {' '}
+                      {feeTokenSymbol}
+                    </FeeAmount>
+                  ) : (
+                    <Skeleton style={{ height: 10, width: 110 }} />
+                  )
+                }
+              />
+            )}
           </InfoPairs>
         </Wrapper>
       ),
@@ -313,4 +356,21 @@ const Divider = styled.div`
   height: 12px;
   width: 1px;
   background: ${vars('--color-neutral-stroke-2-rest')};
+`;
+
+const FeeAmount = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+`;
+
+const TotalFee = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+  ${typography.web.body1};
+  
+  & > button {
+    display: flex;
+  }
 `;

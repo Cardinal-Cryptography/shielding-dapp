@@ -76,7 +76,7 @@ const useShielderFees = ({ token, operation, amount }: Props) => {
     enabled: !!shielderClient && !!chainConfig && !!walletAddress && operation === 'send',
   });
 
-  const { data: allowanceFeeEstimate } = useEstimateAllowanceFee({
+  const { data: allowanceFeeEstimate, isLoading: isAllowanceFeeLoading } = useEstimateAllowanceFee({
     token,
     amount: amount ?? 0n,
     enabled: operation === 'shield',
@@ -86,8 +86,8 @@ const useShielderFees = ({ token, operation, amount }: Props) => {
     if (operation === 'shield' && shieldingFees && chainConfig) {
       const gasPrice = BigInt(shieldingFees.gas_price_native);
       const gasAmount = BigInt(token.isNative ?
-        shieldingFees.native_new_account_gas :
-        shieldingFees.erc20_new_account_gas
+        shieldingFees.native_deposit_gas :
+        shieldingFees.erc20_deposit_gas
       );
       const networkFeeAmount = gasAmount * gasPrice;
 
@@ -136,9 +136,11 @@ const useShielderFees = ({ token, operation, amount }: Props) => {
 
   const totalFee = fees?.reduce((total, fee) => total + fee.amount, 0n);
 
-  const isLoading = operation === 'shield' ?
-    areShieldingFeesLoading :
-    areWithdrawingFeesLoading;
+  const isLoading = isAllowanceFeeLoading || (
+    operation === 'shield' ?
+      areShieldingFeesLoading :
+      areWithdrawingFeesLoading
+  );
   const error = operation === 'shield' ?
     shieldingFeesError :
     withdrawingFeesError;
