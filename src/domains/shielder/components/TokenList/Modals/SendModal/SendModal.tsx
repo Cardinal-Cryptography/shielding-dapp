@@ -34,7 +34,7 @@ const SendModal = ({ token }: Props) => {
     setPage(1);
   };
 
-  const { fees, totalFee } = useShielderFees({ token, operation: 'send' });
+  const { totalFee } = useShielderFees({ token, operation: 'send' });
 
   const hasInsufficientFees = isPresent(token.balance) && totalFee ?
     token.balance < totalFee :
@@ -56,7 +56,6 @@ const SendModal = ({ token }: Props) => {
       token,
       amount,
       addressTo: validatedAddressTo,
-      fee: fees,
     });
     void close();
   };

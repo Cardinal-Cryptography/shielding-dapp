@@ -26,7 +26,7 @@ const useFeeBreakdownModal = ({ fees, totalFee }: Props) => {
     decimalsQuery: { data: nativeTokenDecimals },
   } = useTokenData({ isNative: true }, ['symbol', 'decimals']);
 
-  const getFeeLabel = (type: string) => {
+  const getFeeLabel = (type: FeeStructure[number]['type']) => {
     switch (type) {
       case 'network':
         return 'Network';
@@ -34,8 +34,19 @@ const useFeeBreakdownModal = ({ fees, totalFee }: Props) => {
         return 'Allowance';
       case 'relayer':
         return 'Relayer';
+    }
+  };
+
+  const getFeeTooltipText = (type: FeeStructure[number]['type']) => {
+    switch (type) {
+      case 'network':
+        return 'This is the mandatory fee paid directly to the blockchain network to process and confirm your transaction. The exact amount depends on network conditions, such as congestion and transaction complexity.';
+      case 'allowance':
+        return 'This fee covers the cost of granting a smart contract permission to use your tokens. Before certain operations, a contract must be explicitly allowed to move a specified amount of your tokens. The Allowance fee is a Network fee for executing simple approval transaction.';
+      case 'relayer':
+        return 'This fee is charged up front by relayers and charges you afterward in any supported token. Relayers pass your transactions to and from shielder to ensure your privacy.';
       default:
-        return type;
+        return undefined;
     }
   };
 
@@ -74,7 +85,7 @@ const useFeeBreakdownModal = ({ fees, totalFee }: Props) => {
                       <InfoPair
                         key={`${fee.type}-${index}`}
                         label={getFeeLabel(fee.type)}
-                        tooltipText="TBD"
+                        tooltipText={getFeeTooltipText(fee.type)}
                         value={
                           isPresent(nativeTokenDecimals) && isPresent(fee.amount) ? (
                             <FeeAmount>

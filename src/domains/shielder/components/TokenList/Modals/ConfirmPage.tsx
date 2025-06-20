@@ -97,7 +97,7 @@ const ConfirmPage = ({
         <InfoPair
           label={
             <TotalFee>
-              <p>Total Fee</p>
+              <p>Est. Total fee</p>
               <button onClick={() => void feeBreakdownModal()}>
                 <CIcon size={16} icon="InfoRegular" />
               </button>

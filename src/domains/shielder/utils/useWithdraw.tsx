@@ -9,7 +9,6 @@ import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey, { MUTATION_KEYS } from 'src/domains/misc/utils/getQueryKey';
 import { useActivityHistory } from 'src/domains/shielder/utils/useActivityHistory';
 import useActivityModal from 'src/domains/shielder/utils/useActivityModal';
-import { FeeStructure } from 'src/domains/shielder/utils/useShielderFees';
 import vars from 'src/domains/styling/utils/vars';
 
 import useShielderClient from './useShielderClient';
@@ -32,12 +31,10 @@ const useWithdraw = () => {
       token,
       amount,
       addressTo,
-      fee,
     }: {
       token: Token,
       amount: bigint,
       addressTo: `0x${string}`,
-      fee?: FeeStructure,
     }) => {
       if (!shielderClient) throw new Error('Shielder client not available');
       if (!walletAddress) throw new Error('Wallet address not available');
@@ -56,7 +53,6 @@ const useWithdraw = () => {
         localId,
         status: 'pending',
         submitTimestamp: Date.now(),
-        fees: fee,
         to: addressTo,
       });
 

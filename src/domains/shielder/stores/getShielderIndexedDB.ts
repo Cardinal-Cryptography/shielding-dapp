@@ -1,6 +1,6 @@
 import { ShielderTransaction } from '@cardinal-cryptography/shielder-sdk';
 import { openDB, deleteDB, IDBPDatabase } from 'idb';
-import { Address, sha256, isAddress } from 'viem';
+import { Address, sha256 } from 'viem';
 import { z } from 'zod';
 
 import isPresent from 'src/domains/misc/utils/isPresent';
@@ -9,53 +9,36 @@ const DB_INDEX = 3;
 const DB_BASE_NAME = 'SHIELDER_STORAGE';
 const DB_NAME = `${DB_BASE_NAME}_V${DB_INDEX}`;
 
-const STORE_CLIENTS = 'clients';
-const STORE_TRANSACTIONS = 'transactions';
+export const STORE_SHIELDER = 'shielder-store';
+export const STORE_TRANSACTIONS = 'shielder-transactions';
 
-const ethAddress = z.custom<`0x${string}`>(
-  val => typeof val === 'string' ? isAddress(val, { strict: true }) : false,
-  val => ({ message: `Invalid Ethereum address: "${val}".` }),
+const ethAddress = z.string().refine(
+  (address): address is `0x${string}` => /^0x[a-fA-F0-9]{40}$/.test(address),
+  { message: 'Must be a valid Ethereum address' }
 );
 
-const txHash = z.custom<`0x${string}`>(
-  val => typeof val === 'string' && val.startsWith('0x'),
-  val => ({ message: `Invalid transaction hash: "${val}".` }),
+const txHash = z.string().refine(
+  (hash): hash is `0x${string}` => /^0x[a-fA-F0-9]{64}$/.test(hash),
+  { message: 'Must be a valid transaction hash' }
 );
 
 type ShielderClientData = Record<string, Record<string, string>>;
-
-export type FeeItem = {
-  type: FeeType,
-  amount: bigint,
-  token: string,
-};
-
-export const FeeType = {
-  NETWORK: 'network',
-  RELAYER: 'relayer',
-  ALLOWANCE: 'allowance',
-} as const;
-
-export type FeeType = typeof FeeType[keyof typeof FeeType];
 
 export type LocalShielderActivityHistory = ShielderTransaction & {
   localId: string,
   status: 'pending' | 'completed' | 'failed',
   submitTimestamp?: number,
   completedTimestamp?: number,
-  fees?: FeeItem[],
 };
 
 export type PartialLocalShielderActivityHistory =
-  | (Partial<Omit<LocalShielderActivityHistory, 'fees'>> & {
+  | (Partial<LocalShielderActivityHistory> & {
     localId: string,
     txHash?: `0x${string}`,
-    fees?: FeeItem[],
   })
-  | (Partial<Omit<LocalShielderActivityHistory, 'fees'>> & {
+  | (Partial<LocalShielderActivityHistory> & {
     txHash: `0x${string}`,
     localId?: string,
-    fees?: FeeItem[],
   });
 
 export type LocalShielderActivityHistoryArray = PartialLocalShielderActivityHistory[];
@@ -77,18 +60,11 @@ const shielderTransactionSchema = z.object({
   pocketMoney: z.bigint().optional(),
 });
 
-const feeItemSchema = z.object({
-  type: z.enum(['network', 'relayer', 'allowance']),
-  amount: z.bigint(),
-  token: z.string(),
-});
-
 const localShielderActivityHistorySchema = shielderTransactionSchema.extend({
   localId: z.string(),
   status: z.enum(['pending', 'completed', 'failed']),
   submitTimestamp: z.number().optional(),
   completedTimestamp: z.number().optional(),
-  fees: z.array(feeItemSchema).optional(),
 });
 
 const partialLocalShielderActivityHistorySchema = localShielderActivityHistorySchema.partial();
@@ -100,11 +76,6 @@ const toActivityHistoryStorageFormat = (activities: LocalShielderActivityHistory
     block: a.block?.toString(),
     relayerFee: a.relayerFee?.toString(),
     pocketMoney: a.pocketMoney?.toString(),
-    fees: a.fees?.map(fee => ({
-      type: fee.type,
-      amount: fee.amount.toString(),
-      token: fee.token,
-    })),
   }));
 
 const fromActivityHistoryStorageFormat = (data: unknown): LocalShielderActivityHistoryArray => {
@@ -116,11 +87,6 @@ const fromActivityHistoryStorageFormat = (data: unknown): LocalShielderActivityH
         block: z.string().transform(BigInt).optional(),
         relayerFee: z.string().transform(BigInt).optional(),
         pocketMoney: z.string().transform(BigInt).optional(),
-        fees: z.array(z.object({
-          type: z.enum(['network', 'relayer', 'allowance']),
-          amount: z.string().transform(BigInt),
-          token: z.string(),
-        })).optional(),
         to: ethAddress.optional(),
         txHash: txHash.optional(),
       }),
@@ -131,7 +97,7 @@ const fromActivityHistoryStorageFormat = (data: unknown): LocalShielderActivityH
 };
 
 type DBSchema = {
-  [STORE_CLIENTS]: { key: string, value: ShielderClientData },
+  [STORE_SHIELDER]: { key: string, value: ShielderClientData },
   [STORE_TRANSACTIONS]: { key: string, value: LocalShielderActivityHistoryByChain },
 };
 
@@ -152,7 +118,7 @@ const createDB = async (): Promise<IDBPDatabase<DBSchema>> => {
   // Always create version 1 since each DB_VERSION gets its own database
   return openDB<DBSchema>(DB_NAME, 1, {
     upgrade: db => {
-      db.createObjectStore(STORE_CLIENTS);
+      db.createObjectStore(STORE_SHIELDER);
       db.createObjectStore(STORE_TRANSACTIONS);
     },
   });
@@ -167,15 +133,15 @@ export const getShielderIndexedDB = (chainId: number, privateKey: Address) => {
   return {
     getItem: async (itemKey: string): Promise<string | null> => {
       const db = await dbp;
-      const addrData = await db.get(STORE_CLIENTS, hashedKey);
+      const addrData = await db.get(STORE_SHIELDER, hashedKey);
       return addrData?.[chainKey]?.[itemKey] ?? null;
     },
     setItem: async (itemKey: string, value: string): Promise<void> => {
       const db = await dbp;
-      const addrData = (await db.get(STORE_CLIENTS, hashedKey)) ?? {};
+      const addrData = (await db.get(STORE_SHIELDER, hashedKey)) ?? {};
       const chainData = addrData[chainKey] ?? {};
       await db.put(
-        STORE_CLIENTS,
+        STORE_SHIELDER,
         { ...addrData, [chainKey]: { ...chainData, [itemKey]: value }},
         hashedKey,
       );
@@ -230,5 +196,5 @@ export const getLocalShielderActivityHistoryIndexedDB = (accountAddress: string)
 
 export const clearShielderIndexedDB = async (): Promise<void> => {
   const db = await dbp;
-  await Promise.all([db.clear(STORE_CLIENTS), db.clear(STORE_TRANSACTIONS)]);
+  await Promise.all([db.clear(STORE_SHIELDER), db.clear(STORE_TRANSACTIONS)]);
 };

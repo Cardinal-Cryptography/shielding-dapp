@@ -7,9 +7,16 @@ import { useWallet } from 'src/domains/chains/components/WalletProvider.tsx';
 import { Token } from 'src/domains/chains/types/misc';
 import useChain from 'src/domains/chains/utils/useChain';
 import getQueryKey from 'src/domains/misc/utils/getQueryKey';
-import { FeeItem } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import useEstimateAllowanceFee from 'src/domains/shielder/utils/useEstimateAllowanceFee';
 import useShielderClient from 'src/domains/shielder/utils/useShielderClient';
+
+export type FeeItem = {
+  type: 'network' | 'relayer' | 'allowance',
+  amount: bigint,
+  token: string,
+};
+
+export type FeeStructure = FeeItem[];
 
 const FeeEstimationSchema = z.object({
   native_new_account_gas: z.string(),
@@ -21,8 +28,6 @@ const FeeEstimationSchema = z.object({
 });
 
 export type FeeEstimation = z.infer<typeof FeeEstimationSchema>;
-
-export type FeeStructure = FeeItem[];
 
 type Props = {
   operation: 'shield' | 'send',

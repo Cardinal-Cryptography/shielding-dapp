@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { Address } from 'viem';
+import { useTransactionReceipt } from 'wagmi';
 
 import ChainIcon from 'src/domains/chains/components/ChainIcon';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
@@ -19,6 +21,7 @@ import { PartialLocalShielderActivityHistory } from 'src/domains/shielder/stores
 import useShielderStore from 'src/domains/shielder/stores/shielder';
 import { useActivity } from 'src/domains/shielder/utils/useActivityHistory';
 import useFeeBreakdownModal from 'src/domains/shielder/utils/useFeeBreakdownModal.tsx';
+import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -39,8 +42,30 @@ const ActivityDetailsModal = (props: Props) => {
   const { showToast } = useToast();
   const chainConfig = useChain();
 
-  const totalFee = transaction?.fees?.reduce((total, fee) => total + fee.amount, 0n);
-  const openFeeBreakdownModal = useFeeBreakdownModal({ fees: transaction?.fees, totalFee });
+  const { data: transactionReceipt, isLoading: isTransactionReceiptLoading } = useTransactionReceipt({
+    hash: transaction?.txHash,
+    query: {
+      enabled: !!transaction?.txHash,
+    },
+  });
+
+  const totalFee = useMemo(() => transactionReceipt && transaction?.txHash ?
+    transactionReceipt.gasUsed * transactionReceipt.effectiveGasPrice :
+    null,
+  [transactionReceipt, transaction?.txHash]);
+
+  const token = transaction?.token?.type === 'erc20' ?
+    { address: transaction.token.address, isNative: false as const } :
+    { isNative: true as const };
+
+  const operation = transaction?.type === 'Withdraw' ? 'send' : 'shield';
+  const { fees, totalFee: estimatedTotalFee } = useShielderFees({
+    token,
+    operation,
+    amount: transaction?.amount ?? 0n,
+  });
+
+  const openFeeBreakdownModal = useFeeBreakdownModal({ fees, totalFee: estimatedTotalFee });
 
   const {
     symbolQuery: { data: tokenSymbol },
@@ -207,22 +232,23 @@ const ActivityDetailsModal = (props: Props) => {
                 }
               />
             )}
-            {totalFee && (
+            {!isTransactionReceiptLoading && (isPresent(estimatedTotalFee) || isPresent(totalFee)) && (
               <InfoPair
-                label={
+                label={totalFee ? 'Total fee' : (
                   <TotalFee>
-                    <p>Total Fee</p>
+                    <p>Est. Total fee</p>
                     <button onClick={() => void openFeeBreakdownModal()}>
                       <CIcon size={16} icon="InfoRegular" />
                     </button>
                   </TotalFee>
-                }
+                )}
+                tooltipText={totalFee ? 'This is the overall amount of fees you’ve paid to the blockchain network and relayers to process and confirm your transaction.' : undefined}
                 value={
                   isPresent(feeTokenDecimals) ? (
                     <FeeAmount>
                       <TokenIcon Icon={chainConfig?.NativeTokenIcon} />
                       {formatBalance({
-                        balance: totalFee,
+                        balance: totalFee ?? estimatedTotalFee ?? 0n,
                         decimals: feeTokenDecimals,
                         options: { formatDecimals: 5 },
                       })}

@@ -29,7 +29,7 @@ const ShieldModal = ({ token }: Props) => {
   const { shield, isShielding, reset } = useShield();
   const [page, setPage] = useState(0);
 
-  const { fees, totalFee } = useShielderFees({
+  const { totalFee } = useShielderFees({
     token,
     operation: 'shield',
     amount,
@@ -50,7 +50,6 @@ const ShieldModal = ({ token }: Props) => {
     void shield({
       token,
       amount,
-      fee: fees,
     });
     void close();
   };
