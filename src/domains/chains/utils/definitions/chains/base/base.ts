@@ -13,6 +13,7 @@ const config: ChainConfig = {
     shielderConfig: {
       shielderContractAddress: '0x2098a5f59DAB63F1a2aB7C0715DA437D1efB012B',
       relayerUrl: 'https://shielder-relayer-v2.test.azero.dev/base-testnet',
+      shieldingFeeEstimatorUrl: 'https://fee-estimator.test.azero.dev/base-testnet/get_fees',
     },
     ChainIcon,
     NativeTokenIcon,

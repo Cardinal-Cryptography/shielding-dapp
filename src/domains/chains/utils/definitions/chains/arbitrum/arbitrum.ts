@@ -15,6 +15,7 @@ const config: ChainConfig = {
     shielderConfig: {
       shielderContractAddress: '0x5A0dea46A96a5b578c9cf1730f461eD0bC9C32c6',
       relayerUrl: 'https://shielder-relayer-v2.azero.dev/arbitrum',
+      shieldingFeeEstimatorUrl: 'https://fee-estimator.azero.dev/arbitrum/get_fees',
     },
     ChainIcon,
     NativeTokenIcon,
@@ -30,6 +31,7 @@ const config: ChainConfig = {
     shielderConfig: {
       shielderContractAddress: '0xca2Ca45089Fa4E2BBef2BF26E632a8CA9CD1aFd0',
       relayerUrl: 'https://shielder-relayer-v2.test.azero.dev/arbitrum-testnet',
+      shieldingFeeEstimatorUrl: 'https://fee-estimator.test.azero.dev/arbitrum-testnet/get_fees',
     },
     ChainIcon,
     NativeTokenIcon,

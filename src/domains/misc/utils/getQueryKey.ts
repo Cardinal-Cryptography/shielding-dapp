@@ -3,7 +3,9 @@ import type { Address } from 'viem';
 import { NetworkEnvironment } from 'src/domains/chains/types/misc';
 
 export const QUERY_KEYS = {
-  shielderFees: 'shielderFees',
+  sendingFees: 'sendingFees',
+  shieldingFees: 'shieldingFees',
+  allowanceFeeEstimate: 'allowanceFeeEstimate',
   shielderClient: 'shielder-client',
   shielderTransactions: 'shielder-transactions',
   tokenDecimals: 'token-decimals',
@@ -21,10 +23,22 @@ export const MUTATION_KEYS = {
 } as const;
 
 const getQueryKey = {
-  shielderFees: (walletAddress: Address, chainId: string) => [
-    QUERY_KEYS.shielderFees,
+  sendingFees: (walletAddress: Address, chainId: string) => [
+    QUERY_KEYS.sendingFees,
     walletAddress,
     chainId,
+  ],
+  shieldingFees: (chainId: string, tokenType: 'native' | 'erc20') => [
+    QUERY_KEYS.shieldingFees,
+    chainId,
+    tokenType,
+  ],
+  allowanceFeeEstimate: (tokenAddress: Address, chainId: string, walletAddress: Address, amount: string) => [
+    QUERY_KEYS.allowanceFeeEstimate,
+    tokenAddress,
+    chainId,
+    walletAddress,
+    amount,
   ],
   shielderClient: (chainId: number, shielderPrivateKey: Address) => [
     QUERY_KEYS.shielderClient,
