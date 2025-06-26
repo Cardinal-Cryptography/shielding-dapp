@@ -7,7 +7,6 @@ import { useAccount } from 'wagmi';
 import { Token } from 'src/domains/chains/types/misc';
 import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey, { MUTATION_KEYS } from 'src/domains/misc/utils/getQueryKey';
-import { Fee } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import { useActivityHistory } from 'src/domains/shielder/utils/useActivityHistory';
 import useActivityModal from 'src/domains/shielder/utils/useActivityModal';
 import vars from 'src/domains/styling/utils/vars';
@@ -32,12 +31,10 @@ const useWithdraw = () => {
       token,
       amount,
       addressTo,
-      fee,
     }: {
       token: Token,
       amount: bigint,
       addressTo: `0x${string}`,
-      fee: Fee | undefined,
     }) => {
       if (!shielderClient) throw new Error('Shielder client not available');
       if (!walletAddress) throw new Error('Wallet address not available');
@@ -56,7 +53,6 @@ const useWithdraw = () => {
         localId,
         status: 'pending',
         submitTimestamp: Date.now(),
-        fee,
         to: addressTo,
       });
 

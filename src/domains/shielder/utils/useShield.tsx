@@ -3,13 +3,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
 import { v4 } from 'uuid';
 import { erc20Abi } from 'viem';
-import { useAccount, usePublicClient, useSendTransaction, useWalletClient } from 'wagmi';
+import { useAccount, useSendTransaction, usePublicClient, useWalletClient } from 'wagmi';
 
 import { Token } from 'src/domains/chains/types/misc';
 import useChain from 'src/domains/chains/utils/useChain';
 import { useToast } from 'src/domains/misc/components/Toast';
 import getQueryKey, { MUTATION_KEYS } from 'src/domains/misc/utils/getQueryKey';
-import { Fee } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import { useActivityHistory } from 'src/domains/shielder/utils/useActivityHistory';
 import useActivityModal from 'src/domains/shielder/utils/useActivityModal';
 import { getWalletErrorName, handleWalletError } from 'src/domains/shielder/utils/walletErrors';
@@ -20,11 +19,11 @@ import useShielderClient from './useShielderClient';
 const useShield = () => {
   const { data: shielderClient } = useShielderClient();
   const { address: walletAddress, chainId } = useAccount();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
   const { sendTransactionAsync } = useSendTransaction();
-  const queryClient = useQueryClient();
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
   const chainConfig = useChain();
+  const queryClient = useQueryClient();
   const { showToast } = useToast();
   const { openTransactionModal } = useActivityModal();
   const { upsertTransaction } = useActivityHistory();
@@ -33,7 +32,6 @@ const useShield = () => {
     params: Parameters<typeof sendTransactionAsync>[0],
     token: Token,
     amount: bigint,
-    fee: Fee | undefined
   ) => {
     if(!chainId) throw new Error('chainId is not available');
     if(!walletAddress) throw new Error('walletAddress is not available');
@@ -48,7 +46,6 @@ const useShield = () => {
       amount,
       localId,
       status: 'pending',
-      fee,
     });
 
     const toast = showToast({
@@ -56,9 +53,7 @@ const useShield = () => {
       title: 'Transaction pending',
       subtitle: 'Waiting to be signed by user.',
       body: (
-        <DetailsButton
-          onClick={() => void openTransactionModal({ localId })}
-        >
+        <DetailsButton onClick={() => void openTransactionModal({ localId })}>
           See details
         </DetailsButton>
       ),
@@ -93,19 +88,13 @@ const useShield = () => {
 
   const { mutateAsync: shield, isPending: isShielding, ...meta } = useMutation({
     mutationKey: [MUTATION_KEYS.shield],
-    mutationFn: async ({
-      token,
-      amount,
-      fee,
-    }: {
+    mutationFn: async ({ token, amount }: {
       token: Token,
       amount: bigint,
-      fee: Fee | undefined,
     }) => {
       if (!shielderClient) throw new Error('Shielder is not ready');
       if (!walletAddress) throw new Error('Address is not available');
-
-      const sdkToken = token.isNative ? nativeToken() : erc20Token(token.address);
+      if (!chainId) throw new Error('Chain ID is not available');
 
       if (!token.isNative) {
         if (!publicClient) throw new Error('Public client is not ready');
@@ -131,10 +120,12 @@ const useShield = () => {
         }
       }
 
+      const sdkToken = token.isNative ? nativeToken() : erc20Token(token.address);
+
       await shielderClient.shield(
         sdkToken,
         amount,
-        params => sendTransactionWithToast(params, token, amount, fee),
+        params => sendTransactionWithToast(params, token, amount),
         walletAddress
       );
     },

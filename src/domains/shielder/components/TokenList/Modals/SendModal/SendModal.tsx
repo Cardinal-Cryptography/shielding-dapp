@@ -1,4 +1,4 @@
-import { ReactElement,useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { isAddress } from 'viem';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
@@ -34,42 +34,11 @@ const SendModal = ({ token }: Props) => {
     setPage(1);
   };
 
-  const fees = useShielderFees({ walletAddress: address, token });
+  const { totalFee } = useShielderFees({ token, operation: 'send' });
 
-  const hasInsufficientFees = isPresent(token.balance) && fees?.fee_details.total_cost_fee_token ?
-    token.balance < fees.fee_details.total_cost_fee_token :
+  const hasInsufficientFees = isPresent(token.balance) && totalFee ?
+    token.balance < totalFee :
     false;
-
-  const fee = (
-    fees?.fee_details.total_cost_fee_token ?
-      { address: token.isNative ? 'native' as const : token.address, amount: fees.fee_details.total_cost_fee_token } :
-      undefined
-  );
-
-  const feeConfig = [
-    {
-      label: 'Transaction fee',
-      amount: fees?.fee_details.total_cost_fee_token,
-      tokenSymbol: token.symbol,
-      tokenDecimals: token.decimals,
-      tokenIcon: token.icon,
-      isError: hasInsufficientFees,
-    },
-    {
-      label: 'Network fee',
-      amount: fees?.fee_details.gas_cost_fee_token,
-      tokenSymbol: token.symbol,
-      tokenDecimals: token.decimals,
-      tokenIcon: token.icon,
-    },
-    {
-      label: 'Relayer fee',
-      amount: fees?.fee_details.commission_fee_token,
-      tokenSymbol: token.symbol,
-      tokenDecimals: token.decimals,
-      tokenIcon: token.icon,
-    },
-  ];
 
   const handleSelectAmount = (amount: bigint) => {
     setAmount(amount);
@@ -87,7 +56,6 @@ const SendModal = ({ token }: Props) => {
       token,
       amount,
       addressTo: validatedAddressTo,
-      fee,
     });
     void close();
   };
@@ -114,7 +82,6 @@ const SendModal = ({ token }: Props) => {
               <SelectAmountPage
                 key="select-amount"
                 token={token}
-                feeConfig={feeConfig}
                 onContinue={handleSelectAmount}
                 hasInsufficientFees={hasInsufficientFees}
               />
@@ -130,12 +97,13 @@ const SendModal = ({ token }: Props) => {
                 addressTo={validatedAddressTo}
                 onConfirm={handleWithdraw}
                 isLoading={isWithdrawing}
-                feeConfig={feeConfig}
                 buttonLabel={
                   hasInsufficientFees ?
                     `Insufficient ${token.symbol} Balance` :
                     isWithdrawing ? 'Sending privately' : 'Confirm'
                 }
+                addressFrom={address}
+                hasInsufficientFees={hasInsufficientFees}
               />
             ),
           },

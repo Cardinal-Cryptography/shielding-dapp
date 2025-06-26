@@ -1,15 +1,21 @@
-import { ComponentProps } from 'react';
 import styled from 'styled-components';
 import { type Address } from 'viem';
 
+import useChain from 'src/domains/chains/utils/useChain';
 import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
 import Button from 'src/domains/misc/components/Button';
+import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import InfoPair from 'src/domains/misc/components/InfoPair';
+import Skeleton from 'src/domains/misc/components/Skeleton';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
+import isPresent from 'src/domains/misc/utils/isPresent';
 import formatBalance from 'src/domains/numbers/utils/formatBalance';
-import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
 import { Token } from 'src/domains/shielder/components/TokenList';
+import useFeeBreakdownModal from 'src/domains/shielder/utils/useFeeBreakdownModal';
+import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
+import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -21,7 +27,6 @@ type Props = {
   },
   addressTo?: Address,
   addressFrom?: Address,
-  feeConfig: ComponentProps<typeof FeeBreakdown>['config'],
   amount: bigint,
   onConfirm: () => void,
   isLoading?: boolean,
@@ -31,7 +36,6 @@ type Props = {
 
 const ConfirmPage = ({
   token,
-  feeConfig,
   amount,
   addressTo,
   onConfirm,
@@ -40,6 +44,18 @@ const ConfirmPage = ({
   hasInsufficientFees,
   buttonLabel,
 }: Props) => {
+
+  const chainConfig = useChain();
+
+  const operation = addressTo ? 'send' : 'shield';
+  const { fees, totalFee, isLoading: areShielderFeesLoading } = useShielderFees({ token, operation, amount });
+
+  const {
+    symbolQuery: { data: nativeTokenSymbol },
+    decimalsQuery: { data: nativeTokenDecimals },
+  } = useTokenData({ isNative: true }, ['symbol', 'decimals']);
+
+  const openFeeBreakdownModal = useFeeBreakdownModal({ fees, totalFee });
 
   const isButtonDisabled = amount <= 0n || !!hasInsufficientFees || !!isLoading;
 
@@ -77,8 +93,35 @@ const ConfirmPage = ({
           </Content>
         )}
       </Wrapper>
+      <Details>
+        <InfoPair
+          label={
+            <TotalFee>
+              <p>Est. Total fee</p>
+              <button onClick={() => void openFeeBreakdownModal()}>
+                <CIcon size={16} icon="InfoRegular" />
+              </button>
+            </TotalFee>
+          }
+          value={
+            !areShielderFeesLoading && isPresent(nativeTokenDecimals) && isPresent(totalFee) ? (
+              <FeeAmount $isError={!!hasInsufficientFees}>
+                <TokenIcon Icon={chainConfig?.NativeTokenIcon} />
+                {formatBalance({
+                  balance: totalFee,
+                  decimals: nativeTokenDecimals,
+                  options: { formatDecimals: 5 },
+                })}
+                {' '}
+                {nativeTokenSymbol}
+              </FeeAmount>
+            ) : (
+              <Skeleton style={{ height: 10, width: 110 }} />
+            )
+          }
+        />
+      </Details>
       <Footer>
-        <FeeBreakdown config={feeConfig} />
         <Button isLoading={!!isLoading} disabled={isButtonDisabled} variant="primary" onClick={onConfirm}>
           {buttonLabel}
         </Button>
@@ -93,7 +136,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: ${vars('--spacing-xxxxl')};
+  gap: ${vars('--spacing-xxl')};
 `;
 
 const Wrapper = styled.div`
@@ -146,4 +189,29 @@ const Divider = styled.div`
   height: 12px;
   width: 1px;
   background: ${vars('--color-neutral-stroke-2-rest')};
+`;
+
+const FeeAmount = styled.div<{ $isError: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+  color: ${({ $isError }) => ($isError ? vars('--color-status-danger-foreground-1-rest') : vars('--color-neutral-foreground-2-rest'))};
+`;
+
+const Details = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${vars('--spacing-m')};
+`;
+
+const TotalFee = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+  color: ${vars('--color-neutral-foreground-2-rest')};
+  ${typography.web.body1};
+  
+  & > button {
+    display: flex;
+  }
 `;

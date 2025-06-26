@@ -1,32 +1,44 @@
-import { erc20Token, nativeToken } from '@cardinal-cryptography/shielder-sdk';
-import { skipToken, useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
+import { useMemo } from 'react';
 
 import { Token } from 'src/domains/chains/types/misc';
-import useChain from 'src/domains/chains/utils/useChain';
-import getQueryKey from 'src/domains/misc/utils/getQueryKey';
-import useShielderClient from 'src/domains/shielder/utils/useShielderClient';
+import useSendingFees from 'src/domains/shielder/utils/useSendingFees';
+import useShieldingFees, { FeeItem } from 'src/domains/shielder/utils/useShieldingFees';
+
+export type { FeeItem } from 'src/domains/shielder/utils/useShieldingFees';
+export type FeeStructure = FeeItem[];
 
 type Props = {
-  walletAddress: Address | undefined,
+  operation: 'shield' | 'send',
   token: Token,
+  amount?: bigint,
 };
 
-const useShielderFees = ({ walletAddress, token }: Props) => {
-  const chainConfig = useChain();
-  const { data: shielderClient } = useShielderClient();
-  const { data } = useQuery(chainConfig ? {
-    queryKey: walletAddress ? getQueryKey.shielderFees(walletAddress, chainConfig.id.toString()) : [],
-    queryFn: !shielderClient ?
-      skipToken :
-      async () => {
-        const sdkToken = token.isNative ? nativeToken() : erc20Token(token.address);
+const useShielderFees = ({ token, operation, amount }: Props) => {
+  const shieldingFeesResult = useShieldingFees({
+    token,
+    amount,
+    disabled: operation !== 'shield',
+  });
 
-        return await shielderClient.getWithdrawFees(sdkToken, 0n);
-      },
-  } : { queryKey: [], queryFn: skipToken });
+  const sendingFeesResult = useSendingFees({
+    token,
+    disabled: operation !== 'send',
+  });
 
-  return data;
+  const fees = operation === 'shield' ? shieldingFeesResult.fees : sendingFeesResult.fees;
+  const isLoading = operation === 'shield' ? shieldingFeesResult.isLoading : sendingFeesResult.isLoading;
+  const error = operation === 'shield' ? shieldingFeesResult.error : sendingFeesResult.error;
+
+  const totalFee = useMemo(() => {
+    return fees?.reduce((total, fee) => total + fee.amount, 0n);
+  }, [fees]);
+
+  return {
+    fees,
+    totalFee,
+    isLoading,
+    error,
+  };
 };
 
 export default useShielderFees;

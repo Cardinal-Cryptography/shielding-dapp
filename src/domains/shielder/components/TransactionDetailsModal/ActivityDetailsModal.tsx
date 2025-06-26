@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { Address } from 'viem';
+import { useTransactionReceipt } from 'wagmi';
 
 import ChainIcon from 'src/domains/chains/components/ChainIcon';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
@@ -8,6 +9,7 @@ import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
 import CIcon from 'src/domains/misc/components/CIcon';
 import InfoPair from 'src/domains/misc/components/InfoPair';
 import Modal from 'src/domains/misc/components/Modal';
+import Skeleton from 'src/domains/misc/components/Skeleton.tsx';
 import { useToast } from 'src/domains/misc/components/Toast';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
@@ -17,6 +19,8 @@ import formatBalance from 'src/domains/numbers/utils/formatBalance';
 import { PartialLocalShielderActivityHistory } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import useShielderStore from 'src/domains/shielder/stores/shielder';
 import { useActivity } from 'src/domains/shielder/utils/useActivityHistory';
+import useFeeBreakdownModal from 'src/domains/shielder/utils/useFeeBreakdownModal.tsx';
+import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
 import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -35,6 +39,31 @@ const ActivityDetailsModal = (props: Props) => {
   const { data: transaction } = useActivity(props);
   const { selectedAccountType } = useShielderStore();
   const { showToast } = useToast();
+  const chainConfig = useChain();
+
+  const { data: transactionReceipt, isLoading: isTransactionReceiptLoading } = useTransactionReceipt({
+    hash: transaction?.txHash,
+    query: {
+      enabled: !!transaction?.txHash,
+    },
+  });
+
+  const totalFee = transactionReceipt && transaction?.txHash ?
+    transactionReceipt.gasUsed * transactionReceipt.effectiveGasPrice :
+    null;
+
+  const token = transaction?.token?.type === 'erc20' ?
+    { address: transaction.token.address, isNative: false as const } :
+    { isNative: true as const };
+
+  const operation = transaction?.type === 'Withdraw' ? 'send' : 'shield';
+  const { fees, totalFee: estimatedTotalFee } = useShielderFees({
+    token,
+    operation,
+    amount: transaction?.amount ?? 0n,
+  });
+
+  const openFeeBreakdownModal = useFeeBreakdownModal({ fees, totalFee: estimatedTotalFee });
 
   const {
     symbolQuery: { data: tokenSymbol },
@@ -47,18 +76,17 @@ const ActivityDetailsModal = (props: Props) => {
   );
 
   const {
-    symbolQuery: { data: feeSymbol },
-    decimalsQuery: { data: feeDecimals },
+    symbolQuery: { data: feeTokenSymbol },
+    decimalsQuery: { data: feeTokenDecimals },
   } = useTokenData(
-    transaction?.fee && transaction.fee.address !== 'native' ?
-      { address: transaction.fee.address, isNative: false } :
+    transaction?.type === 'Deposit' ? { isNative: true } : transaction?.token?.type === 'erc20' ?
+      { address: transaction.token.address, isNative: false } :
       { isNative: true },
     ['symbol', 'decimals']
   );
-  const { address } = useWallet();
-  const chainConfig = useChain();
 
-  // Return null if transaction is not found (after all hooks)
+  const { address } = useWallet();
+
   if (!transaction) {
     return null;
   }
@@ -182,25 +210,6 @@ const ActivityDetailsModal = (props: Props) => {
                 }
               />
             )}
-            {transaction.fee && isPresent(feeDecimals) && (
-              <InfoPair
-                tooltipText="Cost of processing your transaction on the blockchain."
-                label={transaction.type === 'Withdraw' ? 'Transaction fee' : 'Network fee'}
-                value={
-                  <Fee>
-                    <TokenIcon
-                      {...(transaction.fee.address !== 'native' ?
-                        { address: transaction.fee.address } :
-                        { Icon: chainConfig?.NativeTokenIcon }
-                      )}
-                    />
-                    {formatBalance({ balance: transaction.fee.amount, decimals: feeDecimals })}
-                    {' '}
-                    {feeSymbol}
-                  </Fee>
-                }
-              />
-            )}
             {transaction.txHash && (
               <InfoPair
                 label="Transaction ID"
@@ -218,6 +227,35 @@ const ActivityDetailsModal = (props: Props) => {
                       </a>
                     )}
                   </TransactionId>
+                }
+              />
+            )}
+            {!isTransactionReceiptLoading && (isPresent(estimatedTotalFee) || isPresent(totalFee)) && (
+              <InfoPair
+                label={totalFee ? 'Total fee' : (
+                  <TotalFee>
+                    <p>Est. Total fee</p>
+                    <button onClick={() => void openFeeBreakdownModal()}>
+                      <CIcon size={16} icon="InfoRegular" />
+                    </button>
+                  </TotalFee>
+                )}
+                tooltipText={totalFee ? 'This is the overall amount of fees you’ve paid to the blockchain network and relayers to process and confirm your transaction.' : undefined}
+                value={
+                  isPresent(feeTokenDecimals) ? (
+                    <FeeAmount>
+                      <TokenIcon Icon={chainConfig?.NativeTokenIcon} />
+                      {formatBalance({
+                        balance: totalFee ?? estimatedTotalFee ?? 0n,
+                        decimals: feeTokenDecimals,
+                        options: { formatDecimals: 5 },
+                      })}
+                      {' '}
+                      {feeTokenSymbol}
+                    </FeeAmount>
+                  ) : (
+                    <Skeleton style={{ height: 10, width: 110 }} />
+                  )
                 }
               />
             )}
@@ -334,13 +372,6 @@ const TransactionId = styled.div`
   }
 `;
 
-const Fee = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${vars('--spacing-xs')};
-  ${typography.web.body1};
-`;
-
 const Text = styled.p`
   color: ${vars('--color-brand-foreground-1-rest')};
 `;
@@ -349,4 +380,21 @@ const Divider = styled.div`
   height: 12px;
   width: 1px;
   background: ${vars('--color-neutral-stroke-2-rest')};
+`;
+
+const FeeAmount = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+`;
+
+const TotalFee = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+  ${typography.web.body1};
+  
+  & > button {
+    display: flex;
+  }
 `;

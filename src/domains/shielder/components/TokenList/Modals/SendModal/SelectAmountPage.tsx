@@ -1,19 +1,26 @@
-import { ComponentProps, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { isNullish } from 'utility-types';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
+import useChain from 'src/domains/chains/utils/useChain';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import InfoPair from 'src/domains/misc/components/InfoPair';
+import Skeleton from 'src/domains/misc/components/Skeleton';
+import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import fromDecimals from 'src/domains/misc/utils/fromDecimals';
+import isPresent from 'src/domains/misc/utils/isPresent';
+import formatBalance from 'src/domains/numbers/utils/formatBalance';
 import shieldImage from 'src/domains/shielder/assets/shield.png';
-import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
-import { Token } from 'src/domains/shielder/components/TokenList';
+import useFeeBreakdownModal from 'src/domains/shielder/utils/useFeeBreakdownModal';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
+import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
+import { Token } from '../../';
 import AssetBox from '../../AssetBox';
 
 type Props = {
@@ -22,29 +29,35 @@ type Props = {
     decimals?: number,
     balance?: bigint,
   },
-  feeConfig: ComponentProps<typeof FeeBreakdown>['config'],
   onContinue: (amount: bigint) => void,
   hasInsufficientFees: boolean,
 };
 
-const SelectAmountPage = ({ token, feeConfig, onContinue, hasInsufficientFees }: Props) => {
+const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => {
   const { address } = useWallet();
+  const chainConfig = useChain();
 
   const [value, setValue] = useState('');
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
 
-  const fees = useShielderFees({ walletAddress: address, token });
+  const { fees, totalFee, isLoading } = useShielderFees({ token, operation: 'send' });
+
+  const {
+    symbolQuery: { data: nativeTokenSymbol },
+    decimalsQuery: { data: nativeTokenDecimals },
+  } = useTokenData({ isNative: true }, ['symbol', 'decimals']);
+
+  const openFeeBreakdownModal = useFeeBreakdownModal({ fees, totalFee });
 
   const maxAmountToSend = useMemo(() => {
     if (isNullish(token.balance)) return token.balance;
-    if (isNullish(fees)) return token.balance;
-    const result = token.balance - fees.fee_details.total_cost_fee_token;
+    if (isNullish(totalFee)) return token.balance;
+    const result = token.balance - totalFee;
     return result > 0n ? result : 0n;
-  }, [token, fees]);
+  }, [token, totalFee]);
 
   const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
   const hasNotSelectedAmount = amount <= 0n;
-
   const isButtonDisabled = hasNotSelectedAmount || isExceedingBalance || hasInsufficientFees;
 
   const buttonLabel =
@@ -59,6 +72,7 @@ const SelectAmountPage = ({ token, feeConfig, onContinue, hasInsufficientFees }:
   return (
     <Container>
       <AssetBox
+        accountType="shielded"
         title="Tokens"
         tokenSymbol={token.symbol}
         currentBalance={token.balance}
@@ -67,8 +81,8 @@ const SelectAmountPage = ({ token, feeConfig, onContinue, hasInsufficientFees }:
         token={token}
         effectiveAssetValue={value}
         onAssetValueChange={setValue}
+        accountAddress={address}
         onAssetBalanceExceeded={setIsExceedingBalance}
-        accountType="shielded"
       />
       <Disclaimer>
         <InfoContainer>
@@ -80,7 +94,34 @@ const SelectAmountPage = ({ token, feeConfig, onContinue, hasInsufficientFees }:
         </InfoContainer>
         <ShieldImage src={shieldImage} alt="Shield icon" />
       </Disclaimer>
-      <FeeBreakdown config={feeConfig} />
+      <FeeWrapper>
+        <InfoPair
+          label={
+            <TotalFeeLabel>
+              <p>Est. Total fee</p>
+              <button onClick={() => void openFeeBreakdownModal()}>
+                <CIcon size={16} icon="InfoRegular" />
+              </button>
+            </TotalFeeLabel>
+          }
+          value={
+            !isLoading && isPresent(nativeTokenDecimals) && isPresent(totalFee) ? (
+              <FeeAmount $isError={hasInsufficientFees}>
+                <TokenIcon Icon={chainConfig?.NativeTokenIcon} />
+                {formatBalance({
+                  balance: totalFee,
+                  decimals: nativeTokenDecimals,
+                  options: { formatDecimals: 5 },
+                })}
+                {' '}
+                {nativeTokenSymbol}
+              </FeeAmount>
+            ) : (
+              <Skeleton style={{ height: 10, width: 110 }} />
+            )
+          }
+        />
+      </FeeWrapper>
       <Button disabled={isButtonDisabled} variant="primary" onClick={() => void onContinue(amount)}>
         {buttonLabel}
       </Button>
@@ -129,4 +170,29 @@ const ShieldImage = styled.img`
   margin-bottom: -2px;
   margin-right: -32px;
   pointer-events: none;
+`;
+
+const FeeAmount = styled.div<{ $isError: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+  color: ${({ $isError }) => ($isError ? vars('--color-status-danger-foreground-1-rest') : vars('--color-neutral-foreground-2-rest'))};
+`;
+
+const FeeWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${vars('--spacing-m')};
+`;
+
+const TotalFeeLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+  color: ${vars('--color-neutral-foreground-2-rest')};
+  ${typography.web.body1};
+
+  & > button {
+    display: flex;
+  }
 `;
