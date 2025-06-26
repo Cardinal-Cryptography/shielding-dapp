@@ -1,4 +1,4 @@
-import { ComponentProps, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { isNullish } from 'utility-types';
 
@@ -7,10 +7,16 @@ import useChain from 'src/domains/chains/utils/useChain';
 import Button from 'src/domains/misc/components/Button';
 import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import InfoPair from 'src/domains/misc/components/InfoPair';
+import Skeleton from 'src/domains/misc/components/Skeleton';
+import TokenIcon from 'src/domains/misc/components/TokenIcon';
 import fromDecimals from 'src/domains/misc/utils/fromDecimals';
+import isPresent from 'src/domains/misc/utils/isPresent';
+import formatBalance from 'src/domains/numbers/utils/formatBalance';
 import shieldImage from 'src/domains/shielder/assets/shield.png';
-import FeeBreakdown from 'src/domains/shielder/components/FeeRows';
+import useFeeBreakdownModal from 'src/domains/shielder/utils/useFeeBreakdownModal';
 import useShielderFees from 'src/domains/shielder/utils/useShielderFees';
+import useTokenData from 'src/domains/shielder/utils/useTokenData';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -23,28 +29,39 @@ type Props = {
     decimals?: number,
     balance?: bigint,
   },
-  feeConfig: ComponentProps<typeof FeeBreakdown>['config'],
   onContinue: (amount: bigint) => void,
   hasInsufficientFees: boolean,
 };
 
-const SelectAmountPage = ({ onContinue, token, feeConfig, hasInsufficientFees }: Props) => {
+const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => {
   const { address } = useWallet();
   const chainConfig = useChain();
 
   const [value, setValue] = useState('');
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
 
-  const fees = useShielderFees({ walletAddress: address, token });
+  const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
+
+  const { fees, totalFee, isLoading: areShielderFeesLoading } = useShielderFees({
+    token,
+    operation: 'shield',
+    amount,
+  });
+
+  const {
+    symbolQuery: { data: nativeTokenSymbol },
+    decimalsQuery: { data: nativeTokenDecimals },
+  } = useTokenData({ isNative: true }, ['symbol', 'decimals']);
+
+  const openFeeBreakdownModal = useFeeBreakdownModal({ fees, totalFee });
 
   const maxAmountToShield = useMemo(() => {
     if (isNullish(token.balance)) return token.balance;
-    if (isNullish(fees)) return token.balance;
-    const result = token.isNative ? token.balance - fees.fee_details.total_cost_native : token.balance;
+    if (isNullish(totalFee)) return token.balance;
+    const result = token.isNative ? token.balance - totalFee : token.balance;
     return result > 0n ? result : 0n;
-  }, [token, fees]);
+  }, [token, totalFee]);
 
-  const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
   const hasNotSelectedAmount = amount <= 0n;
   const isButtonDisabled = hasNotSelectedAmount || isExceedingBalance || hasInsufficientFees;
 
@@ -82,12 +99,35 @@ const SelectAmountPage = ({ onContinue, token, feeConfig, hasInsufficientFees }:
         </InfoContainer>
         <ShieldImage src={shieldImage} alt="Shield icon" />
       </Disclaimer>
-      <FeeBreakdown config={feeConfig} />
-      <Button
-        disabled={isButtonDisabled}
-        variant="primary"
-        onClick={() => void onContinue(amount)}
-      >
+      <FeeWrapper>
+        <InfoPair
+          label={
+            <TotalFeeLabel>
+              <p>Est. Total fee</p>
+              <button onClick={() => void openFeeBreakdownModal()}>
+                <CIcon size={16} icon="InfoRegular" />
+              </button>
+            </TotalFeeLabel>
+          }
+          value={
+            !areShielderFeesLoading && isPresent(nativeTokenDecimals) && isPresent(totalFee) ? (
+              <FeeAmount $isError={hasInsufficientFees}>
+                <TokenIcon Icon={chainConfig?.NativeTokenIcon} />
+                {formatBalance({
+                  balance: totalFee,
+                  decimals: nativeTokenDecimals,
+                  options: { formatDecimals: 5 },
+                })}
+                {' '}
+                {nativeTokenSymbol}
+              </FeeAmount>
+            ) : (
+              <Skeleton style={{ height: 10, width: 110 }} />
+            )
+          }
+        />
+      </FeeWrapper>
+      <Button disabled={isButtonDisabled} variant="primary" onClick={() => void onContinue(amount)}>
         {buttonLabel}
       </Button>
     </Container>
@@ -125,4 +165,29 @@ const ShieldImage = styled.img`
   margin-bottom: -10px;
   margin-right: -30px;
   pointer-events: none;
+`;
+
+const FeeAmount = styled.div<{ $isError: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+  color: ${({ $isError }) => ($isError ? vars('--color-status-danger-foreground-1-rest') : vars('--color-neutral-foreground-2-rest'))};
+`;
+
+const FeeWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${vars('--spacing-m')};
+`;
+
+const TotalFeeLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${vars('--spacing-xs')};
+  color: ${vars('--color-neutral-foreground-2-rest')};
+  ${typography.web.body1};
+
+  & > button {
+    display: flex;
+  }
 `;

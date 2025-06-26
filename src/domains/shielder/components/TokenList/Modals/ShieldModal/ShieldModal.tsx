@@ -29,38 +29,28 @@ const ShieldModal = ({ token }: Props) => {
   const { shield, isShielding, reset } = useShield();
   const [page, setPage] = useState(0);
 
-  const fees = useShielderFees({ walletAddress: address, token });
+  const { totalFee } = useShielderFees({
+    token,
+    operation: 'shield',
+    amount,
+  });
 
   const { data: publicNativeBalance } = usePublicBalance({ accountAddress: address, token: { isNative: true }});
 
-  const hasInsufficientFees = isPresent(publicNativeBalance) && fees?.fee_details.total_cost_native ?
-    publicNativeBalance < fees.fee_details.total_cost_native :
+  const hasInsufficientFees = isPresent(publicNativeBalance) && totalFee ?
+    publicNativeBalance < totalFee :
     false;
-
-  const feeConfig = [
-    {
-      label: 'Transaction fee',
-      amount: fees?.fee_details.total_cost_native,
-      tokenSymbol: chainConfig?.nativeCurrency.symbol,
-      tokenDecimals: chainConfig?.nativeCurrency.decimals,
-      tokenIcon: chainConfig?.NativeTokenIcon,
-      isError: hasInsufficientFees,
-    },
-  ];
 
   const handleSelectAmount = (amount: bigint) => {
     setAmount(amount);
     setPage(1);
   };
 
-  const fee = (
-    fees?.fee_details.total_cost_native ?
-      { address: 'native' as const, amount: fees.fee_details.total_cost_native } :
-      undefined
-  );
-
   const handleShield = () => {
-    void shield({ token, amount, fee });
+    void shield({
+      token,
+      amount,
+    });
     void close();
   };
 
@@ -68,6 +58,7 @@ const ShieldModal = ({ token }: Props) => {
     setPage(0);
     reset();
   };
+
   return (
     <Modal
       page={page}
@@ -80,7 +71,6 @@ const ShieldModal = ({ token }: Props) => {
               <SelectAmountPage
                 key="select-amount"
                 token={token}
-                feeConfig={feeConfig}
                 onContinue={handleSelectAmount}
                 hasInsufficientFees={hasInsufficientFees}
               />
@@ -100,7 +90,6 @@ const ShieldModal = ({ token }: Props) => {
                     `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance` :
                     isShielding ? 'Shielding' : 'Confirm'
                 }
-                feeConfig={feeConfig}
                 addressFrom={address}
                 hasInsufficientFees={hasInsufficientFees}
               />

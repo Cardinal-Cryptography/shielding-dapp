@@ -16,6 +16,7 @@ const config: ChainConfig = {
     shielderConfig: {
       shielderContractAddress: '0x5A0dea46A96a5b578c9cf1730f461eD0bC9C32c6',
       relayerUrl: 'https://shielder-relayer-v2.azero.dev/azero',
+      shieldingFeeEstimatorUrl: 'https://fee-estimator.azero.dev/azero/get_fees',
     },
     nativeCurrency: {
       decimals: 18,
@@ -57,6 +58,7 @@ const config: ChainConfig = {
     shielderConfig: {
       shielderContractAddress: '0x5B496EB83172B52885f80207426042eA21597077',
       relayerUrl: 'https://shielder-relayer-v2.test.azero.dev/azero-testnet',
+      shieldingFeeEstimatorUrl: 'https://fee-estimator.test.azero.dev/azero-testnet/get_fees',
     },
     nativeCurrency: {
       decimals: 18,

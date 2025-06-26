@@ -3,16 +3,19 @@ import type { Address } from 'viem';
 import { NetworkEnvironment } from 'src/domains/chains/types/misc';
 
 export const QUERY_KEYS = {
-  shielderFees: 'shielderFees',
+  wasmCryptoClient: 'wasm-crypto-client',
   shielderClient: 'shielder-client',
-  shielderTransactions: 'shielder-transactions',
-  tokenDecimals: 'token-decimals',
+  shielderPrivateKey: 'shielderPrivateKey',
   tokenName: 'token-name',
   tokenSymbol: 'token-symbol',
+  tokenDecimals: 'token-decimals',
   tokenPublicBalance: 'token-public-balance',
   tokenShieldedBalance: 'token-shielded-balance',
-  shielderPrivateKey: 'shielderPrivateKey',
-  wasmCryptoClient: 'wasm-crypto-client',
+  allowanceCheck: 'allowance-check',
+  allowanceFeeEstimate: 'allowance-fee-estimate',
+  shieldingFeesEstimate: 'shielding-fees-estimate',
+  sendingFeesEstimate: 'sending-fees-estimate',
+  shielderTransactions: 'shielder-transactions',
 } as const;
 
 export const MUTATION_KEYS = {
@@ -21,10 +24,29 @@ export const MUTATION_KEYS = {
 } as const;
 
 const getQueryKey = {
-  shielderFees: (walletAddress: Address, chainId: string) => [
-    QUERY_KEYS.shielderFees,
+  sendingFees: (walletAddress: Address, chainId: string) => [
+    QUERY_KEYS.sendingFeesEstimate,
     walletAddress,
     chainId,
+  ],
+  shieldingFees: (chainId: string, tokenType: 'native' | 'erc20') => [
+    QUERY_KEYS.shieldingFeesEstimate,
+    chainId,
+    tokenType,
+  ],
+  allowanceCheck: (tokenAddress: Address, chainId: string, walletAddress: Address, amount: string) => [
+    QUERY_KEYS.allowanceCheck,
+    tokenAddress,
+    chainId,
+    walletAddress,
+    amount,
+  ],
+  allowanceFeeEstimate: (tokenAddress: Address, chainId: string, walletAddress: Address, amount: string) => [
+    QUERY_KEYS.allowanceFeeEstimate,
+    tokenAddress,
+    chainId,
+    walletAddress,
+    amount,
   ],
   shielderClient: (chainId: number, shielderPrivateKey: Address) => [
     QUERY_KEYS.shielderClient,
