@@ -31,13 +31,14 @@ type Props = {
   },
   onContinue: (amount: bigint) => void,
   hasInsufficientFees: boolean,
+  value: string,
+  onValueChange: (value: string) => void,
 };
 
-const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => {
+const SelectAmountPage = ({ onContinue, token, hasInsufficientFees, value, onValueChange }: Props) => {
   const { address } = useWallet();
   const chainConfig = useChain();
 
-  const [value, setValue] = useState('');
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
 
   const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
@@ -85,7 +86,7 @@ const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => 
         maxAmount={maxAmountToShield}
         token={token}
         effectiveAssetValue={value}
-        onAssetValueChange={setValue}
+        onAssetValueChange={onValueChange}
         accountAddress={address}
         onAssetBalanceExceeded={setIsExceedingBalance}
       />

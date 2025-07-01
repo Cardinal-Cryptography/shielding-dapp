@@ -31,14 +31,17 @@ type Props = {
   },
   onContinue: (amount: bigint) => void,
   hasInsufficientFees: boolean,
+  value: string,
+  onValueChange: (value: string) => void,
 };
 
-const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => {
+const SelectAmountPage = ({ onContinue, token, hasInsufficientFees, value, onValueChange }: Props) => {
   const { address } = useWallet();
   const chainConfig = useChain();
 
-  const [value, setValue] = useState('');
   const [isExceedingBalance, setIsExceedingBalance] = useState(false);
+
+  const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
 
   const { fees, totalFee, isLoading } = useShielderFees({ token, operation: 'send' });
 
@@ -56,7 +59,6 @@ const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => 
     return result > 0n ? result : 0n;
   }, [token, totalFee]);
 
-  const amount = token.decimals ? fromDecimals(value, token.decimals) : 0n;
   const hasNotSelectedAmount = amount <= 0n;
   const isButtonDisabled = hasNotSelectedAmount || isExceedingBalance || hasInsufficientFees;
 
@@ -80,7 +82,7 @@ const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => 
         maxAmount={maxAmountToSend}
         token={token}
         effectiveAssetValue={value}
-        onAssetValueChange={setValue}
+        onAssetValueChange={onValueChange}
         accountAddress={address}
         onAssetBalanceExceeded={setIsExceedingBalance}
       />

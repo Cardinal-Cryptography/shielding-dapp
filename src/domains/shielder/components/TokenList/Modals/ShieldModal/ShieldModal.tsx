@@ -25,6 +25,7 @@ const ShieldModal = ({ token }: Props) => {
   const { address } = useWallet();
   const { close } = useModalControls();
   const [amount, setAmount] = useState(0n);
+  const [inputValue, setInputValue] = useState(''); // Store input value at modal level
   const chainConfig = useChain();
   const { shield, isShielding, reset } = useShield();
   const [page, setPage] = useState(0);
@@ -63,40 +64,38 @@ const ShieldModal = ({ token }: Props) => {
     <Modal
       page={page}
       onClose={handleReset}
-      config={
-        [
-          {
-            title: 'Shield',
-            content: (
-              <SelectAmountPage
-                key="select-amount"
-                token={token}
-                onContinue={handleSelectAmount}
-                hasInsufficientFees={hasInsufficientFees}
-              />
-            ),
-          },
-          {
-            title: 'Shield',
-            content: (
-              <ConfirmPage
-                key="confirmation"
-                amount={amount}
-                token={token}
-                onConfirm={() => void handleShield()}
-                isLoading={isShielding}
-                buttonLabel={
-                  hasInsufficientFees ?
-                    `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance` :
-                    isShielding ? 'Shielding' : 'Confirm'
-                }
-                addressFrom={address}
-                hasInsufficientFees={hasInsufficientFees}
-              />
-            ),
-          },
-        ]
-      }
+      config={[
+        {
+          title: 'Shield',
+          content: (
+            <SelectAmountPage
+              token={token}
+              onContinue={handleSelectAmount}
+              hasInsufficientFees={hasInsufficientFees}
+              value={inputValue}
+              onValueChange={setInputValue}
+            />
+          ),
+        },
+        {
+          title: 'Shield',
+          content: (
+            <ConfirmPage
+              amount={amount}
+              token={token}
+              onConfirm={() => void handleShield()}
+              isLoading={isShielding}
+              buttonLabel={
+                hasInsufficientFees ?
+                  `Insufficient ${chainConfig?.nativeCurrency.symbol} Balance` :
+                  isShielding ? 'Shielding' : 'Confirm'
+              }
+              addressFrom={address}
+              hasInsufficientFees={hasInsufficientFees}
+            />
+          ),
+        },
+      ]}
     />
   );
 };
