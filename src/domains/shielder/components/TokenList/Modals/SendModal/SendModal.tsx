@@ -26,7 +26,7 @@ const SendModal = ({ token }: Props) => {
   const { address } = useWallet();
   const [addressTo, setAddressTo] = useState('');
   const [amount, setAmount] = useState(0n);
-  const [inputValue, setInputValue] = useState(''); // Store input value at modal level
+  const [inputValue, setInputValue] = useState('');
   const { withdraw, isWithdrawing } = useWithdraw();
   const [page, setPage] = useState(0);
   const { close } = useModalControls();

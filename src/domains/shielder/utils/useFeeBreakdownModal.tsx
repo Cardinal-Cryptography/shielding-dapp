@@ -111,11 +111,12 @@ const useFeeBreakdownModal = ({ fees, totalFee }: Props) => {
             <Divider />
             <Disclaimer>
               This is the maximum estimate—it can be slightly lower upon execution.
-              <br />
+              {/* TODO: Temporarily commented out until fee documentation links are ready */}
+              {/* <br />
               <br />
               Want to know more about fees?
               {' '}
-              <LearnMoreLink>Learn more</LearnMoreLink>
+              <LearnMoreLink>Learn more</LearnMoreLink> */}
             </Disclaimer>
           </Container>
         ),
@@ -155,12 +156,13 @@ const Disclaimer = styled.p`
   color: ${vars('--color-neutral-foreground-2-rest')};
 `;
 
-const LearnMoreLink = styled.span`
-  color: ${vars('--color-brand-foreground-1-rest')};
-  cursor: pointer;
-
-  text-decoration: underline;
-`;
+// TODO: Temporarily commented out until fee documentation links are ready
+// const LearnMoreLink = styled.span`
+//   color: ${vars('--color-brand-foreground-1-rest')};
+//   cursor: pointer;
+//
+//   text-decoration: underline;
+// `;
 
 const VerticalConnector = styled.div`
   height: 11px;

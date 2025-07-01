@@ -58,7 +58,6 @@ const Modal = ({
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      // Only handle ESC key if this is the top modal and it's not non-dismissible
       if (e.key === 'Escape' && !nonDismissible && isTopModal) {
         triggerClose();
       }

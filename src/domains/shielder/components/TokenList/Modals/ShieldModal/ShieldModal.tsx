@@ -25,7 +25,7 @@ const ShieldModal = ({ token }: Props) => {
   const { address } = useWallet();
   const { close } = useModalControls();
   const [amount, setAmount] = useState(0n);
-  const [inputValue, setInputValue] = useState(''); // Store input value at modal level
+  const [inputValue, setInputValue] = useState('');
   const chainConfig = useChain();
   const { shield, isShielding, reset } = useShield();
   const [page, setPage] = useState(0);
