@@ -26,6 +26,7 @@ const SendModal = ({ token }: Props) => {
   const { address } = useWallet();
   const [addressTo, setAddressTo] = useState('');
   const [amount, setAmount] = useState(0n);
+  const [inputValue, setInputValue] = useState(''); // Store input value at modal level
   const { withdraw, isWithdrawing } = useWithdraw();
   const [page, setPage] = useState(0);
   const { close } = useModalControls();
@@ -63,52 +64,49 @@ const SendModal = ({ token }: Props) => {
   return (
     <Modal
       page={page}
-      config={
-        [
-          {
-            title: 'Send',
-            content: (
-              <SelectAccountPage
-                key="select-account"
-                addressTo={addressTo}
-                setAddressTo={setAddressTo}
-                onConfirmClick={onConfirm}
-              />
-            ),
-          },
-          {
-            title: 'Send',
-            content: (
-              <SelectAmountPage
-                key="select-amount"
-                token={token}
-                onContinue={handleSelectAmount}
-                hasInsufficientFees={hasInsufficientFees}
-              />
-            ),
-          },
-          {
-            title: 'Send',
-            content: (
-              <ConfirmPage
-                key="confirmation"
-                amount={amount}
-                token={token}
-                addressTo={validatedAddressTo}
-                onConfirm={handleWithdraw}
-                isLoading={isWithdrawing}
-                buttonLabel={
-                  hasInsufficientFees ?
-                    `Insufficient ${token.symbol} Balance` :
-                    isWithdrawing ? 'Sending privately' : 'Confirm'
-                }
-                addressFrom={address}
-                hasInsufficientFees={hasInsufficientFees}
-              />
-            ),
-          },
-        ]
-      }
+      config={[
+        {
+          title: 'Send',
+          content: (
+            <SelectAccountPage
+              addressTo={addressTo}
+              setAddressTo={setAddressTo}
+              onConfirmClick={onConfirm}
+            />
+          ),
+        },
+        {
+          title: 'Send',
+          content: (
+            <SelectAmountPage
+              token={token}
+              onContinue={handleSelectAmount}
+              hasInsufficientFees={hasInsufficientFees}
+              value={inputValue}
+              onValueChange={setInputValue}
+            />
+          ),
+        },
+        {
+          title: 'Send',
+          content: (
+            <ConfirmPage
+              amount={amount}
+              token={token}
+              addressTo={validatedAddressTo}
+              onConfirm={handleWithdraw}
+              isLoading={isWithdrawing}
+              buttonLabel={
+                hasInsufficientFees ?
+                  `Insufficient ${token.symbol} Balance` :
+                  isWithdrawing ? 'Sending privately' : 'Confirm'
+              }
+              addressFrom={address}
+              hasInsufficientFees={hasInsufficientFees}
+            />
+          ),
+        },
+      ]}
     />
   );
 };
