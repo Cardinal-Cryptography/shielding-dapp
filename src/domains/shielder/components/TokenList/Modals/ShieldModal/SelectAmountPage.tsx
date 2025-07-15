@@ -156,7 +156,7 @@ const InfoContainer = styled.div`
   gap: ${vars('--spacing-xs')};
   padding: ${vars('--spacing-m')} ${vars('--spacing-l')} ${vars('--spacing-l')};
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.caption1};
+  ${typography.caption1};
 `;
 
 const ShieldImage = styled.img`
@@ -185,7 +185,7 @@ const TotalFeeLabel = styled.div`
   align-items: center;
   gap: ${vars('--spacing-xs')};
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.body1};
+  ${typography.body1};
 
   & > button {
     display: flex;

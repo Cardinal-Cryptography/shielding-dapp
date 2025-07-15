@@ -83,7 +83,7 @@ const Steps = styled.li`
 const Title = styled.h2`
   max-width: 308px;
   text-align: center;
-  ${typography.web.body1Strong};
+  ${typography.body1Strong};
 `;
 
 const Step = styled.div`
@@ -91,7 +91,7 @@ const Step = styled.div`
   align-items: center;
   gap: ${vars('--spacing-s')};
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const StepNumber = styled.div`
@@ -107,5 +107,5 @@ const StepNumber = styled.div`
   
   flex-shrink: 0;
 
-  ${typography.decorative.body1};
+  ${typography.body1};
 `;

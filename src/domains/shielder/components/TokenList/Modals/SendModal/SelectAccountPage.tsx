@@ -161,7 +161,7 @@ const AccordionHeader = styled.div`
 `;
 
 const AccordionTitle = styled.p`
-  ${typography.web.caption1Strong};
+  ${typography.caption1Strong};
 `;
 
 const AccordionContent = styled(motion.ul)`
@@ -177,7 +177,7 @@ const AccordionItem = styled.li`
   display: flex;
   gap: ${vars('--spacing-s')};
   align-items: start;
-  ${typography.web.caption1};
+  ${typography.caption1};
 
   &::before {
     content: '•';
@@ -192,7 +192,7 @@ const InfoContainer = styled.div`
   gap: ${vars('--spacing-xs')};
   padding: ${vars('--spacing-m')} ${vars('--spacing-l')} ${vars('--spacing-l')};
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.caption1};
+  ${typography.caption1};
 `;
 
 const ShieldImage = styled.img`
@@ -206,7 +206,7 @@ const ShieldImage = styled.img`
 const Label = styled.div`
   display: flex;
   justify-content: space-between;
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const MessageContainer = styled(motion.div)`
@@ -227,7 +227,7 @@ const MessageContent = styled.div<{ $status: MessageStatus }>`
 `;
 
 const MessageText = styled.p`
-  ${typography.web.caption1};
+  ${typography.caption1};
 `;
 
 const ChevronIconWrapper = styled(motion.div)`
@@ -241,5 +241,5 @@ const Link = styled.a`
   color: ${vars('--color-brand-foreground-link-rest')};
 
   text-decoration: none;
-  ${typography.web.body1}
+  ${typography.body1}
 `;

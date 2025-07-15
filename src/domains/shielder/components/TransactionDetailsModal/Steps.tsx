@@ -121,12 +121,12 @@ const StatusCircle = styled.div<{ $status: Status, $showLine: boolean }>`
 `;
 
 const Name = styled.p`
-  ${typography.web.body1}
+  ${typography.body1}
 `;
 
 const Timestamp = styled.p`
   color: ${vars('--color-neutral-foreground-3-rest')};
-  ${typography.web.caption2}
+  ${typography.caption2}
 `;
 
 const LoadingIcon = styled(CIcon)`

@@ -148,10 +148,10 @@ const Container = styled(motion.button)<{ selected: boolean, $size: Size }>`
   /* Note: When changing fonts here, make sure to supply the widest one to the hack below! */
   ${perSize({
     small: ({ selected }: { selected: boolean }) => (
-      selected ? typography.decorative.body1Strong : typography.decorative.body1
+      selected ? typography.body1Strong : typography.body1
     ),
     medium: ({ selected }: { selected: boolean }) => (
-      selected ? typography.decorative.subtitle2 : typography.decorative.body2
+      selected ? typography.subtitle2 : typography.body2
     ),
   })}
 

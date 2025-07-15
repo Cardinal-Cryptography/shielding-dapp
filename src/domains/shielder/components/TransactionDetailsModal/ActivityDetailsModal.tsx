@@ -296,12 +296,12 @@ const Header = styled.header`
 `;
 
 const TokenName = styled.h2`
-  ${typography.decorative.subtitle1}
+  ${typography.subtitle1}
 `;
 
 const Balance = styled.p<{ $isPositive: boolean, $status: Status }>`
   margin-left: auto;
-  ${typography.decorative.subtitle1};
+  ${typography.subtitle1};
   ${({ $isPositive, $status }) => {
     if ($isPositive) {
       if ($status === 'completed') {
@@ -358,14 +358,14 @@ const RowValue = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-s')};
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const TransactionId = styled.div`
   display: flex;
   align-items: center;
   color: ${vars('--color-brand-foreground-1-rest')};
-  ${typography.web.body1};
+  ${typography.body1};
   
   & > a {
     display: flex;
@@ -392,7 +392,7 @@ const TotalFee = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-xs')};
-  ${typography.web.body1};
+  ${typography.body1};
   
   & > button {
     display: flex;

@@ -31,12 +31,12 @@ const Text = styled(motion.div)`
   text-align: center;
   
   & > :first-of-type {
-    ${typography.decorative.subtitle2}
+    ${typography.subtitle2}
   }
 
   & > :last-of-type {
     max-width: 322px;
     color: ${vars('--color-neutral-foreground-2-rest')};
-    ${typography.web.body1};
+    ${typography.body1};
   }
 `;

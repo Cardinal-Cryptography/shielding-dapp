@@ -102,11 +102,11 @@ const DomButton = styled.button.withConfig({
   white-space: nowrap;
 
   ${perSize({
-    large: typography.decorative.subtitle1,
-    medium: typography.decorative.subtitle2,
-    small: typography.decorative.body1Strong,
-    'extra-small': typography.decorative.caption1Strong,
-    tiny: typography.decorative.caption2Strong,
+    large: typography.subtitle1,
+    medium: typography.subtitle2,
+    small: typography.body1Strong,
+    'extra-small': typography.caption1Strong,
+    tiny: typography.caption2Strong,
   })};
   border-radius: ${perSize({
     large: vars('--border-radius-s'),

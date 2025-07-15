@@ -81,7 +81,7 @@ const Content = styled.div`
 `;
 
 const Title = styled.h3`
-  ${typography.decorative.subtitle1};
+  ${typography.subtitle1};
 `;
 
 const Text = styled.p`
@@ -92,7 +92,7 @@ const Text = styled.p`
 
   text-wrap: pretty;
 
-  ${typography.decorative.body1};
+  ${typography.body1};
 `;
 
 const Buttons = styled.div`
@@ -115,7 +115,7 @@ const Link = styled.a`
   display: flex;
   gap: ${vars('--spacing-xs')};
   color: ${vars('--color-brand-foreground-link-rest')};
-  ${typography.web.body1};
+  ${typography.body1};
   
   & > a {
     color: ${vars('--color-brand-foreground-link-rest')};
@@ -129,7 +129,7 @@ const Branding = styled.div`
   gap: ${vars('--spacing-s')};
   align-items: center;
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.subtitle1};
+  ${typography.subtitle1};
 `;
 
 const LogoContainer = styled.div`

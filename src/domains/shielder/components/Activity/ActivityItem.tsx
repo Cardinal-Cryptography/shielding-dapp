@@ -156,16 +156,16 @@ const Info = styled.div`
 
 const Label = styled.div`
   color: ${vars('--color-neutral-foreground-3-rest')};
-  ${typography.web.caption2}
+  ${typography.caption2}
 `;
 
 const Title = styled.div`
-  ${typography.decorative.subtitle2}
+  ${typography.subtitle2}
 `;
 
 const Balance = styled.div<{ $isPositive: boolean, $status: Status }>`
   margin-left: auto;
-  ${typography.decorative.subtitle2};
+  ${typography.subtitle2};
   
   ${({ $isPositive, $status }) => {
     if ($isPositive) {

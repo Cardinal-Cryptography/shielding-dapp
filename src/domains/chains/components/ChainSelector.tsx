@@ -86,7 +86,7 @@ const StyledButton = styled(Button)`
   border-color: ${vars('--color-neutral-stroke-2-rest')};
   overflow: hidden;
 
-  ${typography.web.body1};
+  ${typography.body1};
 
   @media (width <= ${BOTTOM_MENU_BREAKPOINT}) { /* stylelint-disable-line media-query-no-invalid */
     width: fit-content;
@@ -99,7 +99,7 @@ const Option = styled.div`
   gap: ${vars('--spacing-s')};
   width: 100%;
 
-  ${typography.web.body1Strong};
+  ${typography.body1Strong};
 
   & > ${CIcon} {
     margin-left: auto;

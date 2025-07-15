@@ -6,150 +6,150 @@ import { css } from 'styled-components';
 import vars from'./vars';
 
 export const primitives = {
-  '--colors-brand-primary-10': 'rgb(13, 19, 36)',
-  '--colors-brand-primary-100': 'rgb(130, 162, 250)',
-  '--colors-brand-primary-110': 'rgb(148, 177, 255)',
-  '--colors-brand-primary-120': 'rgb(170, 193, 255)',
-  '--colors-brand-primary-130': 'rgb(189, 207, 255)',
-  '--colors-brand-primary-140': 'rgb(204, 218, 255)',
-  '--colors-brand-primary-150': 'rgb(229, 236, 255)',
-  '--colors-brand-primary-160': 'rgb(242, 247, 255)',
-  '--colors-brand-primary-20': 'rgb(21, 31, 60)',
-  '--colors-brand-primary-30': 'rgb(29, 43, 80)',
-  '--colors-brand-primary-40': 'rgb(36, 53, 99)',
-  '--colors-brand-primary-50': 'rgb(44, 65, 122)',
-  '--colors-brand-primary-60': 'rgb(51, 76, 143)',
-  '--colors-brand-primary-70': 'rgb(64, 94, 178)',
-  '--colors-brand-primary-80': 'rgb(84, 117, 209)',
-  '--colors-brand-primary-90': 'rgb(111, 144, 235)',
-  '--colors-brand-secondary-10': 'rgb(41, 23, 10)',
-  '--colors-brand-secondary-100': 'rgb(250, 158, 92)',
-  '--colors-brand-secondary-110': 'rgb(250, 174, 120)',
-  '--colors-brand-secondary-120': 'rgb(252, 189, 144)',
-  '--colors-brand-secondary-130': 'rgb(255, 215, 186)',
-  '--colors-brand-secondary-140': 'rgb(255, 225, 204)',
-  '--colors-brand-secondary-150': 'rgb(255, 241, 232)',
-  '--colors-brand-secondary-160': 'rgb(255, 252, 250)',
-  '--colors-brand-secondary-20': 'rgb(61, 33, 13)',
-  '--colors-brand-secondary-30': 'rgb(79, 43, 17)',
-  '--colors-brand-secondary-40': 'rgb(99, 54, 22)',
-  '--colors-brand-secondary-50': 'rgb(122, 65, 24)',
-  '--colors-brand-secondary-60': 'rgb(145, 77, 28)',
-  '--colors-brand-secondary-70': 'rgb(168, 88, 30)',
-  '--colors-brand-secondary-80': 'rgb(194, 106, 43)',
-  '--colors-brand-secondary-90': 'rgb(227, 129, 59)',
-  '--colors-grey-10': 'rgb(22, 22, 23)',
-  '--colors-grey-12': 'rgb(25, 25, 26)',
-  '--colors-grey-14': 'rgb(27, 27, 28)',
-  '--colors-grey-16': 'rgb(30, 30, 31)',
-  '--colors-grey-18': 'rgb(32, 32, 33)',
-  '--colors-grey-2': 'rgb(5, 5, 5)',
-  '--colors-grey-20': 'rgb(36, 35, 35)',
-  '--colors-grey-22': 'rgb(37, 37, 38)',
-  '--colors-grey-24': 'rgb(40, 40, 41)',
-  '--colors-grey-26': 'rgb(42, 42, 43)',
-  '--colors-grey-28': 'rgb(45, 45, 46)',
-  '--colors-grey-30': 'rgb(47, 47, 48)',
-  '--colors-grey-32': 'rgb(49, 50, 51)',
-  '--colors-grey-34': 'rgb(52, 53, 54)',
-  '--colors-grey-36': 'rgb(54, 55, 56)',
-  '--colors-grey-38': 'rgb(57, 58, 59)',
-  '--colors-grey-4': 'rgb(13, 13, 13)',
-  '--colors-grey-40': 'rgb(59, 60, 61)',
-  '--colors-grey-42': 'rgb(62, 63, 64)',
-  '--colors-grey-44': 'rgb(64, 65, 66)',
-  '--colors-grey-46': 'rgb(67, 68, 69)',
-  '--colors-grey-48': 'rgb(69, 70, 71)',
-  '--colors-grey-50': 'rgb(188, 190, 194)',
-  '--colors-grey-52': 'rgb(190, 192, 196)',
-  '--colors-grey-54': 'rgb(193, 195, 199)',
-  '--colors-grey-56': 'rgb(195, 197, 201)',
-  '--colors-grey-58': 'rgb(198, 200, 204)',
-  '--colors-grey-6': 'rgb(17, 18, 18)',
-  '--colors-grey-60': 'rgb(200, 202, 207)',
-  '--colors-grey-62': 'rgb(203, 205, 209)',
-  '--colors-grey-64': 'rgb(205, 207, 212)',
-  '--colors-grey-66': 'rgb(208, 210, 214)',
-  '--colors-grey-68': 'rgb(210, 212, 217)',
-  '--colors-grey-70': 'rgb(213, 215, 219)',
-  '--colors-grey-72': 'rgb(215, 217, 222)',
-  '--colors-grey-74': 'rgb(218, 220, 224)',
-  '--colors-grey-76': 'rgb(220, 222, 227)',
-  '--colors-grey-78': 'rgb(223, 225, 229)',
-  '--colors-grey-8': 'rgb(19, 20, 20)',
-  '--colors-grey-80': 'rgb(225, 227, 232)',
-  '--colors-grey-82': 'rgb(228, 230, 235)',
-  '--colors-grey-84': 'rgb(230, 232, 237)',
-  '--colors-grey-86': 'rgb(233, 235, 240)',
-  '--colors-grey-88': 'rgb(235, 237, 242)',
-  '--colors-grey-90': 'rgb(237, 239, 245)',
-  '--colors-grey-92': 'rgb(240, 242, 247)',
-  '--colors-grey-94': 'rgb(242, 244, 250)',
-  '--colors-grey-96': 'rgb(247, 248, 252)',
-  '--colors-grey-98': 'rgb(250, 251, 252)',
-  '--colors-grey-black': 'rgb(0, 0, 0)',
-  '--colors-grey-white': 'rgb(255, 255, 255)',
-  '--colors-grey-alpha-0': 'rgb(255, 255, 255, 0)',
-  '--colors-grey-alpha-black-18': 'rgb(0, 0, 0, 0.18)',
-  '--colors-grey-alpha-black-25': 'rgb(0, 0, 0, 0.25)',
-  '--colors-grey-alpha-black-30': 'rgb(0, 0, 0, 0.3)',
-  '--colors-grey-alpha-black-60': 'rgb(0, 0, 0, 0.6)',
-  '--colors-grey-alpha-black-87': 'rgb(0, 0, 0, 0.87)',
-  '--colors-grey-alpha-grey-14-0': 'rgb(27, 27, 28, 0)',
-  '--colors-grey-alpha-grey-14-50': 'rgb(27, 27, 28, 0.5)',
-  '--colors-grey-alpha-grey-14-80': 'rgb(27, 27, 28, 0.8)',
-  '--colors-grey-alpha-grey-2-10': 'rgb(5, 5, 5, 0.1)',
-  '--colors-grey-alpha-grey-2-15': 'rgb(5, 5, 5, 0.15)',
-  '--colors-grey-alpha-grey-2-20': 'rgb(5, 5, 5, 0.2)',
-  '--colors-grey-alpha-grey-2-25': 'rgb(5, 5, 5, 0.25)',
-  '--colors-grey-alpha-grey-2-30': 'rgb(5, 5, 5, 0.3)',
-  '--colors-grey-alpha-grey-2-40': 'rgb(5, 5, 5, 0.4)',
-  '--colors-grey-alpha-grey-2-5': 'rgb(5, 5, 5, 0.05)',
-  '--colors-grey-alpha-grey-2-50': 'rgb(5, 5, 5, 0.5)',
-  '--colors-grey-alpha-grey-2-90': 'rgb(7, 8, 10, 0.9)',
-  '--colors-grey-alpha-grey-30-0': 'rgb(47, 47, 48, 0)',
-  '--colors-grey-alpha-grey-30-10': 'rgb(47, 47, 48, 0.1)',
-  '--colors-grey-alpha-grey-30-15': 'rgb(47, 47, 48, 0.15)',
-  '--colors-grey-alpha-grey-30-20': 'rgb(47, 47, 48, 0.2)',
-  '--colors-grey-alpha-grey-30-25': 'rgb(47, 47, 48, 0.25)',
-  '--colors-grey-alpha-grey-30-5': 'rgb(47, 47, 48, 0.05)',
-  '--colors-grey-alpha-grey-50-0': 'rgb(188, 190, 194, 0)',
-  '--colors-grey-alpha-grey-50-50': 'rgb(188, 190, 194, 0.5)',
-  '--colors-grey-alpha-grey-88-25': 'rgb(235, 237, 242, 0.25)',
-  '--colors-grey-alpha-grey-88-50': 'rgb(235, 237, 242, 0.5)',
-  '--colors-grey-alpha-grey-88-90': 'rgb(235, 237, 242, 0.9)',
-  '--colors-grey-alpha-white-0': 'rgb(255, 255, 255, 0)',
-  '--colors-grey-alpha-white-10': 'rgb(255, 255, 255, 0.1)',
-  '--colors-grey-alpha-white-25': 'rgb(255, 255, 255, 0.25)',
-  '--colors-grey-alpha-white-30': 'rgb(255, 255, 255, 0.3)',
-  '--colors-grey-alpha-white-50': 'rgb(255, 255, 255, 0.5)',
-  '--colors-grey-alpha-white-70': 'rgb(255, 255, 255, 0.7)',
-  '--colors-grey-alpha-white-80': 'rgb(255, 255, 255, 0.8)',
-  '--colors-shared-dark-orange-default': 'rgb(230, 100, 25)',
-  '--colors-shared-dark-orange-shade-10': 'rgb(173, 64, 0)',
-  '--colors-shared-dark-orange-shade-40': 'rgb(71, 26, 0)',
-  '--colors-shared-dark-orange-tint-30': 'rgb(237, 146, 94)',
-  '--colors-shared-dark-orange-tint-40': 'rgb(245, 193, 163)',
-  '--colors-shared-dark-orange-tint-60': 'rgb(252, 239, 232)',
-  '--colors-shared-green-default': 'rgb(0, 153, 99)',
-  '--colors-shared-green-shade-10': 'rgb(0, 128, 83)',
-  '--colors-shared-green-shade-40': 'rgb(0, 38, 25)',
-  '--colors-shared-green-tint-30': 'rgb(82, 204, 161)',
-  '--colors-shared-green-tint-40': 'rgb(138, 229, 197)',
-  '--colors-shared-green-tint-60': 'rgb(229, 255, 245)',
-  '--colors-shared-red-default': 'rgb(229, 64, 81)',
-  '--colors-shared-red-shade-10': 'rgb(204, 57, 72)',
-  '--colors-shared-red-shade-20': 'rgb(182, 47, 61)',
-  '--colors-shared-red-shade-40': 'rgb(63, 16, 21)',
-  '--colors-shared-red-tint-30': 'rgb(236, 116, 128)',
-  '--colors-shared-red-tint-40': 'rgb(245, 183, 189)',
-  '--colors-shared-red-tint-60': 'rgb(253, 237, 239)',
-  '--colors-shared-yellow-default': 'rgb(240, 191, 13)',
-  '--colors-shared-yellow-shade-30': 'rgb(143, 112, 0)',
-  '--colors-shared-yellow-shade-40': 'rgb(77, 60, 0)',
-  '--colors-shared-yellow-tint-30': 'rgb(254, 221, 102)',
-  '--colors-shared-yellow-tint-40': 'rgb(254, 238, 178)',
-  '--colors-shared-yellow-tint-60': 'rgb(255, 251, 235)',
+  '--colors-brand-primary-10': 'rgb(13 19 36)',
+  '--colors-brand-primary-100': 'rgb(130 162 250)',
+  '--colors-brand-primary-110': 'rgb(148 177 255)',
+  '--colors-brand-primary-120': 'rgb(170 193 255)',
+  '--colors-brand-primary-130': 'rgb(189 207 255)',
+  '--colors-brand-primary-140': 'rgb(204 218 255)',
+  '--colors-brand-primary-150': 'rgb(229 236 255)',
+  '--colors-brand-primary-160': 'rgb(242 247 255)',
+  '--colors-brand-primary-20': 'rgb(21 31 60)',
+  '--colors-brand-primary-30': 'rgb(29 43 80)',
+  '--colors-brand-primary-40': 'rgb(36 53 99)',
+  '--colors-brand-primary-50': 'rgb(44 65 122)',
+  '--colors-brand-primary-60': 'rgb(51 76 143)',
+  '--colors-brand-primary-70': 'rgb(64 94 178)',
+  '--colors-brand-primary-80': 'rgb(84 117 209)',
+  '--colors-brand-primary-90': 'rgb(111 144 235)',
+  '--colors-brand-secondary-10': 'rgb(41 23 10)',
+  '--colors-brand-secondary-100': 'rgb(250 158 92)',
+  '--colors-brand-secondary-110': 'rgb(250 174 120)',
+  '--colors-brand-secondary-120': 'rgb(252 189 144)',
+  '--colors-brand-secondary-130': 'rgb(255 215 186)',
+  '--colors-brand-secondary-140': 'rgb(255 225 204)',
+  '--colors-brand-secondary-150': 'rgb(255 241 232)',
+  '--colors-brand-secondary-160': 'rgb(255 252 250)',
+  '--colors-brand-secondary-20': 'rgb(61 33 13)',
+  '--colors-brand-secondary-30': 'rgb(79 43 17)',
+  '--colors-brand-secondary-40': 'rgb(99 54 22)',
+  '--colors-brand-secondary-50': 'rgb(122 65 24)',
+  '--colors-brand-secondary-60': 'rgb(145 77 28)',
+  '--colors-brand-secondary-70': 'rgb(168 88 30)',
+  '--colors-brand-secondary-80': 'rgb(194 106 43)',
+  '--colors-brand-secondary-90': 'rgb(227 129 59)',
+  '--colors-grey-10': 'rgb(22 22 23)',
+  '--colors-grey-12': 'rgb(25 25 26)',
+  '--colors-grey-14': 'rgb(27 27 28)',
+  '--colors-grey-16': 'rgb(30 30 31)',
+  '--colors-grey-18': 'rgb(32 32 33)',
+  '--colors-grey-2': 'rgb(5 5 5)',
+  '--colors-grey-20': 'rgb(36 35 35)',
+  '--colors-grey-22': 'rgb(37 37 38)',
+  '--colors-grey-24': 'rgb(40 40 41)',
+  '--colors-grey-26': 'rgb(42 42 43)',
+  '--colors-grey-28': 'rgb(45 45 46)',
+  '--colors-grey-30': 'rgb(47 47 48)',
+  '--colors-grey-32': 'rgb(49 50 51)',
+  '--colors-grey-34': 'rgb(52 53 54)',
+  '--colors-grey-36': 'rgb(54 55 56)',
+  '--colors-grey-38': 'rgb(57 58 59)',
+  '--colors-grey-4': 'rgb(13 13 13)',
+  '--colors-grey-40': 'rgb(59 60 61)',
+  '--colors-grey-42': 'rgb(62 63 64)',
+  '--colors-grey-44': 'rgb(64 65 66)',
+  '--colors-grey-46': 'rgb(67 68 69)',
+  '--colors-grey-48': 'rgb(69 70 71)',
+  '--colors-grey-50': 'rgb(188 190 194)',
+  '--colors-grey-52': 'rgb(190 192 196)',
+  '--colors-grey-54': 'rgb(193 195 199)',
+  '--colors-grey-56': 'rgb(195 197 201)',
+  '--colors-grey-58': 'rgb(198 200 204)',
+  '--colors-grey-6': 'rgb(17 18 18)',
+  '--colors-grey-60': 'rgb(200 202 207)',
+  '--colors-grey-62': 'rgb(203 205 209)',
+  '--colors-grey-64': 'rgb(205 207 212)',
+  '--colors-grey-66': 'rgb(208 210 214)',
+  '--colors-grey-68': 'rgb(210 212 217)',
+  '--colors-grey-70': 'rgb(213 215 219)',
+  '--colors-grey-72': 'rgb(215 217 222)',
+  '--colors-grey-74': 'rgb(218 220 224)',
+  '--colors-grey-76': 'rgb(220 222 227)',
+  '--colors-grey-78': 'rgb(223 225 229)',
+  '--colors-grey-8': 'rgb(19 20 20)',
+  '--colors-grey-80': 'rgb(225 227 232)',
+  '--colors-grey-82': 'rgb(228 230 235)',
+  '--colors-grey-84': 'rgb(230 232 237)',
+  '--colors-grey-86': 'rgb(233 235 240)',
+  '--colors-grey-88': 'rgb(235 237 242)',
+  '--colors-grey-90': 'rgb(237 239 245)',
+  '--colors-grey-92': 'rgb(240 242 247)',
+  '--colors-grey-94': 'rgb(242 244 250)',
+  '--colors-grey-96': 'rgb(247 248 252)',
+  '--colors-grey-98': 'rgb(250 251 252)',
+  '--colors-grey-black': 'rgb(0 0 0)',
+  '--colors-grey-white': 'rgb(255 255 255)',
+  '--colors-grey-alpha-0': 'rgb(255 255 255 / 0)',
+  '--colors-grey-alpha-black-18': 'rgb(0 0 0 / 0.18)',
+  '--colors-grey-alpha-black-25': 'rgb(0 0 0 / 0.25)',
+  '--colors-grey-alpha-black-30': 'rgb(0 0 0 / 0.3)',
+  '--colors-grey-alpha-black-60': 'rgb(0 0 0 / 0.6)',
+  '--colors-grey-alpha-black-87': 'rgb(0 0 0 / 0.87)',
+  '--colors-grey-alpha-grey-14-0': 'rgb(30 35 43 / 0)',
+  '--colors-grey-alpha-grey-14-50': 'rgb(27 27 28 / 0.5)',
+  '--colors-grey-alpha-grey-14-80': 'rgb(27 27 28 / 0.8)',
+  '--colors-grey-alpha-grey-2-10': 'rgb(5 5 5 / 0.1)',
+  '--colors-grey-alpha-grey-2-15': 'rgb(5 5 5 / 0.15)',
+  '--colors-grey-alpha-grey-2-20': 'rgb(5 5 5 / 0.2)',
+  '--colors-grey-alpha-grey-2-25': 'rgb(5 5 5 / 0.25)',
+  '--colors-grey-alpha-grey-2-30': 'rgb(5 5 5 / 0.3)',
+  '--colors-grey-alpha-grey-2-40': 'rgb(5 5 5 / 0.4)',
+  '--colors-grey-alpha-grey-2-5': 'rgb(5 5 5 / 0.05)',
+  '--colors-grey-alpha-grey-2-50': 'rgb(5 5 5 / 0.5)',
+  '--colors-grey-alpha-grey-2-90': 'rgb(7 8 10 / 0.9)',
+  '--colors-grey-alpha-grey-30-0': 'rgb(47 47 48 / 0)',
+  '--colors-grey-alpha-grey-30-10': 'rgb(47 47 48 / 0.1)',
+  '--colors-grey-alpha-grey-30-15': 'rgb(47 47 48 / 0.15)',
+  '--colors-grey-alpha-grey-30-20': 'rgb(47 47 48 / 0.2)',
+  '--colors-grey-alpha-grey-30-25': 'rgb(70 82 102 / 0.25)',
+  '--colors-grey-alpha-grey-30-5': 'rgb(47 47 48 / 0.05)',
+  '--colors-grey-alpha-grey-50-0': 'rgb(188 190 194 / 0)',
+  '--colors-grey-alpha-grey-50-50': 'rgb(188 190 194 / 0.5)',
+  '--colors-grey-alpha-grey-88-25': 'rgb(235 237 242 / 0.25)',
+  '--colors-grey-alpha-grey-88-50': 'rgb(235 237 242 / 0.5)',
+  '--colors-grey-alpha-grey-88-90': 'rgb(235 237 242 / 0.9)',
+  '--colors-grey-alpha-white-0': 'rgb(255 255 255 / 0)',
+  '--colors-grey-alpha-white-10': 'rgb(255 255 255 / 0.1)',
+  '--colors-grey-alpha-white-25': 'rgb(255 255 255 / 0.25)',
+  '--colors-grey-alpha-white-30': 'rgb(255 255 255 / 0.3)',
+  '--colors-grey-alpha-white-50': 'rgb(255 255 255 / 0.5)',
+  '--colors-grey-alpha-white-70': 'rgb(255 255 255 / 0.7)',
+  '--colors-grey-alpha-white-80': 'rgb(255 255 255 / 0.8)',
+  '--colors-shared-dark-orange-default': 'rgb(230 100 25)',
+  '--colors-shared-dark-orange-shade-10': 'rgb(173 64 0)',
+  '--colors-shared-dark-orange-shade-40': 'rgb(71 26 0)',
+  '--colors-shared-dark-orange-tint-30': 'rgb(237 146 94)',
+  '--colors-shared-dark-orange-tint-40': 'rgb(245 193 163)',
+  '--colors-shared-dark-orange-tint-60': 'rgb(252 239 232)',
+  '--colors-shared-green-default': 'rgb(0 153 99)',
+  '--colors-shared-green-shade-10': 'rgb(0 128 83)',
+  '--colors-shared-green-shade-40': 'rgb(0 38 25)',
+  '--colors-shared-green-tint-30': 'rgb(82 204 161)',
+  '--colors-shared-green-tint-40': 'rgb(138 229 197)',
+  '--colors-shared-green-tint-60': 'rgb(229 255 245)',
+  '--colors-shared-red-default': 'rgb(229 64 81)',
+  '--colors-shared-red-shade-10': 'rgb(204 57 72)',
+  '--colors-shared-red-shade-20': 'rgb(182 47 61)',
+  '--colors-shared-red-shade-40': 'rgb(63 16 21)',
+  '--colors-shared-red-tint-30': 'rgb(236 116 128)',
+  '--colors-shared-red-tint-40': 'rgb(245 183 189)',
+  '--colors-shared-red-tint-60': 'rgb(253 237 239)',
+  '--colors-shared-yellow-default': 'rgb(240 191 13)',
+  '--colors-shared-yellow-shade-30': 'rgb(143 112 0)',
+  '--colors-shared-yellow-shade-40': 'rgb(77 60 0)',
+  '--colors-shared-yellow-tint-30': 'rgb(254 221 102)',
+  '--colors-shared-yellow-tint-40': 'rgb(254 238 178)',
+  '--colors-shared-yellow-tint-60': 'rgb(255 251 235)',
   '--number-values-0': '0px',
   '--number-values-1': '1px',
   '--number-values-2': '2px',
@@ -504,7 +504,7 @@ export const themes = {
     '--color-brand-background-compound-pressed': '--colors-brand-primary-80',
     '--color-brand-background-compound-rest': '--colors-brand-primary-120',
     '--color-brand-background-glow-a': '--colors-brand-primary-40',
-    '--color-brand-background-glow-b': '--colors-grey-alpha-0',
+    '--color-brand-background-glow-b': '--colors-grey-alpha-grey-14-0',
     '--color-brand-background-inverted-hover': '--colors-brand-primary-160',
     '--color-brand-background-inverted-pressed': '--colors-brand-primary-140',
     '--color-brand-background-inverted-rest': '--colors-grey-white',
@@ -616,7 +616,7 @@ export const themes = {
     '--color-neutral-foreground-1-selected': '--colors-grey-white',
     '--color-neutral-foreground-2-hover': '--colors-grey-white',
     '--color-neutral-foreground-2-pressed': '--colors-grey-white',
-    '--color-neutral-foreground-2-rest': '--colors-grey-84',
+    '--color-neutral-foreground-2-rest': '--colors-grey-alpha-white-70',
     '--color-neutral-foreground-2-selected': '--colors-grey-white',
     '--color-neutral-foreground-2-brand-hover': '--colors-brand-primary-140',
     '--color-neutral-foreground-2-brand-pressed': '--colors-brand-primary-130',
@@ -627,7 +627,7 @@ export const themes = {
     '--color-neutral-foreground-2-link-selected': '--colors-grey-white',
     '--color-neutral-foreground-3-hover': '--colors-grey-84',
     '--color-neutral-foreground-3-pressed': '--colors-grey-84',
-    '--color-neutral-foreground-3-rest': '--colors-grey-68',
+    '--color-neutral-foreground-3-rest': '--colors-grey-alpha-white-50',
     '--color-neutral-foreground-3-selected': '--colors-grey-84',
     '--color-neutral-foreground-3-brand-hover': '--colors-brand-primary-100',
     '--color-neutral-foreground-3-brand-pressed': '--colors-brand-primary-90',
@@ -796,358 +796,194 @@ export const themes = {
 } as const satisfies Record<ThemeName, Record<ThemeToken, PrimitiveToken>>;
 
 export const typography = {
-  web: {
-    caption2: css`
-      font-size: 11px;
-      font-family: Inter, sans-serif;
-      line-height: 16px; /* 145.455% */
-      font-weight: 400;
-      font-style: normal;
-      letter-spacing: 0.25px;
+  caption2: css`
+    font-size: 11px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 16px; /* 145.455% */
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0.24px;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    caption2Strong: css`
-      font-size: 11px;
-      font-family: Inter, sans-serif; 
-      line-height: 16px; /* 145.455% */ 
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0.25px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  caption2Strong: css`
+    font-size: 11px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 16px; /* 145.455% */
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: 0.24px;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    caption1: css`
-      font-size: 13px;
-      font-family: Inter, sans-serif;
-      line-height: 18px; /* 138.462% */
-      font-weight: 400;
-      font-style: normal;
-      letter-spacing: 0.15px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  caption1: css`
+    font-size: 13px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 18px; /* 138.462% */
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0.2px;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    caption1Strong: css`
-      font-size: 13px;
-      font-family: Inter, sans-serif;
-      line-height: 18px; /* 138.462% */
-      font-weight: 600;
-      font-style: normal;
-      letter-spacing: 0.15px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  caption1Strong: css`
+    font-size: 13px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 18px; /* 138.462% */
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: 0.2px;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    caption1Stronger: css`
-      font-size: 13px;
-      font-family: Inter, sans-serif;
-      line-height: 18px; /* 138.462% */
-      font-weight: 700;
-      font-style: normal;
-      letter-spacing: 0.15px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  caption1Stronger: css`
+    font-size: 13px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 18px; /* 138.462% */
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: 0.2px;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    body1: css`
-      font-size: 14px;
-      font-family: Inter, sans-serif;
-      line-height: 20px; /* 142.857% */
-      font-weight: 400;
-      font-style: normal;
-      letter-spacing: 0;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  body1: css`
+    font-size: 14px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 20px; /* 142.857% */
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0.16px;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    body1Strong: css`
-      font-size: 14px;
-      font-family: Inter, sans-serif;
-      line-height: 20px; /* 142.857% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  body1Strong: css`
+    font-size: 14px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 20px; /* 142.857% */
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: 0.16px;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    body1Stronger: css`
-      font-size: 14px;
-      font-family: Inter, sans-serif;
-      line-height: 20px; /* 142.857% */
-      font-weight: 700;
-      font-style: normal;
-      letter-spacing: 0;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  body1Stronger: css`
+    font-size: 14px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 20px; /* 142.857% */
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: 0.16px;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    body2: css`
-      font-size: 16px;
-      font-family: Inter, sans-serif;
-      line-height: 24px; /* 150% */
-      font-weight: 400;
-      font-style: normal;
-      letter-spacing: -0.15px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  body2: css`
+    font-size: 16px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 24px; /* 150% */
+    font-weight: 400;
+    font-style: normal;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  body2Strong: css`
+    font-size: 16px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 24px; /* 150% */
+    font-weight: 500;
+    font-style: normal;
 
-    subtitle2: css`
-      font-size: 16px;
-      font-family: Inter, sans-serif;
-      line-height: 24px; /* 150% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: -0.15px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  subtitle2: css`
+    font-size: 16px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 24px; /* 150% */
+    font-weight: 500;
+    font-style: normal;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    subtitle2Stronger: css`
-      font-size: 16px;
-      font-family: Inter, sans-serif;
-      line-height: 24px; /* 150% */
-      font-weight: 700;
-      font-style: normal;
-      letter-spacing: -0.15px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  subtitle2Stronger: css`
+    font-size: 16px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 24px; /* 150% */
+    font-weight: 600;
+    font-style: normal;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    subtitle1: css`
-      font-size: 20px;
-      font-family: Inter, sans-serif;
-      line-height: 25px; /* 125% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: -0.25px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  subtitle1: css`
+    font-size: 20px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 25px; /* 125% */
+    font-weight: 500;
+    font-style: normal;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    title3: css`
-      font-size: 24px;
-      font-family: Inter, sans-serif;
-      line-height: 30px; /* 125% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: -0.15px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  title3: css`
+    font-size: 24px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 30px; /* 125% */
+    font-weight: 500;
+    font-style: normal;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    title2: css`
-      font-size: 28px;
-      font-family: Inter, sans-serif;
-      line-height: 34px; /* 121.429% */
-      font-weight: 600;
-      font-style: normal;
-      letter-spacing: 0.4px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  title2: css`
+    font-size: 28px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 34px; /* 121.429% */
+    font-weight: 500;
+    font-style: normal;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    title1: css`
-      font-size: 32px;
-      font-family: Inter, sans-serif;
-      line-height: 38px; /* 118.75% */
-      font-weight: 600;
-      font-style: normal;
-      letter-spacing: 0.4px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  title1: css`
+    font-size: 32px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 38px; /* 118.75% */
+    font-weight: 500;
+    font-style: normal;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    largeTitle: css`
-      font-size: 40px;
-      font-family: Inter, sans-serif;
-      line-height: 48px; /* 120% */
-      font-weight: 600;
-      font-style: normal;
-      letter-spacing: 0.4px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  largeTitle: css`
+    font-size: 40px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 48px; /* 120% */
+    font-weight: 500;
+    font-style: normal;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-    display: css`
-      font-size: 68px;
-      font-family: Inter, sans-serif;
-      line-height: 82px; /* 120.588% */
-      font-weight: 600;
-      font-style: normal;
-      letter-spacing: 0.25px;
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
+  display: css`
+    font-size: 68px;
+    font-family: "Innovator Grotesk", sans-serif;
+    line-height: 82px; /* 120.588% */
+    font-weight: 500;
+    font-style: normal;
 
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: 'cv01' on;
-    `,
-  },
-  decorative: {
-    caption2: css`
-      font-size: 11px;
-      font-family: Borna, sans-serif;
-      line-height: 14px; /* 127.273% */
-      font-weight: 400;
-      font-style: normal;
-      letter-spacing: 0.25px;
-    `,
-    caption2Strong: css`
-      font-size: 11px;
-      font-family: Borna, sans-serif;
-      line-height: 16px; /* 145.455% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0.25px;
-    `,
-    caption1: css`
-      font-size: 13px;
-      font-family: Borna, sans-serif;
-      line-height: 18px; /* 138.462% */
-      font-weight: 400;
-      font-style: normal;
-      letter-spacing: 0.25px;
-    `,
-    caption1Strong: css`
-      font-size: 13px;
-      font-family: Borna, sans-serif;
-      line-height: 18px; /* 138.462% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0.25px;
-    `,
-    caption1Stronger: css`
-      font-size: 13px;
-      font-family: Borna, sans-serif;
-      line-height: 18px; /* 138.462% */
-      font-weight: 400;
-      font-style: normal;
-      letter-spacing: 0.25px;
-    `,
-    body1: css`
-      font-size: 14px;
-      font-family: Borna, sans-serif;
-      line-height: 20px; /* 142.857% */
-      font-weight: 400;
-      font-style: normal;
-      letter-spacing: 0.25px;
-    `,
-    body1Strong: css`
-      font-size: 14px;
-      font-family: Borna, sans-serif;
-      line-height: 20px; /* 142.857% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0.25px;
-    `,
-    body1Stronger: css`
-      font-size: 14px;
-      font-family: Borna, sans-serif;
-      line-height: 20px; /* 142.857% */
-      font-weight: 600;
-      font-style: normal;
-      letter-spacing: 0.25px;
-    `,
-    body2: css`
-      font-size: 16px;
-      font-family: Borna, sans-serif;
-      line-height: 22px; /* 137.5% */
-      font-weight: 400;
-      font-style: normal;
-      letter-spacing: 0.25px;
-    `,
-    body2Strong: css`
-      font-size: 16px;
-      font-family: Borna, sans-serif;
-      line-height: 22px; /* 137.5% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0.25px;
-    `,
-    subtitle2: css`
-      font-size: 16px;
-      font-family: Borna, sans-serif;
-      line-height: 20px; /* 125% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0.25px;
-
-      font-feature-settings: 'ss01' on;
-    `,
-    subtitle2Stronger: css`
-      font-size: 16px;
-      font-family: Borna, sans-serif;
-      line-height: 20px; /* 125% */
-      font-weight: 600;
-      font-style: normal;
-      letter-spacing: 0.25px;
-
-      font-feature-settings: 'ss01' on;
-    `,
-    subtitle1: css`
-      font-size: 20px;
-      font-family: Borna, sans-serif;
-      line-height: 24px; /* 120% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0.15px;
-
-      font-feature-settings: 'ss01' on;
-    `,
-    title3: css`
-      font-size: 24px;
-      font-family: Borna, sans-serif;
-      line-height: 30px; /* 125% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0;
-
-      font-feature-settings: 'ss01' on;
-    `,
-    title2: css`
-      font-size: 28px;
-      font-family: Borna, sans-serif;
-      line-height: 34px; /* 121.429% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0;
-
-      font-feature-settings: 'ss01' on;
-    `,
-    title1: css`
-      font-size: 32px;
-      font-family: Borna, sans-serif;
-      line-height: 38px; /* 118.75% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0;
-
-      font-feature-settings: 'ss01' on;
-    `,
-    largeTitle: css`
-      font-size: 40px;
-      font-family: Borna, sans-serif;
-      line-height: 44px; /* 110% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0;
-
-      font-feature-settings: 'ss01' on;
-    `,
-    display: css`
-      font-size: 68px;
-      font-family: Borna, sans-serif;
-      line-height: 80px; /* 117.647% */
-      font-weight: 500;
-      font-style: normal;
-      letter-spacing: 0;
-
-      font-feature-settings: 'ss01' on;
-    `,
-  },
+    font-variant-numeric: lining-nums tabular-nums slashed-zero;
+    font-feature-settings: 'ss03' on;
+  `,
 };
 
 export const backgroundFilters = {

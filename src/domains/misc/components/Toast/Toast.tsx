@@ -146,20 +146,20 @@ const Title = styled.span`
   flex-grow: 1;
   margin-right: ${vars('--spacing-s')};
   color: ${vars('--color-neutral-foreground-1-rest')};
-  ${typography.web.body1Strong}
+  ${typography.body1Strong}
 `;
 
 const Time = styled.span`
   min-width: fit-content;
   margin-right: ${vars('--spacing-s')};
   color: ${vars('--color-neutral-foreground-1-rest')};
-  ${typography.web.caption1}
+  ${typography.caption1}
 `;
 
 const Action = styled.button`
   margin-right: ${vars('--spacing-m')};
   color: ${vars('--color-brand-foreground-link-rest')};
-  ${typography.web.body1}
+  ${typography.body1}
   
   &:hover {
     text-decoration: underline;
@@ -181,12 +181,12 @@ const Subtitle = styled.p`
   color: ${vars('--color-neutral-foreground-2-rest')};
 
   word-wrap: anywhere;  /* stylelint-disable-line declaration-property-value-no-unknown */
-  ${typography.web.caption1}
+  ${typography.caption1}
 `;
 
 const Body = styled.div`
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.caption1}
+  ${typography.caption1}
 `;
 
 const ActionGroup = styled.section`

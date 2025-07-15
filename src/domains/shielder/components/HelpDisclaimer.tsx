@@ -36,7 +36,7 @@ const Container = styled.div`
 
 const Text = styled.p`
   color: ${vars('--color-neutral-foreground-4-rest')};
-  ${typography.web.caption1}
+  ${typography.caption1}
 `;
 
 const Link = styled.a`

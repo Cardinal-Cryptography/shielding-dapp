@@ -60,10 +60,10 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
-  ${typography.decorative.subtitle2};
+  ${typography.subtitle2};
   
   & > p {
-    ${typography.web.caption2};
+    ${typography.caption2};
     color:${vars('--color-neutral-foreground-3-rest')}
   }
 `;

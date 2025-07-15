@@ -3,6 +3,7 @@ import cssReset from 'styled-reset';
 
 import { primitives, themes } from '../utils/tokens';
 import vars from '../utils/vars';
+import '../fonts.css';
 
 const primitivesString = Object.entries(primitives)
   .map(([property, value]) => `${property}: ${value};`).join('\n');
