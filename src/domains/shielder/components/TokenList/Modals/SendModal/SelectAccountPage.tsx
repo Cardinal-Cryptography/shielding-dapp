@@ -6,7 +6,7 @@ import { isAddress } from 'viem';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import ContentBox from 'src/domains/misc/components/ContentBox';
 import PasteButton from 'src/domains/misc/components/PasteButton';
 import TextInput from 'src/domains/misc/components/TextInput';
 import { BEST_PRACTICES_LINK } from 'src/domains/misc/consts/consts';
@@ -130,7 +130,7 @@ const Container = styled.div`
   gap: ${vars('--spacing-xl')};
 `;
 
-const Content = styled(DoubleBorderBox.Content)`
+const Content = styled(ContentBox)`
   display: flex;
 
   flex-direction: column;

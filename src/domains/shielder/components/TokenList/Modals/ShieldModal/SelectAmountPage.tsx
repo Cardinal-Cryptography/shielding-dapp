@@ -6,7 +6,7 @@ import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
 import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import ContentBox from 'src/domains/misc/components/ContentBox';
 import InfoPair from 'src/domains/misc/components/InfoPair';
 import Skeleton from 'src/domains/misc/components/Skeleton';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
@@ -142,11 +142,16 @@ const Container = styled.div`
   gap: ${vars('--spacing-xl')};
 `;
 
-const Disclaimer = styled(DoubleBorderBox.Content)`
+const Disclaimer = styled(ContentBox)`
   display: flex;
+
+  flex-direction: row;
   justify-content: space-between;
+  gap: ${vars('--spacing-m')};
+
   margin: ${vars('--spacing-none')};
   padding: ${vars('--spacing-s')} 0 0 0;
+
   background: ${vars('--color-neutral-background-4a-rest')};
 `;
 

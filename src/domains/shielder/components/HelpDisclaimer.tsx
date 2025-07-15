@@ -1,8 +1,9 @@
 import { styled } from 'styled-components';
 
 import BIcon from 'src/domains/misc/components/BIcon';
+import ContentBox from 'src/domains/misc/components/ContentBox';
 import { FRAUD_PROTECTION_LINK } from 'src/domains/misc/consts/consts';
-import { backgroundFilters, typography } from 'src/domains/styling/utils/tokens';
+import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
 const HelpDisclaimer = () => (
@@ -18,20 +19,16 @@ const HelpDisclaimer = () => (
 
 export default HelpDisclaimer;
 
-const Container = styled.div`
+const Container = styled(ContentBox)`
   display: flex;
   
   align-items: start;
   gap: ${vars('--spacing-s')};
 
+  width: 100%;
   padding: ${vars('--spacing-l')};
 
   color: ${vars('--color-neutral-foreground-3-rest')};
-
-  border-radius: ${vars('--border-radius-xxl')};
-  background: ${vars('--color-neutral-background-alpha-4-rest')};
-
-  ${backgroundFilters.backgroundBlur6}
 `;
 
 const Text = styled.p`
