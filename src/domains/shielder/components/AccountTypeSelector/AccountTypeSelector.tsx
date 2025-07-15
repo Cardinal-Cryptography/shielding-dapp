@@ -96,7 +96,7 @@ const BalanceName = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-xxs')};
-  ${typography.web.body1Strong};
+  ${typography.body1Strong};
   background: inherit;
 `;
 
@@ -122,6 +122,6 @@ const Details = styled.div`
 `;
 
 const Address = styled(CopyButton)`
-  ${typography.web.caption1};
+  ${typography.caption1};
   gap: ${vars('--spacing-xs')};
 `;

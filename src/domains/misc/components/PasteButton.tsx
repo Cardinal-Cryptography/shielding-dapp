@@ -69,7 +69,7 @@ const StyledButton = styled.button`
   gap: ${vars('--spacing-xs')};
 
   border-radius: ${vars('--border-radius-m')};
-  ${typography.decorative.caption1Strong};
+  ${typography.caption1Strong};
   transition: color 0.2s;
 `;
 

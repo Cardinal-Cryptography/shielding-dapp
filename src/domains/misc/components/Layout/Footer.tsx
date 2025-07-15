@@ -86,7 +86,7 @@ const CopyrightContainer = styled(InnerContainer)`
 const Copyright = styled.div`
   width: 100%;
   color: ${vars('--color-neutral-foreground-4-rest')};
-  ${typography.web.caption2}
+  ${typography.caption2}
 
   @media (width >= ${BREAKPOINTS.sm}) { /* stylelint-disable-line media-query-no-invalid */
     width: auto;
@@ -97,5 +97,5 @@ const Link = styled.a`
   color: ${vars('--color-neutral-foreground-4-rest')};
 
   text-decoration: underline;
-  ${typography.web.caption2}
+  ${typography.caption2}
 `;

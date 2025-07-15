@@ -82,7 +82,7 @@ const BrandContainer = styled.div`
 const AccountDetails = styled.div`
   display: flex;
   align-items: center;
-  ${typography.web.caption1};
+  ${typography.caption1};
 `;
 
 const AccountManager = styled.div`

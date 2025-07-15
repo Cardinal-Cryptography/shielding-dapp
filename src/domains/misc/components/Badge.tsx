@@ -229,8 +229,8 @@ const BadgeText = styled.span.withConfig({
     })};
   text-align: center;
   ${perSize({
-    medium: typography.web.caption2,
-    large: typography.web.caption1,
+    medium: typography.caption2,
+    large: typography.caption1,
   })};
   line-height: 100%;
 `;

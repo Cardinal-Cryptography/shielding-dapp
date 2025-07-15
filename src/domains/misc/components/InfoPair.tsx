@@ -57,7 +57,7 @@ const Label = styled.div`
   height: 24px;
 
   flex-shrink: 0;
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const Value = styled.div<{ $allowShrinking?: boolean }>`
@@ -66,7 +66,7 @@ const Value = styled.div<{ $allowShrinking?: boolean }>`
   overflow: hidden;
 
   flex-shrink: ${({ $allowShrinking }) => ($allowShrinking ? 1 : 0)};
-  ${typography.web.body1Strong};
+  ${typography.body1Strong};
 `;
 
 const Separator = styled.div`

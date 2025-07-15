@@ -44,7 +44,7 @@ const Input = styled(AutoResizingInput)`
   background: none;
   outline: none;
   
-  ${typography.decorative.subtitle2}
+  ${typography.subtitle2}
 `;
 
 const Container = styled.label<{ $highlighted: boolean }>`
@@ -52,7 +52,7 @@ const Container = styled.label<{ $highlighted: boolean }>`
   align-items: center;
   border-bottom: 1px dashed ${vars('--color-neutral-stroke-2-rest')};
   cursor: text;
-  ${typography.decorative.subtitle2};
+  ${typography.subtitle2};
 
   &&, ${Input}, ${Input}::placeholder  {
     color: ${props => props.$highlighted ?

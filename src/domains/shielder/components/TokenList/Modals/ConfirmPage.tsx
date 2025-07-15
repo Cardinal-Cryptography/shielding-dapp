@@ -161,7 +161,7 @@ const Content = styled(DoubleBorderBox.Content)`
 
   background: ${vars('--color-neutral-background-4a-rest')};
   
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const AccountDetails = styled.div`
@@ -175,14 +175,14 @@ const Address = styled.p`
 `;
 
 const Amount = styled.div`
-  ${typography.decorative.title1};
+  ${typography.title1};
 `;
 
 const TokenDetails = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-s')};
-  ${typography.decorative.subtitle2};
+  ${typography.subtitle2};
 `;
 
 const Divider = styled.div`
@@ -209,7 +209,7 @@ const TotalFee = styled.div`
   align-items: center;
   gap: ${vars('--spacing-xs')};
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.body1};
+  ${typography.body1};
   
   & > button {
     display: flex;

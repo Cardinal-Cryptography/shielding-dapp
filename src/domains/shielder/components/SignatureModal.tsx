@@ -121,12 +121,12 @@ const SignatureIcon = styled(CIcon)`
 `;
 
 const Title = styled.h3<{ $isError?: boolean }>`
-  ${typography.decorative.subtitle1};
+  ${typography.subtitle1};
   ${({ $isError }) => $isError && css`color: ${vars('--color-status-danger-foreground-1-rest')};`}
 `;
 
 const Text = styled.p`
-  ${typography.decorative.body1};
+  ${typography.body1};
   text-align: center;
   color: ${vars('--color-neutral-foreground-2-rest')};
 `;
@@ -141,7 +141,7 @@ const Buttons = styled.div`
 const LearnMore = styled.a`
   display: flex;
   gap: ${vars('--spacing-xs')};
-  ${typography.web.body1};
+  ${typography.body1};
   
   &, & > a {
     color: ${vars('--color-brand-foreground-link-rest')};

@@ -168,7 +168,7 @@ const StyledButton = styled(Button)`
   border-radius: ${vars('--border-radius-xs')};
   outline: none;
 
-  ${typography.web.body1Strong};
+  ${typography.body1Strong};
 
   &:hover, &:active, &:focus, &:focus-visible, &:disabled  {
     border: none;
@@ -184,6 +184,6 @@ const Title = styled.div`
   margin-top: ${vars('--spacing-s')};
   padding-block: ${vars('--spacing-s')};
   padding-inline: 8px;
-  ${typography.web.caption1Strong};
+  ${typography.caption1Strong};
   color: ${vars('--color-neutral-foreground-3-rest')};
 `;

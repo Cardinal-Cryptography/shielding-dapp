@@ -89,7 +89,7 @@ const StyledContent = styled(RadixTooltip.Content)`
   &[data-side='left'] { animation-name: ${slideLeft}; }
   &[data-side='right'] { animation-name: ${slideRight}; }
   
-  ${typography.web.caption1}
+  ${typography.caption1}
 `;
 
 const StyledArrow = styled(RadixTooltip.Arrow)`

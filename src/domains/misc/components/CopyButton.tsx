@@ -73,7 +73,7 @@ const StyledButton = styled.button`
   color: ${vars('--color-brand-foreground-1-rest')};
 
   border-radius: ${vars('--border-radius-m')};
-  ${typography.decorative.body2};
+  ${typography.body2};
   transition: color 0.2s;
 `;
 

@@ -110,7 +110,7 @@ const Container = styled.div<ContainerProps>`
     outline: css`border: ${BORDER_SIZE}px solid ${vars('--color-neutral-stroke-1-rest')}`,
   })};
 
-  ${typography.web.body1}
+  ${typography.body1}
 
   & * {
     fill: ${vars('--color-neutral-foreground-3-rest')};
@@ -182,7 +182,7 @@ const Input = styled.input`
   outline: none;
   transition: color ${transitionTime};
 
-  ${typography.web.body2}
+  ${typography.body2}
 
   &::placeholder {
     color: ${vars('--color-neutral-foreground-4-rest')};

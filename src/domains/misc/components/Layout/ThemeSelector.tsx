@@ -50,5 +50,5 @@ const CapitalizedButton = styled(Button)`
 
 const Title = styled.span`
   color: ${vars('--color-neutral-foreground-1-rest')};
-  ${typography.web.body1}
+  ${typography.body1}
 `;

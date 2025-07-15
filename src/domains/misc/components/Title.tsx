@@ -50,9 +50,9 @@ const TitleBar = styled.header<{ $size: Size }>`
     large: '60px',
   })};
   ${perSize({
-    small: typography.decorative.body1Strong,
-    medium: typography.decorative.subtitle2,
-    large: typography.decorative.subtitle1,
+    small: typography.body1Strong,
+    medium: typography.subtitle2,
+    large: typography.subtitle1,
   })}
 `;
 

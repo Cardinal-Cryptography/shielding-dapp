@@ -124,7 +124,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const ButtonWrapper = styled.div`

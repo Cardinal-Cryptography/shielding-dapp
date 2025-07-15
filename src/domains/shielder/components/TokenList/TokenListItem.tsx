@@ -139,7 +139,7 @@ const Column = styled.div`
 `;
 
 const Title = styled.p`
-  ${typography.decorative.subtitle2};
+  ${typography.subtitle2};
 `;
 
 const Subtitle = styled.div`
@@ -147,5 +147,5 @@ const Subtitle = styled.div`
   align-items: center;
   gap: ${vars('--spacing-xs')};
   color: ${vars('--color-neutral-foreground-4-rest')};
-  ${typography.web.caption1};
+  ${typography.caption1};
 `;
