@@ -108,13 +108,7 @@ const DomButton = styled.button.withConfig({
     'extra-small': typography.caption1Strong,
     tiny: typography.caption2Strong,
   })};
-  border-radius: ${perSize({
-    large: vars('--border-radius-s'),
-    medium: vars('--border-radius-s'),
-    small: vars('--border-radius-s'),
-    'extra-small': vars('--border-radius-s'),
-    tiny: vars('--border-radius-xs'),
-  })};
+  border-radius: ${vars('--border-radius-circular')};
   transition: background-color ${transitionTime}, color ${transitionTime};
 
   outline-offset: -${BORDER_WIDTH}px;

@@ -53,6 +53,7 @@ const ContentWrapper = styled.section`
   display: flex;
 
   justify-content: space-between;
+  align-items: center;
   gap: ${vars('--spacing-xs')};
 
   width: 100%;
