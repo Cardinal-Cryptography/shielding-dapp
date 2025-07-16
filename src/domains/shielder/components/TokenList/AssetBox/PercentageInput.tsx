@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import CIcon from 'src/domains/misc/components/CIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import { transitionTime, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -63,6 +63,6 @@ const Container = styled.label<{ $highlighted: boolean }>`
   }
 `;
 
-const PencilIcon = styled(CIcon)`
+const PencilIcon = styled(BIcon)`
   margin-right: ${vars('--spacing-xxs')};
 `;

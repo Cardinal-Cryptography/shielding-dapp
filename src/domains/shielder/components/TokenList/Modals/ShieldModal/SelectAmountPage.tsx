@@ -4,8 +4,8 @@ import { isNullish } from 'utility-types';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
+import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import InfoPair from 'src/domains/misc/components/InfoPair';
 import Skeleton from 'src/domains/misc/components/Skeleton';
@@ -91,7 +91,7 @@ const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => 
       />
       <Disclaimer>
         <InfoContainer>
-          <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
+          <BIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
           <p>
             You're about to shield your tokens.
             Your shielded account balance and actions will be private and secured.
@@ -105,7 +105,7 @@ const SelectAmountPage = ({ onContinue, token, hasInsufficientFees }: Props) => 
             <TotalFeeLabel>
               <p>Est. Total fee</p>
               <button onClick={() => void openFeeBreakdownModal()}>
-                <CIcon size={16} icon="InfoRegular" />
+                <BIcon size={16} icon="InfoRegular" />
               </button>
             </TotalFeeLabel>
           }

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
+import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
 import Modal, { useModalControls } from 'src/domains/misc/components/Modal';
 import CheckedContainer from 'src/domains/misc/components/PatternContainer';
 import { PRIVACY_POLICY_LINK, TERMS_OF_CONDITIONS_LINK, TERMS_OF_SERVICE_LINK } from 'src/domains/misc/consts/consts';
@@ -28,9 +28,9 @@ const ConnectModal = () => {
               <CheckedContainer>
                 <Branding>
                   <LogoContainer>
-                    <CIcon icon="Common" size={26} color="#406EB2" />
+                    <BIcon icon="Blanksquare" size={26} />
                   </LogoContainer>
-                  <p>Common Web App</p>
+                  <p>Blanksquare Web App</p>
                 </Branding>
               </CheckedContainer>
               <Title>
@@ -42,15 +42,15 @@ const ConnectModal = () => {
               </Text>
               <LinksWrapper>
                 <Link href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">
-                  <CIcon icon="DocumentText" size={20} />
+                  <BIcon icon="DocumentText" size={20} />
                   <p>Terms of service</p>
                 </Link>
                 <Link href={TERMS_OF_CONDITIONS_LINK} target="_blank" rel="noopener noreferrer">
-                  <CIcon icon="DocumentText" size={20} />
+                  <BIcon icon="DocumentText" size={20} />
                   <p>Terms and Conditions</p>
                 </Link>
                 <Link href={PRIVACY_POLICY_LINK} target="_blank" rel="noopener noreferrer">
-                  <CIcon icon="DocumentText" size={20} />
+                  <BIcon icon="DocumentText" size={20} />
                   <p>Privacy policy</p>
                 </Link>
               </LinksWrapper>
@@ -128,7 +128,6 @@ const Branding = styled.div`
   position: relative;
   gap: ${vars('--spacing-s')};
   align-items: center;
-  color: ${vars('--color-neutral-foreground-2-rest')};
   ${typography.subtitle1};
 `;
 
@@ -136,6 +135,4 @@ const LogoContainer = styled.div`
   display: grid;
   place-items: center;
   padding: ${vars('--spacing-xxs')};
-  border-radius: ${vars('--spacing-s-nudge')};
-  background: #E5EFFF;
 `;

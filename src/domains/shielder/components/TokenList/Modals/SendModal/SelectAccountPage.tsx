@@ -4,8 +4,8 @@ import styled, { RuleSet } from 'styled-components';
 import { isAddress } from 'viem';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
+import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import PasteButton from 'src/domains/misc/components/PasteButton';
 import TextInput from 'src/domains/misc/components/TextInput';
@@ -62,7 +62,7 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
               transition={{ duration: 0.2, ease: 'easeInOut' }}
             >
               <MessageContent $status={messageStatus}>
-                <CIcon
+                <BIcon
                   icon={messageStatus === 'error' ? 'ErrorCircleRegular' : 'WarningRegular'}
                   size={12}
                 />
@@ -76,7 +76,7 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
       </Content>
       <Disclaimer>
         <InfoContainer>
-          <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
+          <BIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
           <p>
             You're about to send tokens from your shielded account to a public account.
             It will originate from the shielded pool, leaving your old transfer history behind.
@@ -93,7 +93,7 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
             initial={{ rotateZ: -90 }}
             animate={{ rotateZ: isExpanded ? -270 : -90 }}
           >
-            <CIcon icon="ChevronLeft" size={18} />
+            <BIcon icon="ChevronLeft" size={18} />
           </ChevronIconWrapper>
         </AccordionHeader>
         <AnimatePresence>
@@ -221,7 +221,7 @@ const MessageContent = styled.div<{ $status: MessageStatus }>`
     warning: vars('--color-status-warning-foreground-1-rest'),
   })({ $status: props.$status })};
 
-  & > ${CIcon} {
+  & > ${BIcon} {
     margin-top: ${vars('--spacing-xs-nudge')};
   }
 `;

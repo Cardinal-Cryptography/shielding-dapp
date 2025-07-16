@@ -8,8 +8,8 @@ import { useAccount } from 'wagmi';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import useConnectedChainNetworkEnvironment from 'src/domains/chains/utils/useConnectedChainNetworkEnvironment';
+import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
 import Modal from 'src/domains/misc/components/Modal';
 import CheckedContainer from 'src/domains/misc/components/PatternContainer';
 import { KEY_GENERATION_PROCESS_LINK } from 'src/domains/misc/consts/consts';
@@ -90,7 +90,7 @@ const SignatureModal = () => {
             </Text>
             <LearnMore href={KEY_GENERATION_PROCESS_LINK} target="_blank" rel="noopener noreferrer">
               <p>Learn more</p>
-              <CIcon icon="Open" size={20} />
+              <BIcon icon="Open" size={20} />
             </LearnMore>
             <Buttons>
               {isReady && !isLoading && !isSuccess && (
@@ -116,7 +116,7 @@ const Content = styled.div`
   gap: ${vars('--spacing-l')};
 `;
 
-const SignatureIcon = styled(CIcon)`
+const SignatureIcon = styled(BIcon)`
   position: relative;
 `;
 

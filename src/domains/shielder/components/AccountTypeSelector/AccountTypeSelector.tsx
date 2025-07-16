@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi';
 import CheckmarkChecked from 'src/domains/misc/assets/checkmarkChecked.svg?react';
 import CheckmarkUnchecked from 'src/domains/misc/assets/checkmarkUnchecked.svg?react';
 import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
-import CIcon from 'src/domains/misc/components/CIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import CopyButton from 'src/domains/misc/components/CopyButton';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
 import useShielderStore from 'src/domains/shielder/stores/shielder';
@@ -39,7 +39,7 @@ const AccountTypeSelector = () => {
                 <Address data={address} size={20}>
                   {formatAddress(address)}
                 </Address>
-              ) : <CIcon size={20} icon="ArrowTurnDownLeft" />}
+              ) : <BIcon size={20} icon="ArrowTurnDownLeft" />}
             </AdditionalInfo>
           </BalanceItem>
         );

@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ComponentProps, useRef, MouseEvent } from 'react';
 import styled, { css, RuleSet } from 'styled-components';
 
-import CIcon, { IconName } from 'src/domains/misc/components/CIcon';
+import BIcon, { IconName } from 'src/domains/misc/components/BIcon';
 import { transitionTime, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -42,7 +42,7 @@ const TextInput = ({
       onClick={() => inputRef.current?.focus()}
       className={className}
     >
-      {leftIcon && <CIcon icon={leftIcon} size={24} />}
+      {leftIcon && <BIcon icon={leftIcon} size={24} />}
       <Input ref={inputRef} {...props} />
       <AnimatePresence>
         {onClear && !!props.value?.toString().length && (
@@ -58,7 +58,7 @@ const TextInput = ({
           />
         )}
       </AnimatePresence>
-      {rightIcon && <CIcon icon={rightIcon} size={24} />}
+      {rightIcon && <BIcon icon={rightIcon} size={24} />}
     </Container>
   );
 };

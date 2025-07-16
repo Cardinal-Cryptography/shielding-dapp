@@ -3,8 +3,8 @@ import dayjs from 'dayjs';
 import { ComponentProps, MouseEvent, MouseEventHandler, PointerEvent, ReactNode } from 'react';
 import styled from 'styled-components';
 
+import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
 import userPreferableTimeFormat from 'src/domains/misc/utils/userPreferableTimeFormat';
 import { boxShadows, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -53,7 +53,7 @@ const Toast = ({
   return (
     <Container title="Toast">
       <IconContainer>
-        {status === 'inProgress' ? <Spinner icon="Spinner" size={20} /> : <CIcon size={20} icon={icon} color={color} />}
+        {status === 'inProgress' ? <Spinner icon="Spinner" size={20} /> : <BIcon size={20} icon={icon} color={color} />}
       </IconContainer>
       <RightSection>
         <Header>
@@ -213,7 +213,7 @@ const ProgressBar = styled.div`
   transform-origin: center left;
 `;
 
-const Spinner = styled(CIcon)`
+const Spinner = styled(BIcon)`
   animation: spin 2s infinite linear;
 
   path:first-of-type {
