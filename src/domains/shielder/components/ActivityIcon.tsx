@@ -1,6 +1,6 @@
 import styled, { css, RuleSet } from 'styled-components';
 
-import CIcon, { IconName } from 'src/domains/misc/components/CIcon';
+import BIcon, { IconName } from 'src/domains/misc/components/BIcon';
 import { LocalShielderActivityHistory } from 'src/domains/shielder/stores/getShielderIndexedDB';
 import vars from 'src/domains/styling/utils/vars.ts';
 
@@ -25,14 +25,14 @@ const AccountTypeIcon = ({ type, size, className, status = 'stale' }: Props) => 
   return (
     <Wrapper>
       <IconWrapper className={className} $size={size} $status={status}>
-        <CIcon
+        <BIcon
           icon={ICONS_BY_TYPE[type]}
           size={size / 1.6}
         />
       </IconWrapper>
       {type === 'Withdraw' && (
         <AdditionalIconWrapper className={className}>
-          <CIcon icon="ShieldedFilled" size={size / 2.4} />
+          <BIcon icon="ShieldedFilled" size={size / 2.4} />
         </AdditionalIconWrapper>
       )}
     </Wrapper>

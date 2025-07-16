@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { objectEntries, objectKeys } from 'tsafe';
 
 import useChain from 'src/domains/chains/utils/useChain';
-import CIcon from 'src/domains/misc/components/CIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import Skeleton from 'src/domains/misc/components/Skeleton';
 import Tabs from 'src/domains/misc/components/Tabs';
@@ -100,7 +100,7 @@ useState<keyof typeof TABS>('tokens');
             {selectedAccountType === 'public' && (
               <WithPadding>
                 <InfoBox>
-                  <CIcon icon="Info" size={20} />
+                  <BIcon icon="Info" size={20} />
                   <p>Tokens that can be moved to shielded account:</p>
                 </InfoBox>
               </WithPadding>
@@ -112,7 +112,7 @@ useState<keyof typeof TABS>('tokens');
               <WithPadding>
                 <Disclaimer>
                   <InfoContainer>
-                    <CIcon
+                    <BIcon
                       icon="InfoRegular"
                       size={20}
                       color={vars('--color-neutral-foreground-3-rest')}

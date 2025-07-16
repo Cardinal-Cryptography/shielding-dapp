@@ -4,7 +4,7 @@ import { MouseEvent, type ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { isNullish } from 'utility-types';
 
-import CIcon from 'src/domains/misc/components/CIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -51,7 +51,7 @@ const CopyButton = ({
         initial={{ opacity: 0, y: isSuccess ? -5 : 0 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <CIcon
+        <BIcon
           icon={isSuccess ? 'CheckmarkCircle' : 'Copy'}
           color={isSuccess ? vars('--color-status-success-foreground-1-rest') : undefined}
           size={size}

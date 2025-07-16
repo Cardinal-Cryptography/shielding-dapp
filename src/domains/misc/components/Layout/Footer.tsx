@@ -25,12 +25,12 @@ const Footer = () => (
       <Link href={FAUCET_LINK} target="_blank" rel="noopener noreferrer">
         Get Testnet Tokens
       </Link>
-      <Link href={LANDING_PAGE_LINK} target="_blank" rel="noopener noreferrer">common.fi</Link>
+      <Link href={LANDING_PAGE_LINK} target="_blank" rel="noopener noreferrer">blanksquare.io</Link>
     </InnerContainer>
     <CopyrightContainer data-chromatic="ignore">
       <InnerContainer>
         <Copyright>
-          Copyright © {new Date().getFullYear()} Common, ver. {import.meta.env.APP_VERSION}
+          Copyright © {new Date().getFullYear()} Blanksquare, ver. {import.meta.env.APP_VERSION}
         </Copyright>
         <Link href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">
           Terms of service

@@ -1,7 +1,7 @@
 import { ComponentProps, forwardRef, ReactNode } from 'react';
 import styled, { css, RuleSet } from 'styled-components';
 
-import CIcon, { type IconName } from 'src/domains/misc/components/CIcon';
+import BIcon, { type IconName } from 'src/domains/misc/components/BIcon';
 import { transitionTime, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -46,9 +46,9 @@ const Button = forwardRef<HTMLButtonElement, Props>(({
     selected={selected}
     $iconOnly={!children}
   >
-    {isLoading ? <LoadingIcon icon="Spinner" size={ICON_SIZE_MAP[size] * 0.75} /> : leftIcon && <CIcon icon={leftIcon} size={ICON_SIZE_MAP[size]} />}
+    {isLoading ? <LoadingIcon icon="Spinner" size={ICON_SIZE_MAP[size] * 0.75} /> : leftIcon && <BIcon icon={leftIcon} size={ICON_SIZE_MAP[size]} />}
     {children}
-    {rightIcon && <CIcon icon={rightIcon} size={ICON_SIZE_MAP[size]} />}
+    {rightIcon && <BIcon icon={rightIcon} size={ICON_SIZE_MAP[size]} />}
   </DomButton>
 ));
 
@@ -308,7 +308,7 @@ const DomButton = styled.button.withConfig({
   }
 `;
 
-const LoadingIcon = styled(CIcon)`
+const LoadingIcon = styled(BIcon)`
   animation: spin 1.4s linear infinite;
 
   & *:first-of-type {

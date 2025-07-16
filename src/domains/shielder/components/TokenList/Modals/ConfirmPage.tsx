@@ -3,8 +3,8 @@ import { type Address } from 'viem';
 
 import useChain from 'src/domains/chains/utils/useChain';
 import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
 import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
 import InfoPair from 'src/domains/misc/components/InfoPair';
 import Skeleton from 'src/domains/misc/components/Skeleton';
@@ -99,7 +99,7 @@ const ConfirmPage = ({
             <TotalFee>
               <p>Est. Total fee</p>
               <button onClick={() => void openFeeBreakdownModal()}>
-                <CIcon size={16} icon="InfoRegular" />
+                <BIcon size={16} icon="InfoRegular" />
               </button>
             </TotalFee>
           }
