@@ -15,7 +15,7 @@ import Navigation from '../Navigation';
 
 import Brand from './Brand';
 import * as NavBox from './NavBox';
-import { BRAND_CONTAINER_TITLE, BRAND_LOGO_HEIGHT } from './consts';
+import { BRAND_CONTAINER_TITLE, BRAND_LOGO_HEIGHT_DESKTOP, BRAND_LOGO_HEIGHT_MOBILE } from './consts';
 import UserIcon from './userIcon.svg?react';
 
 const TopBar = () => {
@@ -70,9 +70,13 @@ export default TopBar;
 
 const StyledBrand = styled(Brand)`
   margin-left: 8px;
-  height: ${BRAND_LOGO_HEIGHT};
+  height: ${BRAND_LOGO_HEIGHT_DESKTOP};
 
   flex-shrink: 0;
+
+  @media (width <= ${BOTTOM_MENU_BREAKPOINT}) { /* stylelint-disable-line media-query-no-invalid */
+    height: ${BRAND_LOGO_HEIGHT_MOBILE};
+  }
 `;
 
 const BrandContainer = styled.div`
