@@ -57,6 +57,7 @@ const ActivityDetailsModal = (props: Props) => {
     { isNative: true as const };
 
   const operation = transaction?.type === 'Withdraw' ? 'send' : 'shield';
+
   const { fees, totalFee: estimatedTotalFee } = useShielderFees({
     token,
     operation,

@@ -50,7 +50,7 @@ const TokenListItem = ({ token }: Props) => {
         variables.token.address === token.address &&
         variables.token.isNative === token.isNative;
     },
-  });
+  }) && selectedAccountType === 'public';
 
   const isWithdrawing = !!useIsMutating({
     predicate: mutation => {
@@ -60,7 +60,7 @@ const TokenListItem = ({ token }: Props) => {
         variables.token.address === token.address &&
         variables.token.isNative === token.isNative;
     },
-  });
+  }) && selectedAccountType === 'shielded';
 
   const isProcessing = isShielding || isWithdrawing;
   const processingText = isShielding ? 'Shielding' : isWithdrawing ? 'Sending privately' : undefined;
