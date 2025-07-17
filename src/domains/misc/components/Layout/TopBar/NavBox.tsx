@@ -14,16 +14,16 @@ type Props = {
 };
 
 export const Container = ({ children, wrapperClassName, contentContainerClassName }: Props) => (
-  <BorderWrapper className={wrapperClassName}>
+  <Wrapper className={wrapperClassName}>
     <ContentWrapper className={contentContainerClassName}>
       {children}
     </ContentWrapper>
-  </BorderWrapper>
+  </Wrapper>
 );
 
 const borderSize = 1;
 
-const BorderWrapper = styled.div.withConfig({
+const Wrapper = styled.div.withConfig({
   shouldForwardProp: prop => !['withGradientBorder'].includes(prop),
 })`
   min-width: 0;
@@ -32,20 +32,6 @@ const BorderWrapper = styled.div.withConfig({
     position: relative;
     margin: ${vars('--spacing-xxxl')};
     padding: ${borderSize}px;
-    
-    &::after {
-      content: "";
-
-      position: absolute;
-      inset: 0;
-
-      border: ${borderSize}px solid ${vars('--color-neutral-stroke-3-rest')};
-
-      border-radius: ${vars('--border-radius-xxl')};
-      pointer-events: none; /* necessary because of the z-index, which makes this element cover other children */
-
-      mask-image: linear-gradient(to bottom right, black 10%, transparent 90%);
-    }
   }
 `;
 

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import ConnectModal from 'src/domains/chains/components/ConnectModal';
 import Button from 'src/domains/misc/components/Button';
-import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import ContentBox from 'src/domains/misc/components/ContentBox';
 import { useModal } from 'src/domains/misc/components/Modal';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -15,29 +15,27 @@ const Welcome = () => {
   const { open } = useModal();
 
   return (
-    <DoubleBorderBox.Wrapper>
-      <Content>
-        <BreakTheTrace src={breakTheTrace} />
-        <Steps>
-          <Title>Make your onchain actions private and secure with shielding.</Title>
-          <List>
-            {STEPS.map((step, index) => (
-              <Step key={index}>
-                <StepNumber>{index + 1}</StepNumber>
-                <p>{step}</p>
-              </Step>
-            ))}
-          </List>
-        </Steps>
-        <ConnectButton
-          size="large"
-          variant="primary"
-          onClick={() => void open(<ConnectModal />)}
-        >
-          Connect Wallet
-        </ConnectButton>
-      </Content>
-    </DoubleBorderBox.Wrapper>
+    <Content>
+      <BreakTheTrace src={breakTheTrace} />
+      <Steps>
+        <Title>Make your onchain actions private and secure with shielding.</Title>
+        <List>
+          {STEPS.map((step, index) => (
+            <Step key={index}>
+              <StepNumber>{index + 1}</StepNumber>
+              <p>{step}</p>
+            </Step>
+          ))}
+        </List>
+      </Steps>
+      <ConnectButton
+        size="large"
+        variant="primary"
+        onClick={() => void open(<ConnectModal />)}
+      >
+        Connect Wallet
+      </ConnectButton>
+    </Content>
   );
 };
 
@@ -51,7 +49,7 @@ const BreakTheTrace = styled.img`
   user-select: none;
 `;
 
-const Content = styled(DoubleBorderBox.Content)`
+const Content = styled(ContentBox)`
   display: flex;
 
   flex-direction: column;
