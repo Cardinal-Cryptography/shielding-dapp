@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import vars from 'src/domains/styling/utils/vars';
 
-import { BRAND_CONTAINER_TITLE, BRAND_LOGO_WIDTH_DESKTOP } from './consts';
+import { BRAND_CONTAINER_TITLE, BRAND_LOGO_WIDTH_MOBILE } from './consts';
 import LogoSvg from './logo.svg?react';
 import LogoTypeSvg from './logoType.svg?react';
 
@@ -32,13 +32,13 @@ const Container = styled.div`
 const MobileLogo = styled(LogoSvg)`
   display: none;
     
-  @container ${BRAND_CONTAINER_TITLE} (max-width: ${BRAND_LOGO_WIDTH_DESKTOP}) { /* stylelint-disable-line at-rule-prelude-no-invalid */
+  @container ${BRAND_CONTAINER_TITLE} (max-width: ${BRAND_LOGO_WIDTH_MOBILE}) { /* stylelint-disable-line at-rule-prelude-no-invalid */
     display: block;
   }
 `;
 
 const DesktopLogo = styled(LogoTypeSvg)`
-  @container ${BRAND_CONTAINER_TITLE} (max-width: ${BRAND_LOGO_WIDTH_DESKTOP}) { /* stylelint-disable-line at-rule-prelude-no-invalid */
+  @container ${BRAND_CONTAINER_TITLE} (max-width: ${BRAND_LOGO_WIDTH_MOBILE}) { /* stylelint-disable-line at-rule-prelude-no-invalid */
     display: none;
   }
 `;

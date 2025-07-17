@@ -94,6 +94,7 @@ const BottomNavigationContainer = styled.div`
   width: 100%;
 
   background: ${vars('--color-neutral-background-2-rest')};
+  overflow: hidden;
 
   border-top: 1px solid ${vars('--color-neutral-stroke-2-rest')};
 `;
