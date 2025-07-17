@@ -82,6 +82,7 @@ const StyledButton = styled(Button)`
   padding-inline: ${vars('--spacing-s')};
   width: ${CHAIN_SELECTOR_WIDTH}px;
 
+  border-radius: ${vars('--spacing-s')};
   background: ${vars('--color-neutral-background-1-rest')};
   border-color: ${vars('--color-neutral-stroke-2-rest')};
   overflow: hidden;
