@@ -1,1 +1,1 @@
-# Shielding dApp
+# BlankSquare WebApp

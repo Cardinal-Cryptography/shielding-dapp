@@ -28,7 +28,6 @@ import Chevron from './icons/chevron.svg?react';
 import ChevronDoubleDownRegular from './icons/chevronDoubleDownRegular.svg?react';
 import ChevronLeft from './icons/chevronLeft.svg?react';
 import ClipboardPaste from './icons/clipboardPaste.svg?react';
-import Common from './icons/common.svg?react';
 import CompassNorthWest from './icons/compassNorthWest.svg?react';
 import Copied from './icons/copied.svg?react';
 import Copy from './icons/copy.svg?react';
@@ -101,7 +100,6 @@ export const icons = {
   ChevronDoubleDownRegular,
   ChevronLeft,
   ClipboardPaste,
-  Common,
   CompassNorthWest,
   Copied,
   Copy,
