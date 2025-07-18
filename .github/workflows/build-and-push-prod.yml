@@ -30,4 +30,3 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_S3_PROD_SECRET_ACCESS_KEY }}
           s3-bucket-name: ${{ secrets.AWS_S3_PROD_BUCKET_NAME }}
           amplify-app-id: ${{ secrets.AWS_AMPLIFY_PROD_APP_ID }}
-          npm-token: ${{ secrets.NPM_TOKEN }}
