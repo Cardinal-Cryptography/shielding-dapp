@@ -14,12 +14,6 @@ import { STATUS_ICONS_DATA } from './consts';
 
 const meta = {
   component: Toast,
-  parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Hxk6JqTHnWwLaxsxvEZPtN/Common-Design-System?type=design&node-id=8557-227520',
-    },
-  },
 } satisfies Meta<typeof Toast>;
 
 export default meta;

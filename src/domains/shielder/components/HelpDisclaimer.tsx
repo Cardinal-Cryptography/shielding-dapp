@@ -10,7 +10,7 @@ const HelpDisclaimer = () => (
   <Container>
     <BIcon size={20} icon="CheckmarkStarburst" />
     <Text>
-      Common's privacy system is protected from fraud.
+      BlankSquare's privacy system is protected from fraud.
       {' '}
       <Link href={FRAUD_PROTECTION_LINK} target="_blank" rel="noopener noreferrer">Learn how</Link>
     </Text>
