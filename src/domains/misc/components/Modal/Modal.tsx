@@ -58,13 +58,13 @@ const Modal = ({
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !nonDismissible) {
+      if (e.key === 'Escape' && !nonDismissible && isTopModal) {
         triggerClose();
       }
     };
     document.addEventListener('keydown', handleEsc);
     return () => void document.removeEventListener('keydown', handleEsc);
-  }, [nonDismissible, triggerClose]);
+  }, [nonDismissible, triggerClose, isTopModal]);
 
   const pages = Array.isArray(config) ? config : [config];
 
