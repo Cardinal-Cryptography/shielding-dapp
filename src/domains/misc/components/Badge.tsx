@@ -1,7 +1,7 @@
 import { ComponentProps, forwardRef, type ReactElement } from 'react';
 import styled, { RuleSet } from 'styled-components';
 
-import CIcon, { IconName } from 'src/domains/misc/components/CIcon';
+import BIcon, { IconName } from 'src/domains/misc/components/BIcon';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -45,7 +45,7 @@ const Badge = forwardRef<HTMLButtonElement, Props>(({
       {...props}
     >
       {typeof leftIcon === 'string' ? (
-        <StyledCIcon variant={variant} design={design} size={size} icon={leftIcon} color={iconColor} />
+        <StyledBIcon variant={variant} design={design} size={size} icon={leftIcon} color={iconColor} />
       ) : leftIcon}
       {text && (
         <BadgeText
@@ -58,7 +58,7 @@ const Badge = forwardRef<HTMLButtonElement, Props>(({
         </BadgeText>
       )}
       {typeof rightIcon ==='string' ? (
-        <StyledCIcon variant={variant} design={design} size={size} icon={rightIcon} color={iconColor} />
+        <StyledBIcon variant={variant} design={design} size={size} icon={rightIcon} color={iconColor} />
       ): rightIcon}
     </StyledBadge>
   );
@@ -201,7 +201,7 @@ const StyledBadge = styled.div.withConfig({
   })};
 `;
 
-const StyledCIcon = styled(CIcon).withConfig({
+const StyledBIcon = styled(BIcon).withConfig({
   shouldForwardProp: prop => !['size', 'variant', 'design'].includes(prop),
 })<Props>`
   display: flex;
@@ -229,8 +229,8 @@ const BadgeText = styled.span.withConfig({
     })};
   text-align: center;
   ${perSize({
-    medium: typography.web.caption2,
-    large: typography.web.caption1,
+    medium: typography.caption2,
+    large: typography.caption1,
   })};
   line-height: 100%;
 `;

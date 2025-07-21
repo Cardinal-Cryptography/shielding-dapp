@@ -3,8 +3,8 @@ import styled, { css } from 'styled-components';
 import { objectEntries, objectKeys } from 'tsafe';
 
 import useChain from 'src/domains/chains/utils/useChain';
-import CIcon from 'src/domains/misc/components/CIcon';
-import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import BIcon from 'src/domains/misc/components/BIcon';
+import ContentBox from 'src/domains/misc/components/ContentBox';
 import Skeleton from 'src/domains/misc/components/Skeleton';
 import Tabs from 'src/domains/misc/components/Tabs';
 import Title from 'src/domains/misc/components/Title';
@@ -69,7 +69,7 @@ useState<keyof typeof TABS>('tokens');
 
   if (!isSuccess) {
     return (
-      <Wrapper>
+      <Container>
         <WithPadding>
           <Skeleton
             style={{
@@ -81,72 +81,72 @@ useState<keyof typeof TABS>('tokens');
             }}
           />
         </WithPadding>
-      </Wrapper>
+      </Container>
     );
   }
 
   return (
-    <Wrapper>
-      <Container $withoutBottomPadding={currentTab === 'activity'}>
-        <WithPadding>
-          <Title size="medium">Your accounts</Title>
-          <AccountTypeSelector />
-          <Tabs size="small" selectedTabKey={currentTab} tabsConfig={tabsConfig} />
-        </WithPadding>
-        {currentTab === 'activity' ? (
-          <Activity />
-        ) : (
-          <>
-            {selectedAccountType === 'public' && (
-              <WithPadding>
-                <InfoBox>
-                  <CIcon icon="Info" size={20} />
-                  <p>Tokens that can be moved to shielded account:</p>
-                </InfoBox>
-              </WithPadding>
-            )}
-            <TokensWrapper>
-              <TokenList tokens={tokens} />
-            </TokensWrapper>
-            {selectedAccountType === 'shielded' && (
-              <WithPadding>
-                <Disclaimer>
-                  <InfoContainer>
-                    <CIcon
-                      icon="InfoRegular"
-                      size={20}
-                      color={vars('--color-neutral-foreground-3-rest')}
-                    />
-                    <p>
-                      Shielded account is created based on your connected account.
-                      It’s specific to the platform you use – accounts created in
-                      the Web App can be retrieved from the Web App on another device.
-                    </p>
-                  </InfoContainer>
-                  <ShieldImage src={shieldImage} alt="Shield icon" />
-                </Disclaimer>
-              </WithPadding>
-            )}
-          </>
-        )}
-      </Container>
-    </Wrapper>
+    <Container $withoutBottomPadding={currentTab === 'activity'}>
+      <WithPadding>
+        <Title size="medium">Your accounts</Title>
+        <AccountTypeSelector />
+        <Tabs size="small" selectedTabKey={currentTab} tabsConfig={tabsConfig} />
+      </WithPadding>
+      {currentTab === 'activity' ? (
+        <Activity />
+      ) : (
+        <>
+          {selectedAccountType === 'public' && (
+            <WithPadding>
+              <InfoBox>
+                <BIcon icon="Info" size={20} />
+                <p>Tokens that can be moved to shielded account:</p>
+              </InfoBox>
+            </WithPadding>
+          )}
+          <TokensWrapper>
+            <TokenList tokens={tokens} />
+          </TokensWrapper>
+          {selectedAccountType === 'shielded' && (
+            <WithPadding>
+              <Disclaimer>
+                <InfoContainer>
+                  <BIcon
+                    icon="InfoRegular"
+                    size={20}
+                    color={vars('--color-neutral-foreground-3-rest')}
+                  />
+                  <p>
+                    Shielded account is created based on your connected account.
+                    It’s specific to the platform you use – accounts created in
+                    the Web App can be retrieved from the Web App on another device.
+                  </p>
+                </InfoContainer>
+                <ShieldImage src={shieldImage} alt="Shield icon" />
+              </Disclaimer>
+            </WithPadding>
+          )}
+        </>
+      )}
+    </Container>
   );
 };
 
 export default Shielder;
 
-const Wrapper = styled(DoubleBorderBox.Wrapper)`
-  width: 100%;
-  overflow: hidden;
-`;
-
-const Container = styled(DoubleBorderBox.Content)<{ $withoutBottomPadding?: boolean }>`
+const Container = styled(ContentBox)<{ $withoutBottomPadding?: boolean }>`
   display: flex;
-  flex-direction: column;
+
+
   gap: ${vars('--spacing-l')};
+  flex-direction: column;
+
+  width: 100%;
   padding-inline: ${vars('--spacing-none')};
   padding-block: ${vars('--spacing-l')};
+
+  overflow: hidden;
+  
   ${({ $withoutBottomPadding }) => $withoutBottomPadding && css`
       padding-bottom: 0;
     `
@@ -171,10 +171,10 @@ const InfoBox = styled.div`
   gap: ${vars('--spacing-s')};
   padding-left: ${vars('--spacing-xs')};
   color: ${vars('--color-neutral-foreground-3-rest')};
-  ${typography.web.body1Strong};
+  ${typography.body1Strong};
 `;
 
-const Disclaimer = styled(DoubleBorderBox.Content)`
+const Disclaimer = styled(ContentBox)`
   display: flex;
 
   flex-direction: row;
@@ -193,7 +193,7 @@ const InfoContainer = styled.div`
   gap: ${vars('--spacing-xs')};
   padding: ${vars('--spacing-m')} ${vars('--spacing-l')} ${vars('--spacing-l')};
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.caption1};
+  ${typography.caption1};
 `;
 
 const ShieldImage = styled.img`

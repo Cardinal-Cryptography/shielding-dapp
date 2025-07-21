@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 import ChainIcon from 'src/domains/chains/components/ChainIcon';
-import CIcon from 'src/domains/misc/components/CIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import vars from 'src/domains/styling/utils/vars';
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 const AccountTypeIcon = ({ type, size, className, withBorder, chainId }: Props) => (
   <Wrapper>
     <IconWrapper className={className} $size={size} $withBorder={withBorder}>
-      <CIcon
+      <BIcon
         icon={type === 'public' ? 'PersonFilled' : 'ShieldedFilled'}
         size={size / 1.6}
       />

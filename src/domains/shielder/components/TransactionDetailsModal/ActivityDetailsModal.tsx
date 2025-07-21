@@ -6,7 +6,7 @@ import ChainIcon from 'src/domains/chains/components/ChainIcon';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
 import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
-import CIcon from 'src/domains/misc/components/CIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import InfoPair from 'src/domains/misc/components/InfoPair';
 import Modal from 'src/domains/misc/components/Modal';
 import Skeleton from 'src/domains/misc/components/Skeleton.tsx';
@@ -224,7 +224,7 @@ const ActivityDetailsModal = (props: Props) => {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <CIcon icon="Open" size={20} />
+                        <BIcon icon="Open" size={20} />
                       </a>
                     )}
                   </TransactionId>
@@ -237,7 +237,7 @@ const ActivityDetailsModal = (props: Props) => {
                   <TotalFee>
                     <p>Est. Total fee</p>
                     <button onClick={() => void openFeeBreakdownModal()}>
-                      <CIcon size={16} icon="InfoRegular" />
+                      <BIcon size={16} icon="InfoRegular" />
                     </button>
                   </TotalFee>
                 )}
@@ -297,12 +297,12 @@ const Header = styled.header`
 `;
 
 const TokenName = styled.h2`
-  ${typography.decorative.subtitle1}
+  ${typography.subtitle1}
 `;
 
 const Balance = styled.p<{ $isPositive: boolean, $status: Status }>`
   margin-left: auto;
-  ${typography.decorative.subtitle1};
+  ${typography.subtitle1};
   ${({ $isPositive, $status }) => {
     if ($isPositive) {
       if ($status === 'completed') {
@@ -359,14 +359,14 @@ const RowValue = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-s')};
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const TransactionId = styled.div`
   display: flex;
   align-items: center;
   color: ${vars('--color-brand-foreground-1-rest')};
-  ${typography.web.body1};
+  ${typography.body1};
   
   & > a {
     display: flex;
@@ -393,7 +393,7 @@ const TotalFee = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-xs')};
-  ${typography.web.body1};
+  ${typography.body1};
   
   & > button {
     display: flex;

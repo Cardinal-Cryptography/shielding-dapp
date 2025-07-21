@@ -3,7 +3,7 @@ import { MouseEvent, ReactElement, useCallback, useEffect, useRef, useState } fr
 import styled from 'styled-components';
 
 import Button from 'src/domains/misc/components/Button';
-import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import ContentBox from 'src/domains/misc/components/ContentBox';
 import Pager from 'src/domains/misc/components/Pager';
 import * as Title from 'src/domains/misc/components/Title';
 import { useToast } from 'src/domains/misc/components/Toast';
@@ -129,7 +129,7 @@ const ModalWrapper = styled.div`
   }
 `;
 
-const ModalContent = styled(motion.create(DoubleBorderBox.Content))`
+const ModalContent = styled(motion.create(ContentBox))`
   width: min(${SLIDE_IN_CARD_BREAKPOINT}px, 100dvw);
   max-height: 90vh;
   margin: 0;

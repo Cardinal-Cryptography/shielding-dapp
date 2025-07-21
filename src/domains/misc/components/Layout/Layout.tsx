@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { BREAKPOINTS, BOTTOM_NAVIGATION_HEIGHT, BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';
 import vars from 'src/domains/styling/utils/vars';
 
-import AnimatingBackground from './AnimatingBackground';
 import Footer from './Footer';
 import Navigation from './Navigation';
 import TopBar from './TopBar';
@@ -38,7 +37,6 @@ const Layout = ({ children }: Props) => {
           <BottomNavigationContent position="ceiling" />
         </BottomNavigationContainer>
       )}
-      <AnimatingBackground />
     </Wrapper>
   );
 };
@@ -94,6 +92,7 @@ const BottomNavigationContainer = styled.div`
   width: 100%;
 
   background: ${vars('--color-neutral-background-2-rest')};
+  overflow: hidden;
 
   border-top: 1px solid ${vars('--color-neutral-stroke-2-rest')};
 `;

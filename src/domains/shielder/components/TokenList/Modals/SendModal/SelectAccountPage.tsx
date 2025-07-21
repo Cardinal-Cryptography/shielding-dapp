@@ -4,9 +4,9 @@ import styled, { RuleSet } from 'styled-components';
 import { isAddress } from 'viem';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
+import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
-import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import ContentBox from 'src/domains/misc/components/ContentBox';
 import PasteButton from 'src/domains/misc/components/PasteButton';
 import TextInput from 'src/domains/misc/components/TextInput';
 import { BEST_PRACTICES_LINK } from 'src/domains/misc/consts/consts';
@@ -62,7 +62,7 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
               transition={{ duration: 0.2, ease: 'easeInOut' }}
             >
               <MessageContent $status={messageStatus}>
-                <CIcon
+                <BIcon
                   icon={messageStatus === 'error' ? 'ErrorCircleRegular' : 'WarningRegular'}
                   size={12}
                 />
@@ -76,7 +76,7 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
       </Content>
       <Disclaimer>
         <InfoContainer>
-          <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
+          <BIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
           <p>
             You're about to send tokens from your shielded account to a public account.
             It will originate from the shielded pool, leaving your old transfer history behind.
@@ -93,7 +93,7 @@ const SelectAccountPage = ({ addressTo, setAddressTo, onConfirmClick }: Props) =
             initial={{ rotateZ: -90 }}
             animate={{ rotateZ: isExpanded ? -270 : -90 }}
           >
-            <CIcon icon="ChevronLeft" size={18} />
+            <BIcon icon="ChevronLeft" size={18} />
           </ChevronIconWrapper>
         </AccordionHeader>
         <AnimatePresence>
@@ -130,7 +130,7 @@ const Container = styled.div`
   gap: ${vars('--spacing-xl')};
 `;
 
-const Content = styled(DoubleBorderBox.Content)`
+const Content = styled(ContentBox)`
   display: flex;
 
   flex-direction: column;
@@ -161,7 +161,7 @@ const AccordionHeader = styled.div`
 `;
 
 const AccordionTitle = styled.p`
-  ${typography.web.caption1Strong};
+  ${typography.caption1Strong};
 `;
 
 const AccordionContent = styled(motion.ul)`
@@ -177,7 +177,7 @@ const AccordionItem = styled.li`
   display: flex;
   gap: ${vars('--spacing-s')};
   align-items: start;
-  ${typography.web.caption1};
+  ${typography.caption1};
 
   &::before {
     content: '•';
@@ -192,7 +192,7 @@ const InfoContainer = styled.div`
   gap: ${vars('--spacing-xs')};
   padding: ${vars('--spacing-m')} ${vars('--spacing-l')} ${vars('--spacing-l')};
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.caption1};
+  ${typography.caption1};
 `;
 
 const ShieldImage = styled.img`
@@ -206,7 +206,7 @@ const ShieldImage = styled.img`
 const Label = styled.div`
   display: flex;
   justify-content: space-between;
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const MessageContainer = styled(motion.div)`
@@ -221,13 +221,13 @@ const MessageContent = styled.div<{ $status: MessageStatus }>`
     warning: vars('--color-status-warning-foreground-1-rest'),
   })({ $status: props.$status })};
 
-  & > ${CIcon} {
+  & > ${BIcon} {
     margin-top: ${vars('--spacing-xs-nudge')};
   }
 `;
 
 const MessageText = styled.p`
-  ${typography.web.caption1};
+  ${typography.caption1};
 `;
 
 const ChevronIconWrapper = styled(motion.div)`
@@ -241,5 +241,5 @@ const Link = styled.a`
   color: ${vars('--color-brand-foreground-link-rest')};
 
   text-decoration: none;
-  ${typography.web.body1}
+  ${typography.body1}
 `;

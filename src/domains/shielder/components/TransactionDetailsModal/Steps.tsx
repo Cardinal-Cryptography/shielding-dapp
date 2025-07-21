@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import styled, { css, RuleSet } from 'styled-components';
 
-import CIcon from 'src/domains/misc/components/CIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -30,7 +30,7 @@ const Steps = ({ steps }: { steps: StepData[] }) => {
           <Step key={i}>
             <StatusCircle $status={step.status} $showLine={i !== steps.length - 1}>
               {icon === 'Spinner' ? <LoadingIcon icon={icon} size={16} /> : icon && (
-                <CIcon
+                <BIcon
                   icon={icon}
                   size={16}
                   color={vars('--color-neutral-foreground-on-brand-rest')}
@@ -121,15 +121,15 @@ const StatusCircle = styled.div<{ $status: Status, $showLine: boolean }>`
 `;
 
 const Name = styled.p`
-  ${typography.web.body1}
+  ${typography.body1}
 `;
 
 const Timestamp = styled.p`
   color: ${vars('--color-neutral-foreground-3-rest')};
-  ${typography.web.caption2}
+  ${typography.caption2}
 `;
 
-const LoadingIcon = styled(CIcon)`
+const LoadingIcon = styled(BIcon)`
   animation: spin 1.4s linear infinite;
 
   & *:first-of-type {

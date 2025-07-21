@@ -1,4 +1,4 @@
-import { IconName } from 'src/domains/misc/components/CIcon';
+import { IconName } from 'src/domains/misc/components/BIcon';
 import vars from 'src/domains/styling/utils/vars';
 
 export const STATUS_ICONS_DATA: Record<string, { icon: IconName, color: string | undefined }> = {

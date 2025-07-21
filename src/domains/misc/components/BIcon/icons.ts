@@ -4,6 +4,7 @@
  * @warning Do not modify this file directly. Add or update SVG files in the icons directory and run the generator
  */
 
+import Blanksquare from './icons/Blanksquare.svg?react';
 import Add from './icons/add.svg?react';
 import AddCircle from './icons/addCircle.svg?react';
 import AddSquare from './icons/addSquare.svg?react';
@@ -27,7 +28,6 @@ import Chevron from './icons/chevron.svg?react';
 import ChevronDoubleDownRegular from './icons/chevronDoubleDownRegular.svg?react';
 import ChevronLeft from './icons/chevronLeft.svg?react';
 import ClipboardPaste from './icons/clipboardPaste.svg?react';
-import Common from './icons/common.svg?react';
 import CompassNorthWest from './icons/compassNorthWest.svg?react';
 import Copied from './icons/copied.svg?react';
 import Copy from './icons/copy.svg?react';
@@ -76,6 +76,7 @@ import WarningRegular from './icons/warningRegular.svg?react';
 import XSM from './icons/xSM.svg?react';
 
 export const icons = {
+  Blanksquare,
   Add,
   AddCircle,
   AddSquare,
@@ -99,7 +100,6 @@ export const icons = {
   ChevronDoubleDownRegular,
   ChevronLeft,
   ClipboardPaste,
-  Common,
   CompassNorthWest,
   Copied,
   Copy,

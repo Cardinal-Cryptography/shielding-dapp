@@ -6,7 +6,7 @@ import ConnectModal from 'src/domains/chains/components/ConnectModal';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import Button from 'src/domains/misc/components/Button';
 import { useModal } from 'src/domains/misc/components/Modal';
-import { BOTTOM_MENU_BREAKPOINT } from 'src/domains/misc/consts/consts';
+import { BOTTOM_MENU_BREAKPOINT, BREAKPOINTS } from 'src/domains/misc/consts/consts';
 import formatAddress from 'src/domains/misc/utils/formatAddress';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -15,11 +15,13 @@ import Navigation from '../Navigation';
 
 import Brand from './Brand';
 import * as NavBox from './NavBox';
-import { BRAND_CONTAINER_TITLE, BRAND_LOGO_HEIGHT } from './consts';
+import { BRAND_CONTAINER_TITLE, BRAND_LOGO_HEIGHT_DESKTOP, BRAND_LOGO_HEIGHT_MOBILE } from './consts';
 import UserIcon from './userIcon.svg?react';
 
 const TopBar = () => {
   const isSmallScreen = useMediaQuery(`(max-width: ${BOTTOM_MENU_BREAKPOINT})`);
+  const isLargeScreen = useMediaQuery(`(width > ${BREAKPOINTS.lg}`);
+
   const { disconnect, isConnected , address } = useWallet();
   const { open } = useModal();
 
@@ -31,8 +33,8 @@ const TopBar = () => {
         </BrandContainer>
         {!isSmallScreen && <Navigation position="floor" />}
       </NavBox.BrandCanvas>
-      <NavBox.UserCanvas>
-        {isConnected ? (
+      {isConnected ? (
+        <NavBox.UserCanvas>
           <AccountManager>
             <ChainSelector />
             <Divider />
@@ -48,15 +50,18 @@ const TopBar = () => {
               </PowerButton>
             </AccountDetails>
           </AccountManager>
-        ) : (
+        </NavBox.UserCanvas>
+      ) : (
+        <ConnectButtonWrapper>
           <Button
             onClick={() => void open(<ConnectModal />)}
             variant="primary"
+            size={isLargeScreen ? 'medium' : 'small'}
           >
             Connect
           </Button>
-        )}
-      </NavBox.UserCanvas>
+        </ConnectButtonWrapper>
+      )}
     </NavBox.Container>
   );
 };
@@ -65,9 +70,13 @@ export default TopBar;
 
 const StyledBrand = styled(Brand)`
   margin-left: 8px;
-  height: ${BRAND_LOGO_HEIGHT};
+  height: ${BRAND_LOGO_HEIGHT_DESKTOP};
 
   flex-shrink: 0;
+
+  @media (width <= ${BOTTOM_MENU_BREAKPOINT}) { /* stylelint-disable-line media-query-no-invalid */
+    height: ${BRAND_LOGO_HEIGHT_MOBILE};
+  }
 `;
 
 const BrandContainer = styled.div`
@@ -82,7 +91,7 @@ const BrandContainer = styled.div`
 const AccountDetails = styled.div`
   display: flex;
   align-items: center;
-  ${typography.web.caption1};
+  ${typography.caption1};
 `;
 
 const AccountManager = styled.div`
@@ -103,4 +112,14 @@ const Divider = styled.div`
 
 const PowerButton = styled(Button)`
   color: ${vars('--color-neutral-foreground-2-rest')};
+`;
+
+const ConnectButtonWrapper = styled.div`
+  display: flex;
+  padding-left: ${vars('--spacing-m-nudge')};
+  padding-right: ${vars('--spacing-l')};
+
+  @media (width > ${BREAKPOINTS.lg}) { /* stylelint-disable-line media-query-no-invalid */
+    padding-inline: ${vars('--spacing-s')};
+  }
 `;

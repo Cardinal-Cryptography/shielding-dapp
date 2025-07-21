@@ -1,2 +1,2 @@
-export { default } from './CIcon';
+export { default } from './BIcon';
 export { type IconName } from './icons';

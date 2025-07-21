@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { type ReactNode, useState } from 'react';
 import styled from 'styled-components';
 
-import CIcon from 'src/domains/misc/components/CIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -48,7 +48,7 @@ const PasteButton = ({
         initial={{ opacity: 0, y: isSuccess ? -5 : 0 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <CIcon
+        <BIcon
           icon={isSuccess ? 'CheckmarkCircle' : 'ClipboardPaste'}
           color={isSuccess ? vars('--color-status-success-foreground-1-rest') : undefined}
           size={size}
@@ -69,7 +69,7 @@ const StyledButton = styled.button`
   gap: ${vars('--spacing-xs')};
 
   border-radius: ${vars('--border-radius-m')};
-  ${typography.decorative.caption1Strong};
+  ${typography.caption1Strong};
   transition: color 0.2s;
 `;
 

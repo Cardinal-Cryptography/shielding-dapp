@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-import Button from 'src/domains/misc/components/Button';
 import {
   BREAKPOINTS,
   CHANGELOG_LINK,
@@ -25,32 +24,22 @@ const Footer = () => (
       <Link href={FAUCET_LINK} target="_blank" rel="noopener noreferrer">
         Get Testnet Tokens
       </Link>
-      <Link href={LANDING_PAGE_LINK} target="_blank" rel="noopener noreferrer">common.fi</Link>
+      <Link href={LANDING_PAGE_LINK} target="_blank" rel="noopener noreferrer">blanksquare.io</Link>
     </InnerContainer>
-    <CopyrightContainer data-chromatic="ignore">
-      <InnerContainer>
-        <Copyright>
-          Copyright © {new Date().getFullYear()} Common, ver. {import.meta.env.APP_VERSION}
-        </Copyright>
-        <Link href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">
-          Terms of service
-        </Link>
-        <Link href={PRIVACY_POLICY_LINK} target="_blank" rel="noopener noreferrer">
-          Privacy policy
-        </Link>
-        <Link href={FRAUD_PROTECTION_LINK} target="_blank" rel="noopener noreferrer">
-          Fraud Protection Policy
-        </Link>
-      </InnerContainer>
-      <Button
-        variant="outline"
-        size="extra-small"
-        rightIcon="Open"
-        onClick={() => window.open('https://dex.common.fi/', '_blank', 'noopener')}
-      >
-        DEX and Bridge (WASM)
-      </Button>
-    </CopyrightContainer>
+    <InnerContainer data-chromatic="ignore">
+      <Copyright>
+        Copyright © {new Date().getFullYear()} Blanksquare, ver. {import.meta.env.APP_VERSION}
+      </Copyright>
+      <Link href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noopener noreferrer">
+        Terms of service
+      </Link>
+      <Link href={PRIVACY_POLICY_LINK} target="_blank" rel="noopener noreferrer">
+        Privacy policy
+      </Link>
+      <Link href={FRAUD_PROTECTION_LINK} target="_blank" rel="noopener noreferrer">
+        Fraud Protection Policy
+      </Link>
+    </InnerContainer>
   </Container>
 );
 
@@ -79,14 +68,10 @@ const InnerContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-const CopyrightContainer = styled(InnerContainer)`
-  justify-content: space-between;
-`;
-
 const Copyright = styled.div`
   width: 100%;
   color: ${vars('--color-neutral-foreground-4-rest')};
-  ${typography.web.caption2}
+  ${typography.caption2}
 
   @media (width >= ${BREAKPOINTS.sm}) { /* stylelint-disable-line media-query-no-invalid */
     width: auto;
@@ -97,5 +82,5 @@ const Link = styled.a`
   color: ${vars('--color-neutral-foreground-4-rest')};
 
   text-decoration: underline;
-  ${typography.web.caption2}
+  ${typography.caption2}
 `;

@@ -13,7 +13,7 @@ type Props = {
   className?: string,
 } & ComponentProps<'svg'>;
 
-const CIcon = forwardRef<SVGSVGElement, Props>(({
+const BIcon = forwardRef<SVGSVGElement, Props>(({
   icon,
   size = 24,
   color,
@@ -36,9 +36,9 @@ const CIcon = forwardRef<SVGSVGElement, Props>(({
   );
 });
 
-CIcon.displayName = 'CIcon';
+BIcon.displayName = 'BIcon';
 
-export default styled(CIcon)``;
+export default styled(BIcon)``;
 
 const Icon = styled.div<{
   $size: Size,

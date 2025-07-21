@@ -8,8 +8,8 @@ import { useAccount } from 'wagmi';
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import { wagmiAdapter } from 'src/domains/chains/utils/clients';
 import useConnectedChainNetworkEnvironment from 'src/domains/chains/utils/useConnectedChainNetworkEnvironment';
+import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
 import Modal from 'src/domains/misc/components/Modal';
 import CheckedContainer from 'src/domains/misc/components/PatternContainer';
 import { KEY_GENERATION_PROCESS_LINK } from 'src/domains/misc/consts/consts';
@@ -90,7 +90,7 @@ const SignatureModal = () => {
             </Text>
             <LearnMore href={KEY_GENERATION_PROCESS_LINK} target="_blank" rel="noopener noreferrer">
               <p>Learn more</p>
-              <CIcon icon="Open" size={20} />
+              <BIcon icon="Open" size={20} />
             </LearnMore>
             <Buttons>
               {isReady && !isLoading && !isSuccess && (
@@ -116,17 +116,17 @@ const Content = styled.div`
   gap: ${vars('--spacing-l')};
 `;
 
-const SignatureIcon = styled(CIcon)`
+const SignatureIcon = styled(BIcon)`
   position: relative;
 `;
 
 const Title = styled.h3<{ $isError?: boolean }>`
-  ${typography.decorative.subtitle1};
+  ${typography.subtitle1};
   ${({ $isError }) => $isError && css`color: ${vars('--color-status-danger-foreground-1-rest')};`}
 `;
 
 const Text = styled.p`
-  ${typography.decorative.body1};
+  ${typography.body1};
   text-align: center;
   color: ${vars('--color-neutral-foreground-2-rest')};
 `;
@@ -141,7 +141,7 @@ const Buttons = styled.div`
 const LearnMore = styled.a`
   display: flex;
   gap: ${vars('--spacing-xs')};
-  ${typography.web.body1};
+  ${typography.body1};
   
   &, & > a {
     color: ${vars('--color-brand-foreground-link-rest')};

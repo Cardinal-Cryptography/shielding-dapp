@@ -16,8 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-project
-        with:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   storybook:
     name: Chromatic toolset initialization

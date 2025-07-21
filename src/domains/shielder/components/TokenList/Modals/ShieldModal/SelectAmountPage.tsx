@@ -4,9 +4,9 @@ import { isNullish } from 'utility-types';
 
 import { useWallet } from 'src/domains/chains/components/WalletProvider';
 import useChain from 'src/domains/chains/utils/useChain';
+import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
-import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import ContentBox from 'src/domains/misc/components/ContentBox';
 import InfoPair from 'src/domains/misc/components/InfoPair';
 import Skeleton from 'src/domains/misc/components/Skeleton';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
@@ -92,7 +92,7 @@ const SelectAmountPage = ({ onContinue, token, hasInsufficientFees, value, onVal
       />
       <Disclaimer>
         <InfoContainer>
-          <CIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
+          <BIcon icon="InfoRegular" size={20} color={vars('--color-neutral-foreground-3-rest')} />
           <p>
             You're about to shield your tokens.
             Your shielded account balance and actions will be private and secured.
@@ -106,7 +106,7 @@ const SelectAmountPage = ({ onContinue, token, hasInsufficientFees, value, onVal
             <TotalFeeLabel>
               <p>Est. Total fee</p>
               <button onClick={() => void openFeeBreakdownModal()}>
-                <CIcon size={16} icon="InfoRegular" />
+                <BIcon size={16} icon="InfoRegular" />
               </button>
             </TotalFeeLabel>
           }
@@ -143,11 +143,16 @@ const Container = styled.div`
   gap: ${vars('--spacing-xl')};
 `;
 
-const Disclaimer = styled(DoubleBorderBox.Content)`
+const Disclaimer = styled(ContentBox)`
   display: flex;
+
+  flex-direction: row;
   justify-content: space-between;
+  gap: ${vars('--spacing-m')};
+
   margin: ${vars('--spacing-none')};
   padding: ${vars('--spacing-s')} 0 0 0;
+
   background: ${vars('--color-neutral-background-4a-rest')};
 `;
 
@@ -157,7 +162,7 @@ const InfoContainer = styled.div`
   gap: ${vars('--spacing-xs')};
   padding: ${vars('--spacing-m')} ${vars('--spacing-l')} ${vars('--spacing-l')};
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.caption1};
+  ${typography.caption1};
 `;
 
 const ShieldImage = styled.img`
@@ -186,7 +191,7 @@ const TotalFeeLabel = styled.div`
   align-items: center;
   gap: ${vars('--spacing-xs')};
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.body1};
+  ${typography.body1};
 
   & > button {
     display: flex;

@@ -3,7 +3,7 @@ import {
 } from 'react';
 import { styled } from 'styled-components';
 
-import CIcon from 'src/domains/misc/components/CIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import Tooltip from 'src/domains/misc/components/Tooltip';
 import { typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
@@ -23,7 +23,7 @@ const InfoPair = ({ label, className, tooltipText, ...props }: Props) => (
       {label}
       {tooltipText && (
         <Tooltip text={tooltipText}>
-          <CIcon icon="Info" color={vars('--color-neutral-foreground-4-rest')} size={16} />
+          <BIcon icon="Info" color={vars('--color-neutral-foreground-4-rest')} size={16} />
         </Tooltip>
       )}
     </Label>
@@ -57,7 +57,7 @@ const Label = styled.div`
   height: 24px;
 
   flex-shrink: 0;
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const Value = styled.div<{ $allowShrinking?: boolean }>`
@@ -66,7 +66,7 @@ const Value = styled.div<{ $allowShrinking?: boolean }>`
   overflow: hidden;
 
   flex-shrink: ${({ $allowShrinking }) => ($allowShrinking ? 1 : 0)};
-  ${typography.web.body1Strong};
+  ${typography.body1Strong};
 `;
 
 const Separator = styled.div`

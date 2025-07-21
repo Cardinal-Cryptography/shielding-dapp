@@ -6,8 +6,8 @@ import ChainIcon from 'src/domains/chains/components/ChainIcon';
 import { Definition } from 'src/domains/chains/utils/definitions';
 import supportedChains from 'src/domains/chains/utils/supportedChains';
 import useChain from 'src/domains/chains/utils/useChain';
+import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
 import SelectBox from 'src/domains/misc/components/SelectBox';
 import { BOTTOM_MENU_BREAKPOINT, BREAKPOINTS } from 'src/domains/misc/consts/consts';
 import { typography } from 'src/domains/styling/utils/tokens';
@@ -29,7 +29,7 @@ const ChainSelector = () => {
         <Option>
           <ChainIcon size={20} chainId={chain.id} />
           <p>{chain.name}</p>
-          {chainConfig?.id === chain.id && <CIcon size={20} icon="CheckmarkRegular" />}
+          {chainConfig?.id === chain.id && <BIcon size={20} icon="CheckmarkRegular" />}
         </Option>
       ),
   });
@@ -51,7 +51,7 @@ const ChainSelector = () => {
         ) : (
           'Select Network'
         )}
-        <CIcon icon="Chevron" color={vars('--color-neutral-foreground-3-rest')} />
+        <BIcon icon="Chevron" color={vars('--color-neutral-foreground-3-rest')} />
         <UnderLine />
       </StyledButton>
     </StyledSelectBox>
@@ -82,11 +82,12 @@ const StyledButton = styled(Button)`
   padding-inline: ${vars('--spacing-s')};
   width: ${CHAIN_SELECTOR_WIDTH}px;
 
+  border-radius: ${vars('--spacing-s')};
   background: ${vars('--color-neutral-background-1-rest')};
   border-color: ${vars('--color-neutral-stroke-2-rest')};
   overflow: hidden;
 
-  ${typography.web.body1};
+  ${typography.body1};
 
   @media (width <= ${BOTTOM_MENU_BREAKPOINT}) { /* stylelint-disable-line media-query-no-invalid */
     width: fit-content;
@@ -99,9 +100,9 @@ const Option = styled.div`
   gap: ${vars('--spacing-s')};
   width: 100%;
 
-  ${typography.web.body1Strong};
+  ${typography.body1Strong};
 
-  & > ${CIcon} {
+  & > ${BIcon} {
     margin-left: auto;
   }
 `;

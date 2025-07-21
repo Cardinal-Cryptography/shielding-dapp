@@ -134,7 +134,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${vars('--spacing-l')};
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const FeeBreakdown = styled.div`

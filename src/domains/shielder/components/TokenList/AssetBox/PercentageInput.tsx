@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import CIcon from 'src/domains/misc/components/CIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import { transitionTime, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -44,7 +44,7 @@ const Input = styled(AutoResizingInput)`
   background: none;
   outline: none;
   
-  ${typography.decorative.subtitle2}
+  ${typography.subtitle2}
 `;
 
 const Container = styled.label<{ $highlighted: boolean }>`
@@ -52,7 +52,7 @@ const Container = styled.label<{ $highlighted: boolean }>`
   align-items: center;
   border-bottom: 1px dashed ${vars('--color-neutral-stroke-2-rest')};
   cursor: text;
-  ${typography.decorative.subtitle2};
+  ${typography.subtitle2};
 
   &&, ${Input}, ${Input}::placeholder  {
     color: ${props => props.$highlighted ?
@@ -63,6 +63,6 @@ const Container = styled.label<{ $highlighted: boolean }>`
   }
 `;
 
-const PencilIcon = styled(CIcon)`
+const PencilIcon = styled(BIcon)`
   margin-right: ${vars('--spacing-xxs')};
 `;

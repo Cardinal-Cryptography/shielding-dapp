@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Fragment, ReactElement, ReactNode, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 
-import CIcon, { IconName } from 'src/domains/misc/components/CIcon';
+import BIcon, { IconName } from 'src/domains/misc/components/BIcon';
 import { boxShadows, typography } from 'src/domains/styling/utils/tokens';
 import vars from 'src/domains/styling/utils/vars';
 
@@ -109,7 +109,7 @@ const SelectBox = ({
                         >
                           {checkMarkPosition === 'left' && selectedIndex !== undefined &&
                             <Checkmark icon="CheckmarkRegular" $active={selectedIndex === optionIndex} />}
-                          {option.icon && <CIcon icon={option.icon} />}
+                          {option.icon && <BIcon icon={option.icon} />}
                           {option.text}
                           {
                             option.rightSideEl ?? (checkMarkPosition === 'right' && selectedIndex !== undefined &&
@@ -153,7 +153,7 @@ const Section = styled.div`
   }
 `;
 
-const Checkmark = styled(CIcon)<{ $active: boolean }>`
+const Checkmark = styled(BIcon)<{ $active: boolean }>`
   opacity: ${({ $active }) => $active ? 1 : 0};
 `;
 
@@ -168,7 +168,7 @@ const StyledButton = styled(Button)`
   border-radius: ${vars('--border-radius-xs')};
   outline: none;
 
-  ${typography.web.body1Strong};
+  ${typography.body1Strong};
 
   &:hover, &:active, &:focus, &:focus-visible, &:disabled  {
     border: none;
@@ -184,6 +184,6 @@ const Title = styled.div`
   margin-top: ${vars('--spacing-s')};
   padding-block: ${vars('--spacing-s')};
   padding-inline: 8px;
-  ${typography.web.caption1Strong};
+  ${typography.caption1Strong};
   color: ${vars('--color-neutral-foreground-3-rest')};
 `;

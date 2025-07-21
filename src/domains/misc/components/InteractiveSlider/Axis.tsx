@@ -41,7 +41,7 @@ const Container = styled.div`
   position: relative;
   height: 16px;
   
-  ${typography.web.caption2}
+  ${typography.caption2}
 `;
 
 const Label = styled.div<{ $highlighted: boolean }>`

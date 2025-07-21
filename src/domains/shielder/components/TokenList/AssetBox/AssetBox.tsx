@@ -243,7 +243,7 @@ export default AssetBox;
 const Title = styled.h3`
   padding-bottom: ${vars('--spacing-m-nudge')};
   
-  ${typography.web.caption1}
+  ${typography.caption1}
 `;
 
 const ClearButton = styled(Button)`
@@ -264,7 +264,7 @@ const Input = styled(AutoResizingInput)`
   padding: 0;
   border: none;
 
-  ${typography.decorative.title1};
+  ${typography.title1};
   
   color: ${vars('--color-neutral-foreground-1-rest')};
   text-align: right;
@@ -292,11 +292,11 @@ const CurrentBalance = styled.span<{ $highlighted: boolean }>`
 `;
 
 const BalanceLabel = styled.span`
-  ${typography.web.body1}
+  ${typography.body1}
 `;
 
 const Balance = styled.span`
-  ${typography.web.body1Strong}
+  ${typography.body1Strong}
 `;
 
 const PercentageContainer = styled.div`
@@ -309,13 +309,13 @@ const TokenDetails = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-xs')};
-  ${typography.decorative.subtitle2}
+  ${typography.subtitle2}
 `;
 
 const AccountDetails = styled.div`
   display: flex;
   gap: ${vars('--spacing-m')};
-  ${typography.web.caption1};
+  ${typography.caption1};
   margin-top: ${vars('--spacing-m')};
 `;
 
@@ -324,7 +324,7 @@ const Address = styled.div`
   gap: ${vars('--spacing-s')};
   align-items: center;
   color: ${vars('--color-brand-foreground-1-rest')};
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const Divider = styled.div`

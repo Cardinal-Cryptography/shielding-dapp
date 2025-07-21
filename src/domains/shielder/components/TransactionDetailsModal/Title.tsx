@@ -62,11 +62,11 @@ const Container = styled.div`
   flex-direction: column;
   
   & > :first-of-type {
-    ${typography.decorative.subtitle2};
+    ${typography.subtitle2};
   };
 
   & > :last-of-type {
-    ${typography.web.caption2};
+    ${typography.caption2};
     color:${vars('--color-neutral-foreground-3-rest')}  
   };
 `;

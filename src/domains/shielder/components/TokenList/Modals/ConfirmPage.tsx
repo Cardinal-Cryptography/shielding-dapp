@@ -3,9 +3,9 @@ import { type Address } from 'viem';
 
 import useChain from 'src/domains/chains/utils/useChain';
 import AccountTypeIcon from 'src/domains/misc/components/AccountTypeIcon';
+import BIcon from 'src/domains/misc/components/BIcon';
 import Button from 'src/domains/misc/components/Button';
-import CIcon from 'src/domains/misc/components/CIcon';
-import DoubleBorderBox from 'src/domains/misc/components/DoubleBorderBox';
+import ContentBox from 'src/domains/misc/components/ContentBox';
 import InfoPair from 'src/domains/misc/components/InfoPair';
 import Skeleton from 'src/domains/misc/components/Skeleton';
 import TokenIcon from 'src/domains/misc/components/TokenIcon';
@@ -99,7 +99,7 @@ const ConfirmPage = ({
             <TotalFee>
               <p>Est. Total fee</p>
               <button onClick={() => void openFeeBreakdownModal()}>
-                <CIcon size={16} icon="InfoRegular" />
+                <BIcon size={16} icon="InfoRegular" />
               </button>
             </TotalFee>
           }
@@ -149,9 +149,9 @@ const Footer = styled(Wrapper)`
   gap: ${vars('--spacing-xl')};
 `;
 
-const Content = styled(DoubleBorderBox.Content)`
+const Content = styled(ContentBox)`
   display: flex;
-  
+
   gap: ${vars('--spacing-m')};
   align-items: center;
   justify-content: space-between;
@@ -161,7 +161,7 @@ const Content = styled(DoubleBorderBox.Content)`
 
   background: ${vars('--color-neutral-background-4a-rest')};
   
-  ${typography.web.body1};
+  ${typography.body1};
 `;
 
 const AccountDetails = styled.div`
@@ -175,14 +175,14 @@ const Address = styled.p`
 `;
 
 const Amount = styled.div`
-  ${typography.decorative.title1};
+  ${typography.title1};
 `;
 
 const TokenDetails = styled.div`
   display: flex;
   align-items: center;
   gap: ${vars('--spacing-s')};
-  ${typography.decorative.subtitle2};
+  ${typography.subtitle2};
 `;
 
 const Divider = styled.div`
@@ -209,7 +209,7 @@ const TotalFee = styled.div`
   align-items: center;
   gap: ${vars('--spacing-xs')};
   color: ${vars('--color-neutral-foreground-2-rest')};
-  ${typography.web.body1};
+  ${typography.body1};
   
   & > button {
     display: flex;
